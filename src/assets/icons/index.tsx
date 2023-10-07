@@ -6,6 +6,7 @@ export * from "./AudioRecorder"
 export * from "./ProfileIcons"
 export * from "./ModalIcons"
 export * from "./PanelIcons"
+export * from "./Logo"
 
 // IconContainer component
 interface IconContainerProps {
