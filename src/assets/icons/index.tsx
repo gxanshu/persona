@@ -1,0 +1,46 @@
+import React, { ReactNode, Ref } from 'react';
+export * from "./Warning"
+export * from "./RightArrow"
+export * from "./Play"
+export * from "./AudioRecorder"
+export * from "./ProfileIcons"
+export * from "./ModalIcons"
+
+// IconContainer component
+interface IconContainerProps {
+  className?: string;
+  children: ReactNode;
+  ref?: Ref<HTMLDivElement>;
+}
+
+const IconContainer: React.FC<IconContainerProps> = ({ className, ref ,children }) => {
+  return <div className={className}>{children}</div>;
+};
+
+// IconFrame component
+interface IconFrameProps {
+  className: string;
+  children: ReactNode;
+}
+
+const IconFrame: React.FC<IconFrameProps> = ({ className ,children }) => {
+  return <div className={className}>{children}</div>;
+};
+
+// Icon component
+interface IconProps {
+  containerClass?: string;
+  frameClass: string;
+  children: ReactNode;
+  ref?: Ref<HTMLDivElement>;
+}
+
+const Icon: React.FC<IconProps> = ({ containerClass, frameClass, children, ref }) => {
+  return (
+    <IconContainer className={containerClass} ref={ref}>
+      <IconFrame className={frameClass}>{children}</IconFrame>
+    </IconContainer>
+  );
+};
+
+export { Icon, IconContainer, IconFrame };

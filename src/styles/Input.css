@@ -1,0 +1,47 @@
+.wrapper_focus {
+  border: #06c;
+  z-index: 2;
+  border-width: 0;
+  box-shadow: none;
+  height: 3.3rem;
+}
+
+.input_focus {
+  border-color: #0071e3;
+  border-width: 3px;
+  box-shadow: 0 0 0 4px rgba(0,125,250,.6);
+  outline: none;
+  margin: 0px;
+  text-align: left;
+}
+
+.label_focus {
+  color: #6e6e73;
+  font-size: 12px;
+  line-height: 10px;
+  top: 0.58824rem;
+}
+
+.custom_padding {
+  padding: 16px 40px 0px 16px;
+}
+
+.iti {
+  width: 100% !important;
+}
+
+.iti--separate-dial-code .iti__selected-flag {
+  background: none !important;
+  padding-left: 16px !important;
+}
+
+.user-namewrapper_focus {
+  z-index: 2;
+  border-color: #0071e3;
+  border-width: 2px;
+  box-shadow: 0 0 0 4px rgba(0,125,250,.6);
+}
+
+select {
+  appearance: none;
+}
