@@ -9,7 +9,7 @@ import { WelcomeScreen } from './WelcomeScreen'
 export type AuthFlow = 'login' | 'welcome' | 'clone' | 'name' | 'audio'
 
 export default function AuthSection() {
-  const [authFlow, setAuthFlow] = useState<AuthFlow>('audio')
+  const [authFlow, setAuthFlow] = useState<AuthFlow>('login')
   return (
     <div className='w-full h-screen'>
       {authFlow === 'login' && <NewAuthPage setFlow={setAuthFlow} />}

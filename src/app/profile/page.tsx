@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { AboutCard } from './components/AboutCard';
 import { ProfileCard } from '~/components/container';
+import "~/styles/fadein-animation.css"
 
 const ModalAudio = dynamic(() => import('~/components/modals/AudioRecordingModal'));
 const ModalPhone = dynamic(() => import('~/components/modals/ModalPhone'));
@@ -19,7 +20,7 @@ export default function ProfilePage() {
   return (
     <div
       className="h-screen w-screen p-[72px] flex relative items-start justify-between gap-[92px]"
-      style={{ animation: 'fade-in 0.5s' }}
+      style={{ animation: 'fadeIn 0.5s' }}
     >
       {/*avatar area*/}
       <div className="inline-flex flex-col gap-[32px]">
