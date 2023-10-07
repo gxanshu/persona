@@ -20,7 +20,6 @@ export const MsgContainer = () => {
 						<p className="text-[#494949] text-[13px] leading-[150%] max-w-[208px] text-wrap">This is a new message with multi line support, with ellipsis support and here we go</p>
 						<span className="w-[8px] h-[8px] bg-[#0095F6] rounded-full"/>
 					</div>
-					<div></div>
 				</div>
 			</div>
 		</div>
