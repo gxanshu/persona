@@ -6,10 +6,10 @@ export default function TestingPage() {
 	return (
 		<div className="p-[72px]">
 			<div className="flex flex-col border-r max-w-max">
-			<div className="p-[12px]">
+			<div className="px-[12px] py-[8px]">
 				<ChatHeader/>
 			</div>
-			<div className="p-[12px] border-b">
+			<div className="px-[12px] py-[8px] border-b">
 				<Search/>
 			</div>
 			<div className="inline-flex flex-col gap-[2px] max-h-[450px] overflow-x-hidden overflow-y-auto p-[4px] no-scrollbar">
