@@ -38,3 +38,38 @@ export const PanelPen = () => (
     />
   </svg>
 )
+
+export const MsgMicIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+  >
+    <g clipPath="url(#a)">
+      <path
+        fill="#1D1D1F"
+        fillOpacity={0.72}
+        d="M19.07 12.01a1 1 0 0 1 .85 1.132A8.004 8.004 0 0 1 13 19.938V21a1 1 0 1 1-2 0v-1.062a8.005 8.005 0 0 1-6.92-6.796 1 1 0 1 1 1.98-.284 6.001 6.001 0 0 0 11.878 0 1.001 1.001 0 0 1 1.132-.848ZM12 2a5 5 0 0 1 5 5v5a5 5 0 1 1-10 0V7a5 5 0 0 1 5-5Z"
+      />
+    </g>
+    <defs>
+      <clipPath id="a">
+        <path fill="#fff" d="M0 0h24v24H0z" />
+      </clipPath>
+    </defs>
+  </svg>
+)
+
+export const MsgSendIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+  >
+    <path
+      stroke="#FAFAFA"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.8}
+      d="m8 12-2.466 7.274a.53.53 0 0 0 .127.568.551.551 0 0 0 .578.124L19.5 13l.206-.108.206-.108.206-.109S20.5 12.5 20.5 12s-.382-.675-.382-.675l-.206-.109-.206-.108L19.5 11 6.239 4.034a.557.557 0 0 0-.578.124.536.536 0 0 0-.127.568L8 12Zm0 0h5"
+    />
+  </svg>
+)
