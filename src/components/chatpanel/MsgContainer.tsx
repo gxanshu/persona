@@ -3,7 +3,7 @@ import { CheckIcon } from "~/assets/icons/PanelIcons"
 
 export const MsgContainer = () => {
 	return (
-		<div className="inline-flex p-[8px] items-center rounded-[12px] bg-[#F5F5F5]">
+		<div className="inline-flex p-[8px] items-center rounded-[12px] hover:bg-[#F5F5F5] cursor-pointer">
 			<div className="inline-flex gap-[8px]">
 				<span className="h-[56px] w-[56px] bg-[#86868B] rounded-full"/>
 				<div className="inline-flex flex-col gap-[4px]">
