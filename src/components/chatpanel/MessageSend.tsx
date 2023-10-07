@@ -6,12 +6,12 @@ export const MessageSend = () => {
 	const [input, setInput] = useState("")
 	return (
 		<div className="flex gap-[6px] items-center">
-			<div className="inline-flex p-[12px] items-center rounded-[12px] bg-[#F5F5F5]">
+			<div className="inline-flex p-[12px] items-center rounded-[12px] bg-[#EBEBEB]">
 			<div className="inline-flex gap-[8px]">
-				<Icon frameClass="h-[13px] w-[13px] mt-[2px]" containerClass="h-[20px] w-[20px] inline-flex justify-center"> 
+				<Icon frameClass="h-[13px] w-[13px] mt-[4px]" containerClass="h-[20px] w-[20px] inline-flex justify-center"> 
 					<PanelSearch/>
 				</Icon>
-				<input placeholder="Message" type="text" value={input} onChange={(e)=> setInput(e.target.value)} className="placeholder:text-[#86868B] text-[15px] leading-[20px] border-none outline-none bg-[#F5F5F5] w-[431px]"/>
+				<input placeholder="Message" type="text" value={input} onChange={(e)=> setInput(e.target.value)} className="placeholder:text-[#86868B] text-[15px] leading-[20px] border-none outline-none bg-[#EBEBEB] h-[24px] w-[431px]"/>
 			</div>
 		</div>
 		<div className={`inline-flex items-center justify-center p-[12px] rounded-[32px] ${input != "" ? "bg-[#0095F6]": "bg-[#EBEBEB]"}`}>
