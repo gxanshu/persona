@@ -5,9 +5,9 @@ import { Search } from "~/components/chatpanel/Search";
 
 export default function TestingPage() {
 	return (
-		<div className="p-[72px]">
+		<div className="p-[72px] flex h-full">
 		<div className="flex flex-col border-r max-w-max">
-			<div className="px-[12px] pt-[8px] pb-[4px]">
+			<div className="flex items-center justify-center p-[12px]">
 				<ChatHeader/>
 			</div>
 			<div className="px-[12px] pb-[8px] pt-[4px] border-b">
@@ -26,8 +26,11 @@ export default function TestingPage() {
 				<MsgContainer msg="This is a new message with 1 line"/>
 			</div>
 		</div>
-		<div className="mt-[24px]">
-			<MessageSend/>
+		<div className="flex flex-col justify-between">
+			<div className="p-[12px]"><div className="w-full h-[36px] bg-[#D9D9D9]"/></div>
+			<div className="p-[12px]">
+				<MessageSend/>
+			</div>
 		</div>
 		</div>
 	)

@@ -5,7 +5,7 @@ import { useState } from "react";
 export const MessageSend = () => {
 	const [input, setInput] = useState("")
 	return (
-		<div className="flex gap-[6px] items-center">
+		<div className="flex gap-[8px] items-center">
 			<div className="inline-flex p-[12px] items-center rounded-[12px] bg-[#EBEBEB]">
 			<div className="inline-flex gap-[8px]">
 				<Icon frameClass="h-[13px] w-[13px] mt-[4px]" containerClass="h-[20px] w-[20px] inline-flex justify-center"> 
