@@ -12,7 +12,7 @@ export default function TestingPage() {
 			<div className="p-[12px] border-b">
 				<Search/>
 			</div>
-			<div className="inline-flex flex-col gap-[2px] max-h-[450px] max-w-max overflow-x-hidden overflow-y-auto p-[4px] no-scrollbar">
+			<div className="inline-flex flex-col gap-[2px] max-h-[450px] overflow-x-hidden overflow-y-auto p-[4px] no-scrollbar">
 				<MsgContainer msg="This is a new message with multi line support, with ellipsis support and here we go"/>
 				<MsgContainer msg="This is a new message with 1 line"/>
 				<MsgContainer msg="This is a new message with 1 line"/>
