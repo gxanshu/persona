@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { AboutCard } from './components/AboutCard';
 import { ProfileCard } from '~/components/container';
-import "~/styles/fadein-animation.css"
+import "~/styles/animation.css"
 
 const ModalAudio = dynamic(() => import('~/components/modals/AudioRecordingModal'));
 const ModalPhone = dynamic(() => import('~/components/modals/ModalPhone'));

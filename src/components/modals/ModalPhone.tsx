@@ -14,7 +14,7 @@ const ModalPhone: React.FC<ModalPhoneProps> = (props) => {
   return (
     <AnimatedModal>
       {step ? (
-        <ModalStartPhoto onClose={() => props.onClose()} step={() => setStep(false)} />
+        <ModalStartList onClose={() => props.onClose()} step={() => setStep(false)} />
       ) : (
         <div className="w-full h-full flex flex-col justify-center relative pb-[64px]">
           <div className="inline-flex flex-col items-center gap-[48px] px-[64px] pt-[64px]">
