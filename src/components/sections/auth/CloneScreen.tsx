@@ -1,8 +1,8 @@
-import React from 'react';
-import { AuthFlow } from '.';
+import React from 'react'
+import { AuthFlow } from '.'
 
 interface CloneScreenProps {
-  setFlow: (flow: AuthFlow) => void;
+  setFlow: (flow: AuthFlow) => void
 }
 
 export const CloneScreen: React.FC<CloneScreenProps> = ({ setFlow }) => {
@@ -23,7 +23,9 @@ export const CloneScreen: React.FC<CloneScreenProps> = ({ setFlow }) => {
             </p>
           </div>
           {/* list */}
-          <p className="text-[#494949] text-center text-[17px] leading-[150%] font-[600]">Your clone can...</p>
+          <p className="text-[#494949] text-center text-[17px] leading-[150%] font-[600]">
+            Your clone can...
+          </p>
         </div>
         <div className="flex items-start gap-[16px] w-full mt-[12px] snap-x snap-mandatory overflow-x-auto no-scrollbar ">
           <div className="snap-center shrink-0">
@@ -45,9 +47,9 @@ export const CloneScreen: React.FC<CloneScreenProps> = ({ setFlow }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
 const Card: React.FC = () => {
-  return <div className="min-w-[452px] min-h-[240px] bg-[#F5F5F5] rounded-[24px] snap-center shrink-0"></div>;
-};
+  return <div className="min-w-[452px] min-h-[240px] bg-[#F5F5F5] rounded-[24px] snap-center shrink-0"></div>
+}

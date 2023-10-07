@@ -1,21 +1,21 @@
 'use client'
-import { useState } from 'react';
-import avatarImg from '~/assets/images/welcome-avatar.png';
-import { Icon, ProfileBrain, ProfileBusiness, ProfileFace, ProfileMobile, ProfileVoice } from '~/assets/icons';
-import dynamic from 'next/dynamic';
-import Image from 'next/image';
-import { AboutCard } from './components/AboutCard';
-import { ProfileCard } from '~/components/container';
-import "~/styles/animation.css"
+import { useState } from 'react'
+import avatarImg from '~/assets/images/welcome-avatar.png'
+import { Icon, ProfileBrain, ProfileBusiness, ProfileFace, ProfileMobile, ProfileVoice } from '~/assets/icons'
+import dynamic from 'next/dynamic'
+import Image from 'next/image'
+import { AboutCard } from './components/AboutCard'
+import { ProfileCard } from '~/components/container'
+import '~/styles/animation.css'
 
-const ModalAudio = dynamic(() => import('~/components/modals/AudioRecordingModal'));
-const ModalPhone = dynamic(() => import('~/components/modals/ModalPhone'));
+const ModalAudio = dynamic(() => import('~/components/modals/AudioRecordingModal'))
+const ModalPhone = dynamic(() => import('~/components/modals/ModalPhone'))
 
 export default function ProfilePage() {
   const [modal, setModal] = useState({
     voice: false,
     number: false,
-  });
+  })
 
   return (
     <div
@@ -27,7 +27,7 @@ export default function ProfilePage() {
         <Image
           src={avatarImg}
           className="w-[150px] h-[150px] rounded-full"
-          alt='user profile icon'
+          alt="user profile icon"
           style={{ background: 'lightgray 50% / cover no-repeat' }}
         />
         <div className="flex flex-col gap-[8px]">
@@ -52,8 +52,12 @@ export default function ProfilePage() {
       <div className="flex flex-col gap-[32px]">
         <div className="flex gap-[96px] w-full">
           <div className="flex flex-col gap-[8px]">
-            <h3 className="text-[#1D1D1F] text-[21px] font-[500] leading-[24px]">Getting your Persona ready</h3>
-            <p className="text-[#494949] text-[15px] leading-[20px]">Your AI persona is just a few steps away.</p>
+            <h3 className="text-[#1D1D1F] text-[21px] font-[500] leading-[24px]">
+              Getting your Persona ready
+            </h3>
+            <p className="text-[#494949] text-[15px] leading-[20px]">
+              Your AI persona is just a few steps away.
+            </p>
           </div>
           <div className="bg-[#D9D9D9] h-[32px] w-[32px]" />
         </div>
@@ -61,7 +65,7 @@ export default function ProfilePage() {
           <Card
             icon={<ProfileVoice />}
             text="Add a Voice"
-            buttonHandler={() => setModal((prevValue) => ({...prevValue,voice: true}))}
+            buttonHandler={() => setModal(prevValue => ({ ...prevValue, voice: true }))}
             delay={0.1}
           />
           <Card icon={<ProfileFace />} text="Add a Face" delay={0.2} />
@@ -74,7 +78,7 @@ export default function ProfilePage() {
           <Card
             icon={<ProfileMobile />}
             text="Get a Number"
-            buttonHandler={() => setModal((prevValue) => ({...prevValue,number: true}))}
+            buttonHandler={() => setModal(prevValue => ({ ...prevValue, number: true }))}
             delay={0.4}
           />
           <Card icon={<ProfileBrain />} text="Make it smart" delay={0.5} />
@@ -82,23 +86,21 @@ export default function ProfilePage() {
         </div>
       </div>
       <span />
-      {modal.voice && (
-        <ModalAudio onClose={() => setModal((prevValue) => ({...prevValue,voice: false}))} />
-      )}
-      {modal.number && (
-        <ModalPhone onClose={() => setModal((prevValue) => ({...prevValue,number: false}))} />
-      )}
+      {modal.voice && <ModalAudio onClose={() => setModal(prevValue => ({ ...prevValue, voice: false }))} />}
+      {modal.number && <ModalPhone
+        onClose={() => setModal(prevValue => ({ ...prevValue, number: false }))}
+      />}
     </div>
-  );
+  )
 }
 
 const Card: React.FC<{
-  icon: React.ReactNode;
-  text: string;
-  containerClass?: string;
-  buttonHandler?: () => void;
-  delay: number;
-}> = (props) => {
+  icon: React.ReactNode
+  text: string
+  containerClass?: string
+  buttonHandler?: () => void
+  delay: number
+}> = props => {
   return (
     <ProfileCard className={props.containerClass} delay={props.delay}>
       <div className="flex flex-col gap-[12px] max-h-[140px] max-w-[136px] w-full">
@@ -108,13 +110,13 @@ const Card: React.FC<{
         <div className="h-[44px] flex items-end">
           <p className="text-[17px] font-[500] text-[#1D1D1F] leading-[24px]">{props.text}</p>
         </div>
-          <button
-            className="py-[8px] px-[12px] flex items-center justify-center rounded-[16px] text-[#1D1D1F] text-[13px] leading-[20px] font-[500] bg-[#F2F2F2] w-full"
-            onClick={props.buttonHandler}
-          >
-            Start
-          </button>
+        <button
+          className="py-[8px] px-[12px] flex items-center justify-center rounded-[16px] text-[#1D1D1F] text-[13px] leading-[20px] font-[500] bg-[#F2F2F2] w-full"
+          onClick={props.buttonHandler}
+        >
+          Start
+        </button>
       </div>
     </ProfileCard>
-  );
-};
+  )
+}

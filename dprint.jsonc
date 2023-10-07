@@ -1,0 +1,33 @@
+{
+  // https://dprint.dev/plugins/typescript/config/
+  "typescript": {
+    "newLineKind": "lf",
+    "indentWidth": 2,
+    "semiColons": "asi",
+    "quoteStyle": "preferSingle",
+    "quoteProps": "asNeeded",
+    "jsx.quoteStyle": "preferDouble",
+    "lineWidth": 110,
+    "bracePosition": "sameLineUnlessHanging",
+    "arrowFunction.useParentheses": "preferNone",
+    "module.sortImportDeclarations": "maintain",
+    "exportDeclaration.sortNamedExports": "caseSensitive",
+    "singleBodyPosition":"maintain",
+    "jsxAttributes.preferSingleLine": true
+  },
+  "json": {},
+  "includes": [
+    "**/*.{ts,tsx,js,jsx,cjs,mjs,json,md,toml}"
+  ],
+  "excludes": [
+    "**/node_modules",
+    "**/*-lock.json",
+    "**/.git",
+    "**/dist",
+    "**/.next"
+  ],
+  "plugins": [
+    "https://plugins.dprint.dev/typescript-0.85.1.wasm",
+    "https://plugins.dprint.dev/json-0.17.4.wasm"
+  ]
+}

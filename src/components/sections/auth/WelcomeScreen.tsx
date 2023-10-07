@@ -1,10 +1,10 @@
-import React from 'react';
-import { PlayIcon } from '~/assets/icons';
-import avatarImg from '~/assets/images/welcome-avatar.png';
-import { AuthFlow } from '.';
+import React from 'react'
+import { PlayIcon } from '~/assets/icons'
+import avatarImg from '~/assets/images/welcome-avatar.png'
+import { AuthFlow } from '.'
 
 interface WelcomeScreenProps {
-  setFlow: (flow: AuthFlow) => void;
+  setFlow: (flow: AuthFlow) => void
 }
 
 export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ setFlow }) => {
@@ -48,5 +48,5 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ setFlow }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

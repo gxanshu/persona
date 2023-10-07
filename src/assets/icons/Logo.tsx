@@ -1,8 +1,5 @@
 export const Logo = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none">
     <path
       stroke="#000"
       strokeLinecap="round"

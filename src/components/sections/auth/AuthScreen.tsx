@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import {AuthFlow} from "."
-import {SelectInput, TextInput} from "~/components/inputs"
+import React, { useState } from 'react'
+import { AuthFlow } from '.'
+import { SelectInput, TextInput } from '~/components/inputs'
 
 interface NewAuthPageProps {
-  setFlow: (flow: AuthFlow) => void;
+  setFlow: (flow: AuthFlow) => void
 }
 
 interface FormValues {
-  name: string;
-  business: string;
-  type: string;
-  options: string;
+  name: string
+  business: string
+  type: string
+  options: string
 }
 
 export const NewAuthPage: React.FC<NewAuthPageProps> = ({ setFlow }) => {
@@ -19,14 +19,16 @@ export const NewAuthPage: React.FC<NewAuthPageProps> = ({ setFlow }) => {
     business: '',
     type: '',
     options: '',
-  });
+  })
   console.log(value)
 
   return (
     <div className="h-screen w-full flex items-center">
       <div className="flex flex-col items-center gap-[48px] w-full">
         <div className="flex flex-col items-center gap-[16px]">
-          <h1 className="text-[#1D1D1F] text-[64px] leading-[72px] font-[600] tracking-[-1.44px]">Hi human 👋</h1>
+          <h1 className="text-[#1D1D1F] text-[64px] leading-[72px] font-[600] tracking-[-1.44px]">
+            Hi human 👋
+          </h1>
           <p className="text-[#494949] text-[19px] leading-[24px] text-center">
             You’re new here! Let’s start with your name.
           </p>
@@ -38,12 +40,10 @@ export const NewAuthPage: React.FC<NewAuthPageProps> = ({ setFlow }) => {
             type="text"
             value={value.name}
             required={true}
-            setValue={(value: string) =>
-              setValue((prevValue) => ({
-                ...prevValue,
-                name: value,
-              }))
-            }
+            setValue={(value: string) => setValue(prevValue => ({
+              ...prevValue,
+              name: value,
+            }))}
             actionButton={false}
             disabled={false}
             haveError={() => false}
@@ -58,11 +58,10 @@ export const NewAuthPage: React.FC<NewAuthPageProps> = ({ setFlow }) => {
                 value={value.business}
                 required={true}
                 setValue={(value: string) =>
-                  setValue((prevValue) => ({
+                  setValue(prevValue => ({
                     ...prevValue,
                     business: value,
-                  }))
-                }
+                  }))}
                 actionButton={false}
                 disabled={false}
                 haveError={() => false}
@@ -75,12 +74,10 @@ export const NewAuthPage: React.FC<NewAuthPageProps> = ({ setFlow }) => {
                 name="ecommerce"
                 value={value.type}
                 required={true}
-                setValue={(value: string) =>
-                  setValue((prevValue) => ({
-                    ...prevValue,
-                    type: value,
-                  }))
-                }
+                setValue={(value: string) => setValue(prevValue => ({
+                  ...prevValue,
+                  type: value,
+                }))}
                 actionButton={false}
                 disabled={false}
                 haveError={() => false}
@@ -98,11 +95,10 @@ export const NewAuthPage: React.FC<NewAuthPageProps> = ({ setFlow }) => {
                 value={value.options}
                 required={true}
                 setValue={(value: string) =>
-                  setValue((prevValue) => ({
+                  setValue(prevValue => ({
                     ...prevValue,
                     options: value,
-                  }))
-                }
+                  }))}
                 actionButton={false}
                 disabled={false}
                 haveError={() => false}
@@ -119,5 +115,5 @@ export const NewAuthPage: React.FC<NewAuthPageProps> = ({ setFlow }) => {
         )}
       </div>
     </div>
-  );
-};
+  )
+}

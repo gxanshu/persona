@@ -1,19 +1,19 @@
-import React, { useRef } from 'react';
-import { Icon, RightArrowIcon } from '~/assets/icons';
-import '~/styles/Input.css';
-import ShownError from './ShowError';
+import React, { useRef } from 'react'
+import { Icon, RightArrowIcon } from '~/assets/icons'
+import '~/styles/Input.css'
+import ShownError from './ShowError'
 
 interface SelectInputProps {
-  actionButton?: boolean;
-  label: string;
-  required?: boolean;
-  name: string;
-  disabled?: boolean;
-  value: string;
-  setValue: (value: string) => void;
-  haveError?: any;
-  className?: string;
-  options: string[];
+  actionButton?: boolean
+  label: string
+  required?: boolean
+  name: string
+  disabled?: boolean
+  value: string
+  setValue: (value: string) => void
+  haveError?: any
+  className?: string
+  options: string[]
 }
 
 export const SelectInput: React.FC<SelectInputProps> = ({
@@ -28,9 +28,9 @@ export const SelectInput: React.FC<SelectInputProps> = ({
   className,
   options,
 }) => {
-  const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const labelRef = useRef<HTMLSpanElement | null>(null);
-  const inputRef = useRef<HTMLSelectElement | null>(null);
+  const wrapperRef = useRef<HTMLDivElement | null>(null)
+  const labelRef = useRef<HTMLSpanElement | null>(null)
+  const inputRef = useRef<HTMLSelectElement | null>(null)
 
   const handleFocus = () => {
     if (inputRef.current?.value) {
@@ -40,7 +40,7 @@ export const SelectInput: React.FC<SelectInputProps> = ({
       inputRef.current?.classList.toggle('input_focus')
       labelRef.current?.classList.toggle('label_focus')
     }
-  };
+  }
 
   return (
     <>
@@ -61,9 +61,9 @@ export const SelectInput: React.FC<SelectInputProps> = ({
             autoComplete="off"
             aria-invalid="false"
             value={value}
-            onChange={(event) => {
-              haveError(null);
-              setValue(event.target.value);
+            onChange={event => {
+              haveError(null)
+              setValue(event.target.value)
             }}
           >
             <option value="" selected></option>
@@ -96,5 +96,5 @@ export const SelectInput: React.FC<SelectInputProps> = ({
       </div>
       <ShownError error={haveError() ?? ''} />
     </>
-  );
-};
+  )
+}

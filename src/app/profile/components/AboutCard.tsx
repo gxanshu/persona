@@ -1,13 +1,13 @@
-import { FC, ReactNode } from "react";
-import { Icon, ProfileBusiness, ProfileCake, ProfileLang, ProfilePlus, ProfileWork } from "~/assets/icons"
-import { ProfileCard } from "~/components/container"
+import { FC, ReactNode } from 'react'
+import { Icon, ProfileBusiness, ProfileCake, ProfileLang, ProfilePlus, ProfileWork } from '~/assets/icons'
+import { ProfileCard } from '~/components/container'
 
 interface AboutCardProps {
-  containerClass?: string;
+  containerClass?: string
   delay: number
 }
 
-export const AboutCard:FC<AboutCardProps> = ({delay, containerClass}) => {
+export const AboutCard: FC<AboutCardProps> = ({ delay, containerClass }) => {
   return (
     <ProfileCard className={containerClass} delay={delay}>
       <div className="flex flex-col gap-[20px] w-full h-full">
@@ -35,7 +35,7 @@ export const AboutCard:FC<AboutCardProps> = ({delay, containerClass}) => {
   )
 }
 
-export const AboutCardList = ({icon, text}: {icon: ReactNode; text: string}) => {
+export const AboutCardList = ({ icon, text }: { icon: ReactNode; text: string }) => {
   return (
     <div className="flex items-center gap-[8px]">
       <Icon frameClass="h-[20px] w-[20px]">

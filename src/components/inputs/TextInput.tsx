@@ -1,19 +1,19 @@
-import React, { useRef } from 'react';
-import { Icon, RightArrowIcon } from '~/assets/icons';
-import '~/styles/Input.css';
-import ShownError from './ShowError';
+import React, { useRef } from 'react'
+import { Icon, RightArrowIcon } from '~/assets/icons'
+import '~/styles/Input.css'
+import ShownError from './ShowError'
 
 interface TextInputProps {
-  actionButton?: boolean;
-  label: string;
-  type?: 'text' | 'email';
-  required?: boolean;
-  name: string;
-  disabled?: boolean;
-  value: string;
-  setValue: (value: string) => void;
-  haveError?: any;
-  className?: string;
+  actionButton?: boolean
+  label: string
+  type?: 'text' | 'email'
+  required?: boolean
+  name: string
+  disabled?: boolean
+  value: string
+  setValue: (value: string) => void
+  haveError?: any
+  className?: string
 }
 
 export const TextInput: React.FC<TextInputProps> = ({
@@ -28,9 +28,9 @@ export const TextInput: React.FC<TextInputProps> = ({
   haveError,
   className,
 }) => {
-  const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const labelRef = useRef<HTMLSpanElement | null>(null);
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const wrapperRef = useRef<HTMLDivElement | null>(null)
+  const labelRef = useRef<HTMLSpanElement | null>(null)
+  const inputRef = useRef<HTMLInputElement | null>(null)
 
   const handleFocus = () => {
     if (inputRef.current?.value) {
@@ -40,7 +40,7 @@ export const TextInput: React.FC<TextInputProps> = ({
       inputRef.current?.classList.toggle('input_focus')
       labelRef.current?.classList.toggle('label_focus')
     }
-  };
+  }
 
   return (
     <>
@@ -62,9 +62,9 @@ export const TextInput: React.FC<TextInputProps> = ({
             autoComplete="off"
             aria-invalid="false"
             value={value}
-            onChange={(event) => {
-              haveError(null);
-              setValue(event.target.value);
+            onChange={event => {
+              haveError(null)
+              setValue(event.target.value)
             }}
           />
           {actionButton && (
@@ -90,5 +90,5 @@ export const TextInput: React.FC<TextInputProps> = ({
       </div>
       <ShownError error={haveError() ?? ''} />
     </>
-  );
-};
+  )
+}

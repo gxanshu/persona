@@ -1,10 +1,5 @@
 export const RightArrowIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={16}
-    height={14}
-    fill="none"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width={16} height={14} fill="none">
     <path
       fill="#fff"
       fillRule="evenodd"

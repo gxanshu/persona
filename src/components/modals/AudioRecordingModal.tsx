@@ -1,14 +1,14 @@
-import { FC } from "react"
-import { Icon, ProfileModalCross } from "~/assets/icons"
-import { AnimatedModal } from "./AnimatedModal"
-import dynamic from "next/dynamic"
+import { FC } from 'react'
+import { Icon, ProfileModalCross } from '~/assets/icons'
+import { AnimatedModal } from './AnimatedModal'
+import dynamic from 'next/dynamic'
 const AudioModal = dynamic(() => import('~/components/sections/auth/AudioScreen'))
 
 interface ModalAudioProps {
   onClose: () => void
 }
 
-export const ModalAudio:FC<ModalAudioProps>= ({onClose}) => {
+export const ModalAudio: FC<ModalAudioProps> = ({ onClose }) => {
   return (
     <AnimatedModal>
       <div className="w-full h-full relative">
