@@ -1,12 +1,15 @@
+'use client'
 import { ChatHeader } from "~/components/chatpanel/ChatHeader";
 import { MessageSend } from "~/components/chatpanel/MessageSend";
 import { MsgContainer } from "~/components/chatpanel/MsgContainer";
 import { Search } from "~/components/chatpanel/Search";
+import { AnimatedModal } from "~/components/modals/AnimatedModal";
 
 export default function TestingPage() {
 	return (
-		<div className="p-[72px] flex h-full">
-		<div className="flex flex-col border-r max-w-max">
+		<AnimatedModal containerClass="w-max p-[12px]">
+			<div className="w-full flex">
+				<div className="flex flex-col border-r max-w-max">
 			<div className="flex items-center justify-center p-[12px]">
 				<ChatHeader/>
 			</div>
@@ -32,6 +35,7 @@ export default function TestingPage() {
 				<MessageSend/>
 			</div>
 		</div>
-		</div>
+			</div>
+		</AnimatedModal>
 	)
 }

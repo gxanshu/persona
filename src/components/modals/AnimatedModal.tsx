@@ -3,9 +3,10 @@ import "~/styles/animation.css"
 
 interface AnimatedModalProps {
   children: ReactNode
+  containerClass?: string;
 }
 
-export const AnimatedModal:FC<AnimatedModalProps> = ({children}) => {
+export const AnimatedModal:FC<AnimatedModalProps> = ({children, containerClass}) => {
   let mainContainer = useRef<HTMLDivElement | null>(null);
 
   // useEffect(()=> {
@@ -21,7 +22,7 @@ export const AnimatedModal:FC<AnimatedModalProps> = ({children}) => {
     style={{boxShadow: "0px 4px 32px 0px rgba(29, 29, 31, 0.12)"}}
   >
     <div
-      className="w-[531px] min-h-[500px] rounded-[48px] flex flex-col items-center bg-white relative"
+      className={`w-[531px] min-h-[500px] rounded-[48px] flex flex-col items-center bg-white relative ${containerClass}`}
     >
       {children}
     </div>

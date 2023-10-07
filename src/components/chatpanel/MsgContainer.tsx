@@ -18,7 +18,9 @@ export const MsgContainer = ({msg}: {msg: string}) => {
 					</div>
 					<div className="flex items-center gap-[8px]">
 						<p className="text-[#494949] text-[13px] leading-[150%] max-w-[208px] text-wrap">{msg}</p>
-						<span className="w-[8px] h-[8px] bg-[#0095F6] rounded-full"/>
+						<div className="h-[16px] w-[16px] flex items-center justify-center">
+							<span className="w-[8px] h-[8px] bg-[#0095F6] rounded-full"/>
+						</div>
 					</div>
 				</div>
 			</div>
