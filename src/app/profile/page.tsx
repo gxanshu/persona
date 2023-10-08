@@ -86,10 +86,8 @@ export default function ProfilePage() {
         </div>
       </div>
       <span />
-      {modal.voice && <ModalAudio onClose={() => setModal(prevValue => ({ ...prevValue, voice: false }))} />}
-      {modal.number && <ModalPhone
-        onClose={() => setModal(prevValue => ({ ...prevValue, number: false }))}
-      />}
+      <ModalAudio show={modal.voice} onClose={() => setModal(prevValue => ({ ...prevValue, voice: false }))} />
+      <ModalPhone show={modal.number} onClose={() => setModal(prevValue => ({ ...prevValue, number: false }))}/>
     </div>
   )
 }

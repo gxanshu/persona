@@ -6,11 +6,12 @@ const AudioModal = dynamic(() => import('~/components/sections/auth/AudioScreen'
 
 interface ModalAudioProps {
   onClose: () => void
+  show: boolean
 }
 
-export const ModalAudio: FC<ModalAudioProps> = ({ onClose }) => {
+export const ModalAudio: FC<ModalAudioProps> = ({ onClose, show }) => {
   return (
-    <AnimatedModal>
+    <AnimatedModal show={show}>
       <div className="w-full h-full relative">
         <div className="p-[64px]">
           <AudioModal text="Add a Voice" subText="Record or upload 1 min audio. Our AI will clone it." />

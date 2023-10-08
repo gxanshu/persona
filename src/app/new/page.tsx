@@ -7,7 +7,7 @@ import { AnimatedModal } from '~/components/modals/AnimatedModal'
 
 export default function TestingPage() {
   return (
-    <AnimatedModal containerClass="w-max p-[12px]">
+    <AnimatedModal show={true} containerClass="w-max p-[12px]">
       <div className="w-full flex">
         <div className="flex flex-col border-r max-w-max">
           <div className="flex items-center justify-center p-[12px]">

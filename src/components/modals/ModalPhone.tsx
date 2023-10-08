@@ -1,9 +1,11 @@
+'use client'
 import { useState } from 'react'
 import { AnimatedModal } from './AnimatedModal'
 import { Icon, ProfileModalCross } from '~/assets/icons'
 
 interface ModalPhoneProps {
   onClose: () => void
+  show: boolean
 }
 
 const ModalPhone: React.FC<ModalPhoneProps> = props => {
@@ -12,7 +14,7 @@ const ModalPhone: React.FC<ModalPhoneProps> = props => {
   const [step, setStep] = useState<boolean>(true)
 
   return (
-    <AnimatedModal>
+    <AnimatedModal show={props.show}>
       {step
         ? <ModalStartList onClose={() => props.onClose()} step={() => setStep(false)} />
         : (
