@@ -8,7 +8,7 @@ export const SocialCard = ({className, delay}: {className?: string, delay: numbe
     <ProfileCard className={`${className}`} delay={delay}>
       <div>
         <p className="mb-10 px-2.5 pt-2.5 text-xl font-semibold">
-          Add your social media accounts to your Bento
+          Add your social media accounts to your Persona
         </p>
         <div className="flex max-h-[250px] flex-1 flex-col overflow-y-auto gap-3 no-scrollbar">
           <SocialList icon={<TwitterIcon/>} />

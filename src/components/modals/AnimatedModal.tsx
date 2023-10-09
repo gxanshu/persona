@@ -1,4 +1,4 @@
-import { FC, ReactNode } from 'react'
+import { FC, ReactNode, useEffect } from 'react'
 import '~/styles/animation/modal.css'
 import Animate from '../Animate'
 
@@ -9,9 +9,10 @@ interface AnimatedModalProps {
 }
 
 export const AnimatedModal: FC<AnimatedModalProps> = ({ children, containerClass, show }) => {
+
   return (
     <Animate
-      className="absolute left-0 top-0 flex items-center justify-center h-screen w-screen bg-black/30"
+      className="absolute left-0 top-0 bottom-0 right-0 flex items-center justify-center bg-black/30 z-[50]"
       enter="backdrop-enter"
       exit="backdrop-exit"
       show={show}

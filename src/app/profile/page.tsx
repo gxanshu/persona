@@ -1,5 +1,5 @@
 'use client'
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import avatarImg from '~/assets/images/welcome-avatar.png'
 import { Icon, ProfileBrain, ProfileBusiness, ProfileFace, ProfileMobile, ProfileVoice } from '~/assets/icons'
 import dynamic from 'next/dynamic'
@@ -42,11 +42,12 @@ export default function ProfilePage() {
       style={{ background: `url(${avatarImg.src}) lightgray 50% / cover no-repeat` }}
     >
       <div
-        className="p-[72px] flex relative items-start justify-between gap-[92px] bg-white/80 backdrop-blur-3xl h-full w-screen overflow-y-auto"
+        id="main-area"
+        className="p-[72px] flex items-start justify-between gap-[92px] bg-white/80 backdrop-blur-3xl h-full w-screen overflow-y-auto no-scrollbar"
         style={{ animation: 'fadeIn 0.5s' }}
       >
         {/*avatar area*/}
-        <div className="inline-flex flex-col gap-[32px] sticky top-20 z-[50] self-start">
+        <div className="inline-flex flex-col gap-[32px] sticky top-20 z-[1] self-start">
           <Image
             src={avatarImg}
             className="w-[150px] h-[150px] rounded-full"
