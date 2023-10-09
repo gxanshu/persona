@@ -11,7 +11,7 @@ interface CardContainerProps {
 export const ProfileCard: FC<CardContainerProps> = ({ children, delay, className }) => {
   return (
     <div
-      className={`inline-flex p-[24px] items-center gap-[12px] rounded-[24px] border border-[#EBEBEB] bg-white shadow-sm ${className} min-w-[184px] min-h-[184px]`}
+      className={`inline-flex p-[24px] items-center gap-[12px] rounded-[24px] border border-[#EBEBEB] bg-white shadow-sm ${className}`}
       style={{ ...animate({ name: 'fadeIn', delay }), opacity: 0 }}
     >
       {children}

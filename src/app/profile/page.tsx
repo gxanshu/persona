@@ -1,13 +1,13 @@
 'use client'
-import { useEffect, useRef, useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import avatarImg from '~/assets/images/welcome-avatar.png'
 import { Icon, ProfileBrain, ProfileBusiness, ProfileFace, ProfileMobile, ProfileVoice } from '~/assets/icons'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { AboutCard } from './components/AboutCard'
-import { ProfileCard } from '~/components/container'
 import '~/styles/animation.css'
 import { Card } from './components/Cards'
+import { SocialCard } from './components/SocialCard'
 
 const ModalAudio = dynamic(() => import('~/components/modals/AudioRecordingModal'))
 const ModalPhone = dynamic(() => import('~/components/modals/ModalPhone'))
@@ -19,41 +19,34 @@ export default function ProfilePage() {
   })
   const [name, setName] = useState('vish')
   const [bio, setBio] = useState('')
-  const [limit, setLimit] = useState(false)
-  const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
 
-  const handleNameChange = (e: any) => {
+  const handleNameChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setName(e.target.value)
+    // Auto-adjust the textarea's height based on its content
+    e.target.style.height = 'auto'
+    e.target.style.height = e.target.scrollHeight + 'px'
   }
 
-  const handleBio = (e: any) => {
-    if (bio.length > 10) {
-      setLimit(true)
+  const handleBio = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    const inputText = e.target.value
+    if (inputText.length <= 280) {
+      setBio(inputText)
+      e.target.style.height = 'auto'
+      e.target.style.height = e.target.scrollHeight + 'px'
     }
-    if (bio.length < 280 || bio.length == 0) {
-      setBio(e.target.value)
-    }
-  }
-
-  textAreaRef.current?.addEventListener('input', autoResize, false)
-  function autoResize() {
-    // @ts-ignore
-    this.style.height = 'auto'
-    // @ts-ignore
-    this.style.height = this.scrollHeight + 'px'
   }
 
   return (
     <div
-      className="h-screen w-screen"
+      className="w-screen h-screen z-[-1] fixed"
       style={{ background: `url(${avatarImg.src}) lightgray 50% / cover no-repeat` }}
     >
       <div
-        className="p-[72px] flex relative items-start justify-between gap-[92px] h-screen w-screen bg-white/80 backdrop-blur-3xl"
+        className="p-[72px] flex relative items-start justify-between gap-[92px] bg-white/80 backdrop-blur-3xl h-full w-screen overflow-y-auto"
         style={{ animation: 'fadeIn 0.5s' }}
       >
         {/*avatar area*/}
-        <div className="inline-flex flex-col gap-[32px]">
+        <div className="inline-flex flex-col gap-[32px] sticky top-20 z-[50] self-start">
           <Image
             src={avatarImg}
             className="w-[150px] h-[150px] rounded-full"
@@ -61,13 +54,16 @@ export default function ProfilePage() {
             style={{ background: 'lightgray 50% / cover no-repeat' }}
           />
           <div className="flex flex-col gap-[8px]">
-            <input
+            <textarea
               className="text-[33px] font-[600] leading-[40px] tracking-[-0.66px] text-[#1D1D1F] bg-transparent outline-none border-none max-w-[200px] max-w-[270px]"
               placeholder="Your name"
+              spellCheck="false"
+              style={{ height: 40 }}
+              rows={1}
               value={name}
               onChange={handleNameChange}
             >
-            </input>
+            </textarea>
             <div className="flex items-center gap-[8px] text-[#494949]">
               <p className="text-[15px] leading-[20px]">Vish V.</p>
               <svg xmlns="http://www.w3.org/2000/svg" width="2" height="2" viewBox="0 0 2 2" fill="none">
@@ -76,17 +72,17 @@ export default function ProfilePage() {
               <p className="text-[15px] leading-[20px]">110K Followers</p>
             </div>
             <textarea
-              ref={textAreaRef}
               className="text-[20px] font-[500] leading-[150%] text-[#1D1D1F] bg-transparent outline-none border-none max-w-full"
               style={{ height: 40 }}
               rows={1}
+              spellCheck="false"
               placeholder="Your bio"
               value={bio}
               onChange={handleBio}
             >
             </textarea>
-            {limit
-              ? <p className="text-[12px] mt-[16px] leading-[20px]">{bio.length}/280 characters</p>
+            {bio.length > 10
+              ? <p className="text-[12px] leading-[20px]">{bio.length}/280 characters</p>
               : (null)}
           </div>
           <div className="flex py-[16px] px-[24px] items-center rounded-[24px] bg-[#F5F5F5]">
@@ -111,6 +107,7 @@ export default function ProfilePage() {
             <div className="bg-[#D9D9D9] h-[32px] w-[32px]" />
           </div>
           <div className="grid gap-[32px] grid-cols-4 max-w-[800px]">
+          <SocialCard className='col-span-2 row-span-2' delay={0.8}/>
             <Card
               icon={<ProfileVoice />}
               text="Add a Voice"

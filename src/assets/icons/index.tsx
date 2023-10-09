@@ -6,6 +6,7 @@ export * from './PanelIcons'
 export * from './Play'
 export * from './ProfileIcons'
 export * from './RightArrow'
+export * from './SocialCards'
 export * from './Warning'
 
 // IconContainer component
