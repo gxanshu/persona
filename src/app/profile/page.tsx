@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import avatarImg from '~/assets/images/welcome-avatar.png'
 import { Icon, ProfileBrain, ProfileBusiness, ProfileFace, ProfileMobile, ProfileVoice } from '~/assets/icons'
 import dynamic from 'next/dynamic'
@@ -19,10 +19,19 @@ export default function ProfilePage() {
   })
   const [name, setName] = useState("vish");
   const [bio, setBio] = useState("");
+  const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
 
   const handleNameChange = (e:any) => {
     setName(e.target.value)
-  } 
+  }
+
+  textAreaRef.current?.addEventListener('input', autoResize, false);
+  function autoResize() {
+    //@ts-ignore
+    this.style.height = 'auto';
+    //@ts-ignore
+    this.style.height = this.scrollHeight + 'px';
+  }
 
   return (
     <div className='h-screen w-screen' style={{background: `url(${avatarImg.src}) lightgray 50% / cover no-repeat`}}>
@@ -47,7 +56,7 @@ export default function ProfilePage() {
             </svg>
             <p className="text-[15px] leading-[20px]">110K Followers</p>
           </div>
-          <textarea className="text-[20px] font-[500] leading-[150%] text-[#1D1D1F] bg-transparent outline-none border-none max-w-full" rows={3} placeholder='Your bio' value={bio} onChange={(e)=> setBio(e.target.value)}></textarea>
+          <textarea ref={textAreaRef} className="text-[20px] font-[500] leading-[150%] text-[#1D1D1F] bg-transparent outline-none border-none max-w-full h-[40px]" placeholder='Your bio' value={bio} onChange={(e)=> setBio(e.target.value)}></textarea>
         </div>
         <div className="flex py-[16px] px-[24px] items-center rounded-[24px] bg-[#F5F5F5]">
           <div className="flex justify-center items-start gap-[4px] min-w-[175px]">
