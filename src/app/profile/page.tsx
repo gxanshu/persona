@@ -107,28 +107,28 @@ export default function ProfilePage() {
             <div className="bg-[#D9D9D9] h-[32px] w-[32px]" />
           </div>
           <div className="grid gap-[32px] grid-cols-4 max-w-[800px]">
-          <SocialCard className='col-span-2 row-span-2' delay={0.8}/>
+          <SocialCard className='col-span-2 row-span-2' delay={0.1}/>
             <Card
               icon={<ProfileVoice />}
               text="Add a Voice"
               buttonHandler={() => setModal(prevValue => ({ ...prevValue, voice: true }))}
-              delay={0.1}
+              delay={0.2}
             />
             <Card icon={<ProfileFace />} text="Add a Face" delay={0.2} />
             <Card
               icon={<ProfileBusiness />}
               text="Monetize your Persona"
               containerClass="col-span-2"
-              delay={0.3}
+              delay={0.4}
             />
             <Card
               icon={<ProfileMobile />}
               text="Get a Number"
               buttonHandler={() => setModal(prevValue => ({ ...prevValue, number: true }))}
-              delay={0.4}
+              delay={0.5}
             />
-            <Card icon={<ProfileBrain />} text="Make it smart" delay={0.5} />
-            <AboutCard containerClass="col-span-2" delay={0.6} />
+            <Card icon={<ProfileBrain />} text="Make it smart" delay={0.6} />
+            <AboutCard containerClass="col-span-2" delay={0.7} />
           </div>
         </div>
         <span />

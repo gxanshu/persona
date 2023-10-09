@@ -41,9 +41,6 @@ export default function TestingPage() {
         </div>
       </div>
     </AnimatedModal>
-    <div className='mt-[14px]'>
-      <SocialCard/>
-    </div>
     </>
   )
 }
