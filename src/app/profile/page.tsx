@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { AboutCard } from './components/AboutCard'
 import { ProfileCard } from '~/components/container'
 import '~/styles/animation.css'
+import { Card } from './components/Cards'
 
 const ModalAudio = dynamic(() => import('~/components/modals/AudioRecordingModal'))
 const ModalPhone = dynamic(() => import('~/components/modals/ModalPhone'))
@@ -16,11 +17,18 @@ export default function ProfilePage() {
     voice: false,
     number: false,
   })
+  const [name, setName] = useState("vish");
+  const [bio, setBio] = useState("");
+
+  const handleNameChange = (e:any) => {
+    setName(e.target.value)
+  } 
 
   return (
+    <div className='h-screen w-screen' style={{background: `url(${avatarImg.src}) lightgray 50% / cover no-repeat`}}>
     <div
-      className="h-screen w-screen p-[72px] flex relative items-start justify-between gap-[92px]"
-      style={{ animation: 'fadeIn 0.5s' }}
+      className="p-[72px] flex relative items-start justify-between gap-[92px] h-screen w-screen bg-white/50 backdrop-blur-3xl"
+      style={{ animation: 'fadeIn 0.5s'}}
     >
       {/*avatar area*/}
       <div className="inline-flex flex-col gap-[32px]">
@@ -31,7 +39,8 @@ export default function ProfilePage() {
           style={{ background: 'lightgray 50% / cover no-repeat' }}
         />
         <div className="flex flex-col gap-[8px]">
-          <h2 className="text-[33px] font-[600] leading-[40px] tracking-[-0.66px] text-[#1D1D1F]">vish</h2>
+          <input className="text-[33px] font-[600] leading-[40px] tracking-[-0.66px] text-[#1D1D1F] bg-transparent outline-none border-none max-w-[150px]" value={name} onChange={handleNameChange}></input>
+          <textarea className="text-[24px] font-[500] leading-[40px] tracking-[-0.66px] text-[#1D1D1F] bg-transparent outline-none border-none max-w-[150px] mt-[8px]" placeholder='Your bio' value={bio} onChange={(e)=> setBio(e.target.value)}></textarea>
           <div className="flex items-center gap-[8px] text-[#494949]">
             <p className="text-[15px] leading-[20px]">Vish V.</p>
             <svg xmlns="http://www.w3.org/2000/svg" width="2" height="2" viewBox="0 0 2 2" fill="none">
@@ -89,32 +98,6 @@ export default function ProfilePage() {
       <ModalAudio show={modal.voice} onClose={() => setModal(prevValue => ({ ...prevValue, voice: false }))} />
       <ModalPhone show={modal.number} onClose={() => setModal(prevValue => ({ ...prevValue, number: false }))}/>
     </div>
-  )
-}
-
-const Card: React.FC<{
-  icon: React.ReactNode
-  text: string
-  containerClass?: string
-  buttonHandler?: () => void
-  delay: number
-}> = props => {
-  return (
-    <ProfileCard className={props.containerClass} delay={props.delay}>
-      <div className="flex flex-col gap-[12px] max-h-[140px] max-w-[136px] w-full">
-        <div className="flex flex-col gap-[32px]">
-          <Icon frameClass="h-[36px] w-[36px]">{props.icon}</Icon>
-        </div>
-        <div className="h-[44px] flex items-end">
-          <p className="text-[17px] font-[500] text-[#1D1D1F] leading-[24px]">{props.text}</p>
-        </div>
-        <button
-          className="py-[8px] px-[12px] flex items-center justify-center rounded-[16px] text-[#1D1D1F] text-[13px] leading-[20px] font-[500] bg-[#F2F2F2] w-full"
-          onClick={props.buttonHandler}
-        >
-          Start
-        </button>
-      </div>
-    </ProfileCard>
+    </div>
   )
 }
