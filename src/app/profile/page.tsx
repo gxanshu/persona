@@ -56,7 +56,7 @@ export default function ProfilePage() {
             </svg>
             <p className="text-[15px] leading-[20px]">110K Followers</p>
           </div>
-          <textarea ref={textAreaRef} className="text-[20px] font-[500] leading-[150%] text-[#1D1D1F] bg-transparent outline-none border-none max-w-full h-[40px]" placeholder='Your bio' value={bio} onChange={(e)=> setBio(e.target.value)}></textarea>
+          <textarea ref={textAreaRef} className="text-[20px] font-[500] leading-[150%] text-[#1D1D1F] bg-transparent outline-none border-none max-w-full" style={{height: 40}} rows={1} placeholder='Your bio' value={bio} onChange={(e)=> setBio(e.target.value)}></textarea>
         </div>
         <div className="flex py-[16px] px-[24px] items-center rounded-[24px] bg-[#F5F5F5]">
           <div className="flex justify-center items-start gap-[4px] min-w-[175px]">
