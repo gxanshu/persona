@@ -1,5 +1,5 @@
-import { Icon } from "~/assets/icons"
-import { ProfileCard } from "~/components/container"
+import { Icon } from '~/assets/icons'
+import { ProfileCard } from '~/components/container'
 
 export const Card: React.FC<{
   icon: React.ReactNode

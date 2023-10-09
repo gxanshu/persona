@@ -1,17 +1,17 @@
-import React, { AnimationEventHandler, CSSProperties, ReactNode } from "react";
-import { useUnmountAnimation } from "~/hooks";
+import React, { AnimationEventHandler, CSSProperties, ReactNode } from 'react'
+import { useUnmountAnimation } from '~/hooks'
 
 interface AnimateProps {
-  show: boolean;
-  enter: string;
-  exit: string;
-  children: ReactNode;
-  className?: string;
+  show: boolean
+  enter: string
+  exit: string
+  children: ReactNode
+  className?: string
   style?: CSSProperties
 }
 
-const Animate = ({ show, enter, exit, children, className, style }:AnimateProps) => {
-  const [shouldRender, onAnimationEnd] = useUnmountAnimation(show);
+const Animate = ({ show, enter, exit, children, className, style }: AnimateProps) => {
+  const [shouldRender, onAnimationEnd] = useUnmountAnimation(show)
 
   return (
     shouldRender && (
@@ -22,7 +22,7 @@ const Animate = ({ show, enter, exit, children, className, style }:AnimateProps)
         {children}
       </div>
     )
-  );
-};
+  )
+}
 
-export default Animate;
+export default Animate

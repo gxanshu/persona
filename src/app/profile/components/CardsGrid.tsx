@@ -1,9 +1,9 @@
 'use client'
-import { ProfileBrain, ProfileBusiness, ProfileFace, ProfileMobile, ProfileVoice } from "~/assets/icons"
-import { Card } from "./Cards"
-import { AboutCard } from "."
-import { useState } from "react"
-import dynamic from "next/dynamic"
+import { ProfileBrain, ProfileBusiness, ProfileFace, ProfileMobile, ProfileVoice } from '~/assets/icons'
+import { Card } from './Cards'
+import { AboutCard } from '.'
+import { useState } from 'react'
+import dynamic from 'next/dynamic'
 const ModalAudio = dynamic(() => import('~/components/modals/AudioRecordingModal'))
 const ModalPhone = dynamic(() => import('~/components/modals/ModalPhone'))
 
@@ -12,10 +12,16 @@ export const CardsGrid = () => {
     voice: false,
     number: false,
   })
-	return (
+  return (
     <>
-        <ModalAudio show={modal.voice} onClose={() => setModal(prevValue => ({ ...prevValue, voice: false }))} />
-      <ModalPhone show={modal.number} onClose={() => setModal(prevValue => ({ ...prevValue, number: false }))}/>
-      </>
-	)
+      <ModalAudio
+        show={modal.voice}
+        onClose={() => setModal(prevValue => ({ ...prevValue, voice: false }))}
+      />
+      <ModalPhone
+        show={modal.number}
+        onClose={() => setModal(prevValue => ({ ...prevValue, number: false }))}
+      />
+    </>
+  )
 }
