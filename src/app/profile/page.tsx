@@ -39,8 +39,7 @@ export default function ProfilePage() {
           style={{ background: 'lightgray 50% / cover no-repeat' }}
         />
         <div className="flex flex-col gap-[8px]">
-          <input className="text-[33px] font-[600] leading-[40px] tracking-[-0.66px] text-[#1D1D1F] bg-transparent outline-none border-none max-w-[150px]" value={name} onChange={handleNameChange}></input>
-          <textarea className="text-[24px] font-[500] leading-[40px] tracking-[-0.66px] text-[#1D1D1F] bg-transparent outline-none border-none max-w-[150px] mt-[8px]" placeholder='Your bio' value={bio} onChange={(e)=> setBio(e.target.value)}></textarea>
+          <input className="text-[33px] font-[600] leading-[40px] tracking-[-0.66px] text-[#1D1D1F] bg-transparent outline-none border-none max-w-[200px] max-w-[270px]" placeholder='Your name' value={name} onChange={handleNameChange}></input>
           <div className="flex items-center gap-[8px] text-[#494949]">
             <p className="text-[15px] leading-[20px]">Vish V.</p>
             <svg xmlns="http://www.w3.org/2000/svg" width="2" height="2" viewBox="0 0 2 2" fill="none">
@@ -48,6 +47,7 @@ export default function ProfilePage() {
             </svg>
             <p className="text-[15px] leading-[20px]">110K Followers</p>
           </div>
+          <textarea className="text-[20px] font-[500] leading-[150%] text-[#1D1D1F] bg-transparent outline-none border-none max-w-full" rows={3} placeholder='Your bio' value={bio} onChange={(e)=> setBio(e.target.value)}></textarea>
         </div>
         <div className="flex py-[16px] px-[24px] items-center rounded-[24px] bg-[#F5F5F5]">
           <div className="flex justify-center items-start gap-[4px] min-w-[175px]">
