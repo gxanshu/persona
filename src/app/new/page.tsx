@@ -22,7 +22,7 @@ export default function TestingPage() {
         <div className="w-full flex">
           <div className="flex flex-col border-r max-w-max">
             <div className="flex items-center justify-center p-[12px]">
-              <ChatHeader onClick={() => void} />
+              <ChatHeader onClick={() => console.log("ok")} />
             </div>
             <div className="px-[12px] pb-[8px] pt-[4px] border-b">
               <Search />
