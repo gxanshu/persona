@@ -138,8 +138,8 @@ export default function ProfilePage() {
           </div>
           <div className="grid gap-[32px] grid-cols-4 max-w-[800px]">
             <SocialCard className="col-span-2 row-span-2" delay={0.1} />
-            <Card icon={<ProfileVoice />} text="Add a Voice" buttonHandler={openChatModal} delay={0.2} />
-            <Card icon={<ProfileFace />} text="Add a Face" delay={0.2} buttonHandler={openAudioModal} />
+            <Card icon={<ProfileVoice />} text="Add a Voice" buttonHandler={openAudioModal} delay={0.2} />
+            <Card icon={<ProfileFace />} text="Add a Face" delay={0.2} />
             <Card
               icon={<ProfileBusiness />}
               text="Monetize your Persona"
