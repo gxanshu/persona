@@ -55,7 +55,7 @@ export default function ProfilePage() {
       <div
         id="main-area"
         className="p-[72px] flex items-start justify-between gap-[92px] bg-white/80 backdrop-blur-3xl h-full w-screen overflow-y-auto no-scrollbar"
-        style={{ animation: 'fadeIn 0.5s' }}
+        // style={{ animation: 'fadeIn 0.5s' }}
       >
         {/*avatar area*/}
         <div className="inline-flex flex-col gap-[32px] sticky top-20 z-[1] self-start">
