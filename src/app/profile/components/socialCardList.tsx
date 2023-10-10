@@ -13,7 +13,7 @@ export const SocialCardList = () => {
 	    setIsScrolling(true)
 	    timer = setTimeout(function() {
 	          setIsScrolling(false)
-	    }, 1500);
+	    }, 100);
 	}
 
 	return (
