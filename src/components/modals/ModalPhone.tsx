@@ -3,6 +3,8 @@ import React, { useState, forwardRef, ForwardedRef } from 'react';
 import { Icon, ProfileModalCross } from '~/assets/icons';
 import AnimatedModal from './AnimatedModal';
 import { animate } from '~/lib';
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 
 interface ModalPhoneProps {}
 
@@ -155,7 +157,6 @@ const ListItem: React.FC<ListItemProps> = ({emoji, delay, subText}) => {
 }
 
 interface ModalStartPhotoProps {
-  onClose: () => void
   step: () => void
 }
 
@@ -185,6 +186,82 @@ const ModalStartPhoto: React.FC<ModalStartPhotoProps> = props => {
   )
 }
 
+const ModalStartImage: React.FC<ModalStartPhotoProps> = props => {
+  return (
+    <div className="flex flex-col items-center justify-between pt-[74px] gap-[48px] w-full no-s">
+      <div className="relative max-w-full overflow-x-auto no-scrollbar">
+        <Carousel
+    additionalTransfrom={0}
+    arrows={false}
+    autoPlaySpeed={3000}
+    centerMode={false}
+    className="flex items-center no-scrollbar"
+    containerClass="container"
+    dotListClass=""
+    focusOnSelect={false}
+    itemClass=""
+    keyBoardControl
+    minimumTouchDrag={80}
+    pauseOnHover
+    renderArrowsWhenDisabled={false}
+    renderButtonGroupOutside={false}
+    renderDotsOutside
+    responsive={{
+      desktop: {
+        breakpoint: {
+          max: 3000,
+          min: 1024
+        },
+        items: 1
+      },
+      mobile: {
+        breakpoint: {
+          max: 464,
+          min: 0
+        },
+        items: 1
+      },
+      tablet: {
+        breakpoint: {
+          max: 1024,
+          min: 464
+        },
+        items: 1
+      }
+    }}
+    rewind={false}
+    rewindWithAnimation={false}
+    rtl={false}
+    showDots
+    sliderClass=""
+    slidesToSlide={1}
+  >
+    <div className='flex h-[400px] w-[400px] items-center justify-center'>
+      <div className='h-[184px] w-[184px] bg-gray-100'></div>
+    </div>
+    <div className='flex h-full w-full items-center justify-center'>
+      <div className='h-[184px] w-[400px] bg-gray-100'></div>
+    </div>
+    <div className='flex h-full w-full items-center justify-center'>
+      <div className='h-[350px] w-[350px] bg-gray-100'></div>
+    </div>
+  </Carousel>
+        <div className="snap-center shrink-0">
+          <div className="shrink-0 w-4 sm:w-[40px]"></div>
+        </div>
+      </div>
+      <div className="px-[64px] pb-[64px] w-full">
+        <button
+          onClick={() => props.step()}
+          className="p-[12px] flex items-center justify-center rounded-[16px] text-[#1D1D1F] text-[15px] leading-[20px] font-[500] bg-[#F2F2F2] w-full"
+        >
+          I'm sure
+        </button>
+      </div>
+    </div>
+  )
+}
+
 const CardSection: React.FC = () => {
   return (
     <div className="flex flex-col items-center gap-[16px] min-w-[400px]">
@@ -196,5 +273,26 @@ const CardSection: React.FC = () => {
     </div>
   )
 }
+
+export const responsive = {
+  superLargeDesktop: {
+    // the naming can be any, depends on you.
+    breakpoint: { max: 4000, min: 1024 },
+    items: 1,
+    slidesToSlide: 1,
+  },
+  desktop: {
+    breakpoint: { max: 1024, min: 800 },
+    items: 1,
+  },
+  tablet: {
+    breakpoint: { max: 800, min: 464 },
+    items: 1,
+  },
+  mobile: {
+    breakpoint: { max: 464, min: 0 },
+    items: 1,
+  },
+};
 
 export default ModalPhone
