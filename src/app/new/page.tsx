@@ -3,13 +3,22 @@ import { ChatHeader } from '~/components/chatpanel/ChatHeader'
 import { MessageSend } from '~/components/chatpanel/MessageSend'
 import { MsgContainer } from '~/components/chatpanel/MsgContainer'
 import { Search } from '~/components/chatpanel/Search'
-import { AnimatedModal } from '~/components/modals/AnimatedModal'
+import AnimatedModal from '~/components/modals/AnimatedModal'
 import { SocialCard } from '../profile/components/SocialCard'
+import { useEffect, useRef } from 'react'
 
 export default function TestingPage() {
+  const modalRef = useRef<HTMLDialogElement>(null)
+
+  useEffect(()=> {
+    if(modalRef){
+      modalRef.current?.showModal()
+    }
+  })
+
   return (
     <>
-      <AnimatedModal show={true} containerClass="w-max p-[12px]">
+      <AnimatedModal ref={modalRef} containerClass="w-max p-[12px]">
       <div className="w-full flex">
         <div className="flex flex-col border-r max-w-max">
           <div className="flex items-center justify-center p-[12px]">

@@ -1,23 +1,35 @@
 'use client'
-import { useState } from 'react'
-import { AnimatedModal } from './AnimatedModal'
-import { Icon, ProfileModalCross } from '~/assets/icons'
+import React, { useState, forwardRef, ForwardedRef } from 'react';
+import { Icon, ProfileModalCross } from '~/assets/icons';
+import AnimatedModal from './AnimatedModal';
 
-interface ModalPhoneProps {
-  onClose: () => void
-  show: boolean
-}
+interface ModalPhoneProps {}
 
-const ModalPhone: React.FC<ModalPhoneProps> = props => {
-  const [inputNumber, setInputNumber] = useState<string>('')
-  const [selectList, setSelectList] = useState<number | null>(null)
-  const [step, setStep] = useState<boolean>(true)
+const ModalPhone = forwardRef(({}, ref: ForwardedRef<HTMLDialogElement>)=> {
+    const [inputNumber, setInputNumber] = useState<string>('');
+    const [selectList, setSelectList] = useState<number | null>(null);
+    const [step, setStep] = useState<boolean>(true);
 
-  return (
-    <AnimatedModal show={props.show}>
-      {step
-        ? <ModalStartList onClose={() => props.onClose()} step={() => setStep(false)} />
-        : (
+    const closeModal = () => {
+      if(ref){
+        //@ts-ignore
+        ref.current.classList.add("modal-exit");
+        //@ts-ignore
+        ref.current.addEventListener("animationend", function () {
+          //@ts-ignore
+          ref.current.classList.remove("modal-exit");
+          //@ts-ignore
+          ref.current.close()
+        }, { once: true });
+      }
+    }
+
+    return (
+      <AnimatedModal ref={ref}>
+        <>
+          {step ? (
+          <ModalStartList step={() => setStep(false)} />
+        ) : (
           <div className="w-full h-full flex flex-col justify-center relative pb-[64px]">
             <div className="inline-flex flex-col items-center gap-[48px] px-[64px] pt-[64px]">
               <div className="flex flex-col items-center gap-[16px]">
@@ -33,7 +45,7 @@ const ModalPhone: React.FC<ModalPhoneProps> = props => {
                     className="w-full placeholder:text-[#86868B] text-[17px] leading-[24px] bg-[#F5F5F5] outline-none no-controller"
                     placeholder="Search"
                     value={inputNumber}
-                    onChange={event => setInputNumber(event.target.value)}
+                    onChange={(event) => setInputNumber(event.target.value)}
                   />
                 </div>
               </div>
@@ -67,24 +79,25 @@ const ModalPhone: React.FC<ModalPhoneProps> = props => {
             )}
           </div>
         )}
-      <button
-        className="h-[40px] w-[40px] flex items-center justify-center bg-[#EBEBEB] rounded-full absolute top-[24px] right-[24px]"
-        onClick={() => props.onClose()}
-      >
-        <Icon frameClass="h-[24px] w-[24px]">
-          <ProfileModalCross />
-        </Icon>
-      </button>
-    </AnimatedModal>
-  )
-}
+        <button
+          className="h-[40px] w-[40px] flex items-center justify-center bg-[#EBEBEB] rounded-full absolute top-[24px] right-[24px]"
+          onClick={closeModal}
+        >
+          <Icon frameClass="h-[24px] w-[24px]">
+            <ProfileModalCross />
+          </Icon>
+        </button>
+        </>
+      </AnimatedModal>
+    );
+  }
+);
 
 interface ModalStartListProps {
-  onClose: () => void
-  step: () => void
+  step: () => void;
 }
 
-const ModalStartList: React.FC<ModalStartListProps> = props => {
+const ModalStartList: React.FC<ModalStartListProps> = (props) => {
   return (
     <div className="flex flex-col items-center justify-between p-[64px] gap-[48px]">
       <div className="flex flex-col gap-[24px] items-center">
@@ -116,8 +129,8 @@ const ModalStartList: React.FC<ModalStartListProps> = props => {
         I'm sure
       </button>
     </div>
-  )
-}
+  );
+};
 
 interface ListItemProps {
   emoji: string

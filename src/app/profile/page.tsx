@@ -1,24 +1,21 @@
 'use client'
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useRef, useState } from 'react'
 import avatarImg from '~/assets/images/welcome-avatar.png'
 import { Icon, ProfileBrain, ProfileBusiness, ProfileFace, ProfileMobile, ProfileVoice } from '~/assets/icons'
-import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { AboutCard } from './components/AboutCard'
 import '~/styles/animation.css'
 import { Card } from './components/Cards'
 import { SocialCard } from './components/SocialCard'
 
-const ModalAudio = dynamic(() => import('~/components/modals/AudioRecordingModal'))
-const ModalPhone = dynamic(() => import('~/components/modals/ModalPhone'))
+import ModalAudio  from '~/components/modals/AudioRecordingModal'
+import ModalPhone from '~/components/modals/ModalPhone'
 
 export default function ProfilePage() {
-  const [modal, setModal] = useState({
-    voice: false,
-    number: false,
-  })
   const [name, setName] = useState('vish')
   const [bio, setBio] = useState('')
+  const phoneModalRef = useRef<HTMLDialogElement>(null)
+  const audioModalRef = useRef<HTMLDialogElement>(null)
 
   const handleNameChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setName(e.target.value)
@@ -33,6 +30,20 @@ export default function ProfilePage() {
       setBio(inputText)
       e.target.style.height = 'auto'
       e.target.style.height = e.target.scrollHeight + 'px'
+    }
+  }
+
+  const openPhoneModal = () => {
+    console.log(phoneModalRef)
+    if(phoneModalRef.current){
+      phoneModalRef.current.showModal()
+    }
+  }
+
+  const openAudioModal = () => {
+    console.log(audioModalRef)
+    if(audioModalRef.current){
+      audioModalRef.current.showModal()
     }
   }
 
@@ -112,7 +123,7 @@ export default function ProfilePage() {
             <Card
               icon={<ProfileVoice />}
               text="Add a Voice"
-              buttonHandler={() => setModal(prevValue => ({ ...prevValue, voice: true }))}
+              buttonHandler={openAudioModal}
               delay={0.2}
             />
             <Card icon={<ProfileFace />} text="Add a Face" delay={0.2} />
@@ -125,7 +136,7 @@ export default function ProfilePage() {
             <Card
               icon={<ProfileMobile />}
               text="Get a Number"
-              buttonHandler={() => setModal(prevValue => ({ ...prevValue, number: true }))}
+              buttonHandler={openPhoneModal}
               delay={0.5}
             />
             <Card icon={<ProfileBrain />} text="Make it smart" delay={0.6} />
@@ -133,15 +144,10 @@ export default function ProfilePage() {
           </div>
         </div>
         <span />
-        <ModalAudio
-          show={modal.voice}
-          onClose={() => setModal(prevValue => ({ ...prevValue, voice: false }))}
-        />
-        <ModalPhone
-          show={modal.number}
-          onClose={() => setModal(prevValue => ({ ...prevValue, number: false }))}
-        />
+        <ModalAudio ref={audioModalRef}/>
+        <ModalPhone ref={phoneModalRef}/>
       </div>
     </div>
   )
 }
+

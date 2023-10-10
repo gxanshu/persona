@@ -13,17 +13,6 @@ interface AnimateProps {
 const Animate = ({ show, enter, exit, children, className, style }: AnimateProps) => {
   const [shouldRender, onAnimationEnd] = useUnmountAnimation(show)
 
-  useEffect(()=> {
-    if(shouldRender){
-      let div = document.getElementById("main-area")
-    if(div) div.style.overflow = "hidden"
-    }
-    return () => {
-      let div = document.getElementById("main-area")
-    if(div) div.style.overflow = "auto"
-    }
-  }, [shouldRender])
-
   return (
     shouldRender && (
       <div
