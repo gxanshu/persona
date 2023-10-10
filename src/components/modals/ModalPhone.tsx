@@ -1,87 +1,87 @@
 'use client'
-import React, { useState, forwardRef, ForwardedRef } from 'react';
-import { Icon, ProfileModalCross } from '~/assets/icons';
-import AnimatedModal from './AnimatedModal';
-import { animate } from '~/lib';
-import Carousel from "react-multi-carousel";
-import "react-multi-carousel/lib/styles.css";
+import React, { ForwardedRef, forwardRef, useState } from 'react'
+import { Icon, ProfileModalCross } from '~/assets/icons'
+import AnimatedModal from './AnimatedModal'
+import { animate } from '~/lib'
+import Carousel from 'react-multi-carousel'
+import 'react-multi-carousel/lib/styles.css'
 
 interface ModalPhoneProps {}
 
-const ModalPhone = forwardRef(({}, ref: ForwardedRef<HTMLDialogElement>)=> {
-    const [inputNumber, setInputNumber] = useState<string>('');
-    const [selectList, setSelectList] = useState<number | null>(null);
-    const [step, setStep] = useState<boolean>(true);
+const ModalPhone = forwardRef(({}, ref: ForwardedRef<HTMLDialogElement>) => {
+  const [inputNumber, setInputNumber] = useState<string>('')
+  const [selectList, setSelectList] = useState<number | null>(null)
+  const [step, setStep] = useState<boolean>(true)
 
-    const closeModal = () => {
-      if(ref){
-        //@ts-ignore
-        ref.current.classList.add("modal-exit");
-        //@ts-ignore
-        ref.current.addEventListener("animationend", function () {
-          //@ts-ignore
-          ref.current.classList.remove("modal-exit");
-          //@ts-ignore
-          ref.current.close()
-        }, { once: true });
-      }
+  const closeModal = () => {
+    if (ref) {
+      // @ts-ignore
+      ref.current.classList.add('modal-exit')
+      // @ts-ignore
+      ref.current.addEventListener('animationend', function() {
+        // @ts-ignore
+        ref.current.classList.remove('modal-exit')
+        // @ts-ignore
+        ref.current.close()
+      }, { once: true })
     }
+  }
 
-    return (
-      <AnimatedModal ref={ref}>
-        <>
-          {step ? (
-          <ModalStartList step={() => setStep(false)} />
-        ) : (
-          <div className="w-full h-full flex flex-col justify-center relative pb-[64px]">
-            <div className="inline-flex flex-col items-center gap-[48px] px-[64px] pt-[64px]">
-              <div className="flex flex-col items-center gap-[16px]">
-                <h2 className="text-[33px] leading-[40px] font-[600]">New Phone Number</h2>
-                <p className="text-[15px] leading-[150%] text-[#494949] text-center max-w-[258px]">
-                  Your followers will text here. Your persona AI responds
-                </p>
-              </div>
-              <div className="min-w-[300px]">
-                <div className="flex p-[16px] items-center gap-[12px] rounded-[32px] bg-[#F5F5F5] w-full">
-                  <input
-                    type="text"
-                    className="w-full placeholder:text-[#86868B] text-[17px] leading-[24px] bg-[#F5F5F5] outline-none no-controller"
-                    placeholder="Search"
-                    value={inputNumber}
-                    onChange={(event) => setInputNumber(event.target.value)}
-                  />
+  return (
+    <AnimatedModal ref={ref}>
+      <>
+        {step
+          ? <ModalStartList step={() => setStep(false)} />
+          : (
+            <div className="w-full h-full flex flex-col justify-center relative pb-[64px]">
+              <div className="inline-flex flex-col items-center gap-[48px] px-[64px] pt-[64px]">
+                <div className="flex flex-col items-center gap-[16px]">
+                  <h2 className="text-[33px] leading-[40px] font-[600]">New Phone Number</h2>
+                  <p className="text-[15px] leading-[150%] text-[#494949] text-center max-w-[258px]">
+                    Your followers will text here. Your persona AI responds
+                  </p>
+                </div>
+                <div className="min-w-[300px]">
+                  <div className="flex p-[16px] items-center gap-[12px] rounded-[32px] bg-[#F5F5F5] w-full">
+                    <input
+                      type="text"
+                      className="w-full placeholder:text-[#86868B] text-[17px] leading-[24px] bg-[#F5F5F5] outline-none no-controller"
+                      placeholder="Search"
+                      value={inputNumber}
+                      onChange={event => setInputNumber(event.target.value)}
+                    />
+                  </div>
                 </div>
               </div>
+              {inputNumber !== '' && (
+                <div className="w-full my-[24px]">
+                  <div className="flex items-start gap-[16px] w-full mt-[12px] snap-x snap-mandatory overflow-x-auto no-scrollbar">
+                    <div className="snap-center shrink-0">
+                      <div className="shrink-0 w-4 sm:w-[100px]"></div>
+                    </div>
+                    <div className="min-w-max grid grid-row-3 grid-cols-3 gap-x-[10px] gap-y-[12px]">
+                      {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((item, index) => (
+                        <div
+                          key={index}
+                          className={`flex items-center justify-center py-[12px] px-[16px] rounded-[12px] border border-[2px] bg-white cursor-pointer ${
+                            selectList === index ? 'border-black' : ''
+                          }`}
+                          onClick={() => setSelectList(index)}
+                        >
+                          <p className="min-w-[151px] text-[#1D1D1F] text-[15px] leading-[20px] text-center">
+                            +1 983-556-4321
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="snap-center shrink-0">
+                      <div className="shrink-0 w-4 sm:w-[100px]"></div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
-            {inputNumber !== '' && (
-              <div className="w-full my-[24px]">
-                <div className="flex items-start gap-[16px] w-full mt-[12px] snap-x snap-mandatory overflow-x-auto no-scrollbar">
-                  <div className="snap-center shrink-0">
-                    <div className="shrink-0 w-4 sm:w-[100px]"></div>
-                  </div>
-                  <div className="min-w-max grid grid-row-3 grid-cols-3 gap-x-[10px] gap-y-[12px]">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((item, index) => (
-                      <div
-                        key={index}
-                        className={`flex items-center justify-center py-[12px] px-[16px] rounded-[12px] border border-[2px] bg-white cursor-pointer ${
-                          selectList === index ? 'border-black' : ''
-                        }`}
-                        onClick={() => setSelectList(index)}
-                      >
-                        <p className="min-w-[151px] text-[#1D1D1F] text-[15px] leading-[20px] text-center">
-                          +1 983-556-4321
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="snap-center shrink-0">
-                    <div className="shrink-0 w-4 sm:w-[100px]"></div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+          )}
         <button
           className="h-[40px] w-[40px] flex items-center justify-center bg-[#EBEBEB] rounded-full absolute top-[24px] right-[24px]"
           onClick={closeModal}
@@ -90,17 +90,16 @@ const ModalPhone = forwardRef(({}, ref: ForwardedRef<HTMLDialogElement>)=> {
             <ProfileModalCross />
           </Icon>
         </button>
-        </>
-      </AnimatedModal>
-    );
-  }
-);
+      </>
+    </AnimatedModal>
+  )
+})
 
 interface ModalStartListProps {
-  step: () => void;
+  step: () => void
 }
 
-const ModalStartList: React.FC<ModalStartListProps> = (props) => {
+const ModalStartList: React.FC<ModalStartListProps> = props => {
   return (
     <div className="flex flex-col items-center justify-between p-[64px] gap-[48px]">
       <div className="flex flex-col gap-[24px] items-center">
@@ -135,8 +134,8 @@ const ModalStartList: React.FC<ModalStartListProps> = (props) => {
         I'm sure
       </button>
     </div>
-  );
-};
+  )
+}
 
 interface ListItemProps {
   emoji: string
@@ -144,10 +143,9 @@ interface ListItemProps {
   delay: number
 }
 
-const ListItem: React.FC<ListItemProps> = ({emoji, delay, subText}) => {
+const ListItem: React.FC<ListItemProps> = ({ emoji, delay, subText }) => {
   return (
-    <div className="flex flex-start gap-[96px]"
-    style={{ ...animate({ name: 'fadeIn', delay }), opacity: 0 }}>
+    <div className="flex flex-start gap-[96px]" style={{ ...animate({ name: 'fadeIn', delay }), opacity: 0 }}>
       <div className="flex gap-[12px]">
         <p className="text-center text-[24px] leading-[150%]">{emoji}</p>
         <p className="text-[#494949] text-[15px] leading-[150%] w-[356px]">{subText}</p>
@@ -191,61 +189,61 @@ const ModalStartImage: React.FC<ModalStartPhotoProps> = props => {
     <div className="flex flex-col items-center justify-between pt-[74px] gap-[48px] w-full no-s">
       <div className="relative max-w-full overflow-x-auto no-scrollbar">
         <Carousel
-    additionalTransfrom={0}
-    arrows={false}
-    autoPlaySpeed={3000}
-    centerMode={false}
-    className="flex items-center no-scrollbar"
-    containerClass="container"
-    dotListClass=""
-    focusOnSelect={false}
-    itemClass=""
-    keyBoardControl
-    minimumTouchDrag={80}
-    pauseOnHover
-    renderArrowsWhenDisabled={false}
-    renderButtonGroupOutside={false}
-    renderDotsOutside
-    responsive={{
-      desktop: {
-        breakpoint: {
-          max: 3000,
-          min: 1024
-        },
-        items: 1
-      },
-      mobile: {
-        breakpoint: {
-          max: 464,
-          min: 0
-        },
-        items: 1
-      },
-      tablet: {
-        breakpoint: {
-          max: 1024,
-          min: 464
-        },
-        items: 1
-      }
-    }}
-    rewind={false}
-    rewindWithAnimation={false}
-    rtl={false}
-    showDots
-    sliderClass=""
-    slidesToSlide={1}
-  >
-    <div className='flex h-[400px] w-[400px] items-center justify-center'>
-      <div className='h-[184px] w-[184px] bg-gray-100'></div>
-    </div>
-    <div className='flex h-full w-full items-center justify-center'>
-      <div className='h-[184px] w-[400px] bg-gray-100'></div>
-    </div>
-    <div className='flex h-full w-full items-center justify-center'>
-      <div className='h-[350px] w-[350px] bg-gray-100'></div>
-    </div>
-  </Carousel>
+          additionalTransfrom={0}
+          arrows={false}
+          autoPlaySpeed={3000}
+          centerMode={false}
+          className="flex items-center no-scrollbar"
+          containerClass="container"
+          dotListClass=""
+          focusOnSelect={false}
+          itemClass=""
+          keyBoardControl
+          minimumTouchDrag={80}
+          pauseOnHover
+          renderArrowsWhenDisabled={false}
+          renderButtonGroupOutside={false}
+          renderDotsOutside
+          responsive={{
+            desktop: {
+              breakpoint: {
+                max: 3000,
+                min: 1024,
+              },
+              items: 1,
+            },
+            mobile: {
+              breakpoint: {
+                max: 464,
+                min: 0,
+              },
+              items: 1,
+            },
+            tablet: {
+              breakpoint: {
+                max: 1024,
+                min: 464,
+              },
+              items: 1,
+            },
+          }}
+          rewind={false}
+          rewindWithAnimation={false}
+          rtl={false}
+          showDots
+          sliderClass=""
+          slidesToSlide={1}
+        >
+          <div className="flex h-[400px] w-[400px] items-center justify-center">
+            <div className="h-[184px] w-[184px] bg-gray-100"></div>
+          </div>
+          <div className="flex h-full w-full items-center justify-center">
+            <div className="h-[184px] w-[400px] bg-gray-100"></div>
+          </div>
+          <div className="flex h-full w-full items-center justify-center">
+            <div className="h-[350px] w-[350px] bg-gray-100"></div>
+          </div>
+        </Carousel>
         <div className="snap-center shrink-0">
           <div className="shrink-0 w-4 sm:w-[40px]"></div>
         </div>
@@ -293,6 +291,6 @@ export const responsive = {
     breakpoint: { max: 464, min: 0 },
     items: 1,
   },
-};
+}
 
 export default ModalPhone

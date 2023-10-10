@@ -8,14 +8,16 @@ import '~/styles/animation.css'
 import { Card } from './components/Cards'
 import { SocialCard } from './components/SocialCard'
 
-import ModalAudio  from '~/components/modals/AudioRecordingModal'
+import ModalAudio from '~/components/modals/AudioRecordingModal'
 import ModalPhone from '~/components/modals/ModalPhone'
+import ShareModal from '~/components/modals/ShareModal'
 
 export default function ProfilePage() {
   const [name, setName] = useState('vish')
   const [bio, setBio] = useState('')
   const phoneModalRef = useRef<HTMLDialogElement>(null)
   const audioModalRef = useRef<HTMLDialogElement>(null)
+  const shareModalRef = useRef<HTMLDialogElement>(null)
 
   const handleNameChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setName(e.target.value)
@@ -35,15 +37,22 @@ export default function ProfilePage() {
 
   const openPhoneModal = () => {
     console.log(phoneModalRef)
-    if(phoneModalRef.current){
+    if (phoneModalRef.current) {
       phoneModalRef.current.showModal()
     }
   }
 
   const openAudioModal = () => {
     console.log(audioModalRef)
-    if(audioModalRef.current){
+    if (audioModalRef.current) {
       audioModalRef.current.showModal()
+    }
+  }
+
+  const openShareModal = () => {
+    console.log(shareModalRef)
+    if (shareModalRef.current) {
+      shareModalRef.current.showModal()
     }
   }
 
@@ -119,35 +128,26 @@ export default function ProfilePage() {
             <div className="bg-[#D9D9D9] h-[32px] w-[32px]" />
           </div>
           <div className="grid gap-[32px] grid-cols-4 max-w-[800px]">
-          <SocialCard className='col-span-2 row-span-2' delay={0.1}/>
-            <Card
-              icon={<ProfileVoice />}
-              text="Add a Voice"
-              buttonHandler={openAudioModal}
-              delay={0.2}
-            />
+            <SocialCard className="col-span-2 row-span-2" delay={0.1} />
+            <Card icon={<ProfileVoice />} text="Add a Voice" buttonHandler={openAudioModal} delay={0.2} />
             <Card icon={<ProfileFace />} text="Add a Face" delay={0.2} />
             <Card
               icon={<ProfileBusiness />}
               text="Monetize your Persona"
               containerClass="col-span-2"
+              buttonHandler={openShareModal}
               delay={0.4}
             />
-            <Card
-              icon={<ProfileMobile />}
-              text="Get a Number"
-              buttonHandler={openPhoneModal}
-              delay={0.5}
-            />
+            <Card icon={<ProfileMobile />} text="Get a Number" buttonHandler={openPhoneModal} delay={0.5} />
             <Card icon={<ProfileBrain />} text="Make it smart" delay={0.6} />
             <AboutCard containerClass="col-span-2" delay={0.7} />
           </div>
         </div>
         <span />
-        <ModalAudio ref={audioModalRef}/>
-        <ModalPhone ref={phoneModalRef}/>
+        <ModalAudio ref={audioModalRef} />
+        <ModalPhone ref={phoneModalRef} />
+        <ShareModal ref={shareModalRef} />
       </div>
     </div>
   )
 }
-

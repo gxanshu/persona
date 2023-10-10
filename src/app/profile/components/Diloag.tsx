@@ -1,7 +1,6 @@
-import { forwardRef } from "react"
+import { forwardRef } from 'react'
 
 const Modal = (props: any, ref: any) => {
-
   const closeModal = () => {
     ref.current.close()
   }

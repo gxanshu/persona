@@ -6,21 +6,20 @@ const AudioModal = dynamic(() => import('~/components/sections/auth/AudioScreen'
 
 interface ModalAudioProps {}
 
-const ModalAudio = forwardRef(({}, ref: ForwardedRef<HTMLDialogElement>)=> {
-
+const ModalAudio = forwardRef(({}, ref: ForwardedRef<HTMLDialogElement>) => {
   const closeModal = () => {
-      if(ref){
-        //@ts-ignore
-        ref.current.classList.add("modal-exit");
-        //@ts-ignore
-        ref.current.addEventListener("animationend", function () {
-          //@ts-ignore
-          ref.current.classList.remove("modal-exit");
-          //@ts-ignore
-          ref.current.close()
-        }, { once: true });
-      }
+    if (ref) {
+      // @ts-ignore
+      ref.current.classList.add('modal-exit')
+      // @ts-ignore
+      ref.current.addEventListener('animationend', function() {
+        // @ts-ignore
+        ref.current.classList.remove('modal-exit')
+        // @ts-ignore
+        ref.current.close()
+      }, { once: true })
     }
+  }
 
   return (
     <AnimatedModal ref={ref}>
