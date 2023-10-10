@@ -58,8 +58,8 @@ const ShareModal = forwardRef(
     return (
       <AnimatedModal
         ref={ref}
-        containerClass="w-[663px] min-h-[346px] bg-white rounded-2xl p-[22px]"
-        style={{height: 200}}
+        containerClass="w-[663px] bg-white rounded-2xl p-[22px]"
+        style={{minHeight: 346}}
       >
       <div className='flex items-center flex-col justify-center w-full h-full'>
         <div className='flex items-center justify-between w-full'>
