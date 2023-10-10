@@ -2,6 +2,7 @@
 import React, { useState, forwardRef, ForwardedRef } from 'react';
 import { Icon, ProfileModalCross } from '~/assets/icons';
 import AnimatedModal from './AnimatedModal';
+import { animate } from '~/lib';
 
 interface ModalPhoneProps {}
 
@@ -111,14 +112,17 @@ const ModalStartList: React.FC<ModalStartListProps> = (props) => {
           <ListItem
             emoji="📱"
             subText="A dedicated number for your users to chat with your Persona. Don’t worry it’s AI managed."
+            delay={0.1}
           />
           <ListItem
             emoji="🤯"
             subText="Your Persona can be trained. It can learn from you, and behave like you."
+            delay={0.2}
           />
           <ListItem
             emoji="💰"
             subText="Your Persona can be trained. It can learn from you, and behave like you."
+            delay={0.3}
           />
         </div>
       </div>
@@ -135,14 +139,16 @@ const ModalStartList: React.FC<ModalStartListProps> = (props) => {
 interface ListItemProps {
   emoji: string
   subText: string
+  delay: number
 }
 
-const ListItem: React.FC<ListItemProps> = props => {
+const ListItem: React.FC<ListItemProps> = ({emoji, delay, subText}) => {
   return (
-    <div className="flex flex-start gap-[96px]">
+    <div className="flex flex-start gap-[96px]"
+    style={{ ...animate({ name: 'fadeIn', delay }), opacity: 0 }}>
       <div className="flex gap-[12px]">
-        <p className="text-center text-[24px] leading-[150%]">{props.emoji}</p>
-        <p className="text-[#494949] text-[15px] leading-[150%] w-[356px]">{props.subText}</p>
+        <p className="text-center text-[24px] leading-[150%]">{emoji}</p>
+        <p className="text-[#494949] text-[15px] leading-[150%] w-[356px]">{subText}</p>
       </div>
     </div>
   )
