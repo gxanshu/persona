@@ -1,12 +1,14 @@
 'use client'
 
 import { FC, ReactNode, useState } from "react"
+import { animate } from "~/lib"
 
 interface SocialListProps {
   icon: ReactNode
+  delay: number
 }
 
-export const SocialList: FC<SocialListProps> = ({ icon }) => {
+export const SocialList: FC<SocialListProps> = ({ icon, delay }) => {
   const [username, setUsername] = useState("")
   const [hover, setHover] = useState(false)
 
@@ -16,7 +18,8 @@ export const SocialList: FC<SocialListProps> = ({ icon }) => {
   }
 
   return (
-    <div className="flex gap-[8px]">
+    <div className="flex gap-[8px]"
+    style={{ ...animate({ name: 'fadeIn', delay }), opacity: 0 }}>
       <div className="rounded-sm">
         {icon}
       </div>
