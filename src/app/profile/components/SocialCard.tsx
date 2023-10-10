@@ -23,8 +23,8 @@ export const SocialCard = ({className, delay}: {className?: string, delay: numbe
             <SocialList icon={<TwitterIcon/>} delay={1.8}/>
             <SocialList icon={<TwitterIcon/>} delay={2}/>
           </div>
-          <div className="h-[30px] pointer-events-none absolute left-[-0.25rem] right-[-0.25rem] top-[-1px] bg-[linear-gradient(180deg,#fff,hsla(0,0%,100%,0))]"></div>
-          <div className="h-[42px] pointer-events-none absolute left-[-0.25rem] right-[-0.25rem] bottom-[-1px] bg-[linear-gradient(180deg,hsla(0,0%,100%,0),#fff)]"></div>
+          <div className="h-[30px] pointer-events-none absolute left-[-0.25rem] right-[-0.25rem] top-[-2px] bg-[linear-gradient(180deg,#fff,hsla(0,0%,100%,0))]"></div>
+          <div className="h-[42px] pointer-events-none absolute left-[-0.25rem] right-[-0.25rem] bottom-[-2px] bg-[linear-gradient(180deg,hsla(0,0%,100%,0),#fff)]"></div>
       </div>
       </div>
     </ProfileCard>
