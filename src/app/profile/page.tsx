@@ -11,6 +11,7 @@ import { SocialCard } from './components/SocialCard'
 import ModalAudio from '~/components/modals/AudioRecordingModal'
 import ModalPhone from '~/components/modals/ModalPhone'
 import ShareModal from '~/components/modals/ShareModal'
+import ModalChat from '~/components/modals/ChatModal'
 
 export default function ProfilePage() {
   const [name, setName] = useState('vish')
@@ -18,6 +19,7 @@ export default function ProfilePage() {
   const phoneModalRef = useRef<HTMLDialogElement>(null)
   const audioModalRef = useRef<HTMLDialogElement>(null)
   const shareModalRef = useRef<HTMLDialogElement>(null)
+  const chatModalRef = useRef<HTMLDialogElement>(null)
 
   const handleNameChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setName(e.target.value)
@@ -53,6 +55,13 @@ export default function ProfilePage() {
     console.log(shareModalRef)
     if (shareModalRef.current) {
       shareModalRef.current.showModal()
+    }
+  }
+
+  const openChatModal = () => {
+    console.log(chatModalRef)
+    if (chatModalRef.current) {
+      chatModalRef.current.showModal()
     }
   }
 
@@ -129,8 +138,8 @@ export default function ProfilePage() {
           </div>
           <div className="grid gap-[32px] grid-cols-4 max-w-[800px]">
             <SocialCard className="col-span-2 row-span-2" delay={0.1} />
-            <Card icon={<ProfileVoice />} text="Add a Voice" buttonHandler={openAudioModal} delay={0.2} />
-            <Card icon={<ProfileFace />} text="Add a Face" delay={0.2} />
+            <Card icon={<ProfileVoice />} text="Add a Voice" buttonHandler={openChatModal} delay={0.2} />
+            <Card icon={<ProfileFace />} text="Add a Face" delay={0.2} buttonHandler={openAudioModal} />
             <Card
               icon={<ProfileBusiness />}
               text="Monetize your Persona"
@@ -138,8 +147,8 @@ export default function ProfilePage() {
               buttonHandler={openShareModal}
               delay={0.4}
             />
-            <Card icon={<ProfileMobile />} text="Get a Number" buttonHandler={openPhoneModal} delay={0.5} />
-            <Card icon={<ProfileBrain />} text="Make it smart" delay={0.6} />
+            <Card icon={<ProfileMobile />} text="Get a Number" buttonHandler={openChatModal} delay={0.5} />
+            <Card icon={<ProfileBrain />} buttonHandler={openPhoneModal} text="Make it smart" delay={0.6} />
             <AboutCard containerClass="col-span-2" delay={0.7} />
           </div>
         </div>
@@ -147,6 +156,7 @@ export default function ProfilePage() {
         <ModalAudio ref={audioModalRef} />
         <ModalPhone ref={phoneModalRef} />
         <ShareModal ref={shareModalRef} />
+        <ModalChat ref={chatModalRef}/>
       </div>
     </div>
   )
