@@ -3,13 +3,13 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Anshu - persona', // The title of your page
   description: 'This is a demo app built with Next.js 13 and the Metadata API', // The description of your page
-  applicationName: "persona.me",
+  applicationName: 'persona.me',
   keywords: ['Next.js', 'React', 'JavaScript'],
   category: 'technology',
   openGraph: {
     title: 'Anshu - persona', // The title of your page
     description: 'This is a demo app built with Next.js 13 and the Metadata API',
-    siteName: "persona",
+    siteName: 'persona',
     type: 'website', // The type of your page, e.g. website, article, book, etc.
     url: 'persona.me', // The canonical URL of your page
     images: [
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     creator: '@persona',
     creatorId: '1467726470533754880',
     images: ['https://picsum.photos/800/600'],
-  }
+  },
 }
 export default function RootLayout({
   children,

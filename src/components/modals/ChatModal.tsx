@@ -9,7 +9,6 @@ import { ForwardedRef, forwardRef, useEffect, useRef } from 'react'
 interface ModalChatProps {}
 
 const ModalChat = forwardRef(({}, ref: ForwardedRef<HTMLDialogElement>) => {
-
   const closeModal = () => {
     if (ref) {
       // @ts-ignore

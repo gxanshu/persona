@@ -156,7 +156,7 @@ export default function ProfilePage() {
         <ModalAudio ref={audioModalRef} />
         <ModalPhone ref={phoneModalRef} />
         <ShareModal ref={shareModalRef} />
-        <ModalChat ref={chatModalRef}/>
+        <ModalChat ref={chatModalRef} />
       </div>
     </div>
   )

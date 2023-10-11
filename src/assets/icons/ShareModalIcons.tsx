@@ -1,10 +1,5 @@
 export const ShareWhatsapp = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={79}
-    height={79}
-    fill="none"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width={79} height={79} fill="none">
     <circle cx={39.71} cy={39.473} r={38.824} fill="#65D072" />
     <path
       fill="#fff"
@@ -20,12 +15,7 @@ export const ShareWhatsapp = () => (
 )
 
 export const ShareEmbid = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={79}
-    height={79}
-    fill="none"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width={79} height={79} fill="none">
     <path
       fill="#F4F4F4"
       stroke="#E7E7E7"
@@ -41,12 +31,7 @@ export const ShareEmbid = () => (
 )
 
 export const ShareFacebookIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={79}
-    height={79}
-    fill="none"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width={79} height={79} fill="none">
     <circle cx={39.25} cy={39.473} r={38.824} fill="#425893" />
     <path
       fill="#fff"
@@ -56,12 +41,7 @@ export const ShareFacebookIcon = () => (
 )
 
 export const ShareTwitterIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={79}
-    height={79}
-    fill="none"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width={79} height={79} fill="none">
     <circle cx={39.297} cy={39.473} r={38.824} fill="#4D9FEB" />
     <path
       fill="#fff"
@@ -71,12 +51,7 @@ export const ShareTwitterIcon = () => (
 )
 
 export const ShareEmail = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={79}
-    height={79}
-    fill="none"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width={79} height={79} fill="none">
     <circle cx={39.345} cy={39.473} r={38.824} fill="#888" />
     <path
       fill="#fff"
@@ -86,12 +61,7 @@ export const ShareEmail = () => (
 )
 
 export const ShareRedit = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={79}
-    height={79}
-    fill="none"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width={79} height={79} fill="none">
     <circle cx={39.392} cy={39.473} r={38.824} fill="#FF4500" />
     <path
       fill="#fff"
