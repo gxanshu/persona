@@ -1,9 +1,6 @@
-
-
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { CrossIcon, SuccessIcon } from '~/assets/icons';
 import '~/styles/Input.css';
-import ShownError from './ShowError';
 
 export type InputState = '' | 'loading' | 'success' | 'error';
 
@@ -39,7 +36,9 @@ const PreTextInput: React.FC<PreTextInputProps> = (props) => {
         if (searchTimeout !== undefined) {
           clearTimeout(searchTimeout);
         }
-        searchTimeout = setTimeout(() => props.handleSubmit(props.value), 250);
+        if(searchTimeout == undefined){
+          searchTimeout = setTimeout(() => props.handleSubmit(props.value), 1000);
+        }
       };
   }, [props.value])
 
@@ -47,7 +46,7 @@ const PreTextInput: React.FC<PreTextInputProps> = (props) => {
     <>
       <div
         ref={wrapperRef}
-        className="flex w-full rounded-[8px] text-[14px] leading-[20px] bg-[#F7F7F7] p-[12px] border-[2px] border-transparent transition-all duration-75"
+        className="flex w-full rounded-[8px] text-[14px] leading-[20px] bg-[#F7F7F7] p-[12px] border-[2px] border-transparent transition-all duration-75 items-center"
       >
         <div className="flex items-center justify-center text-[#6C6C6C]">{props.preText}/</div>
         <input
@@ -68,7 +67,8 @@ const PreTextInput: React.FC<PreTextInputProps> = (props) => {
           aria-invalid={false}
           value={props.value}
           onInput={(event) => {
-            props.haveError && props.setError(null);
+            props.setError(null);
+            props.setInputState("")
             props.setValue(event.currentTarget.value);
           }}
         />
@@ -89,9 +89,6 @@ const PreTextInput: React.FC<PreTextInputProps> = (props) => {
             </button>
           )}
         </div>
-      </div>
-      <div className='mt-[10px]'>
-        <ShownError error={props.haveError || ''} />
       </div>
     </>
   );
