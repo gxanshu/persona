@@ -4,7 +4,6 @@ import { MessageSend } from '~/components/chatpanel/MessageSend'
 import { MsgContainer } from '~/components/chatpanel/MsgContainer'
 import { Search } from '~/components/chatpanel/Search'
 import AnimatedModal from '~/components/modals/AnimatedModal'
-import { SocialCard } from '../profile/components/SocialCard'
 import { useEffect, useRef } from 'react'
 
 export default function TestingPage() {
