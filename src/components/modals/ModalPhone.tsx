@@ -3,8 +3,6 @@ import React, { ForwardedRef, forwardRef, useState } from 'react'
 import { Icon, ProfileModalCross } from '~/assets/icons'
 import AnimatedModal from './AnimatedModal'
 import { animate } from '~/lib'
-import Carousel from 'react-multi-carousel'
-import 'react-multi-carousel/lib/styles.css'
 
 interface ModalPhoneProps {}
 
@@ -31,7 +29,7 @@ const ModalPhone = forwardRef(({}, ref: ForwardedRef<HTMLDialogElement>) => {
     <AnimatedModal ref={ref}>
       <>
         {step
-          ? <ModalStartList step={() => setStep(false)} />
+          ? <ModalStartImage step={() => setStep(false)} />
           : (
             <div className="w-full h-full flex flex-col justify-center relative pb-[64px]">
               <div className="inline-flex flex-col items-center gap-[48px] px-[64px] pt-[64px]">
@@ -185,69 +183,54 @@ const ModalStartPhoto: React.FC<ModalStartPhotoProps> = props => {
 }
 
 const ModalStartImage: React.FC<ModalStartPhotoProps> = props => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  // copied from: https://github.com/harakisgeorge/carouselreact/blob/master/src/Carousel.jsx
+  const items = [1,2,3]
+  const itemWidth = 400
+
+  const updateIndex = (newIndex: number) => {
+    console.log(newIndex)
+    if (newIndex < 0) {
+      newIndex = 0;
+    } else if (newIndex >= items.length) {
+      newIndex = items.length - 1;
+    }
+
+    setActiveIndex(newIndex);
+  };
+
   return (
     <div className="flex flex-col items-center justify-between pt-[74px] gap-[48px] w-full no-s">
-      <div className="relative max-w-full overflow-x-auto no-scrollbar">
-        <Carousel
-          additionalTransfrom={0}
-          arrows={false}
-          autoPlaySpeed={3000}
-          centerMode={false}
-          className="flex items-center no-scrollbar"
-          containerClass="container"
-          dotListClass=""
-          focusOnSelect={false}
-          itemClass=""
-          keyBoardControl
-          minimumTouchDrag={80}
-          pauseOnHover
-          renderArrowsWhenDisabled={false}
-          renderButtonGroupOutside={false}
-          renderDotsOutside
-          responsive={{
-            desktop: {
-              breakpoint: {
-                max: 3000,
-                min: 1024,
-              },
-              items: 1,
-            },
-            mobile: {
-              breakpoint: {
-                max: 464,
-                min: 0,
-              },
-              items: 1,
-            },
-            tablet: {
-              breakpoint: {
-                max: 1024,
-                min: 464,
-              },
-              items: 1,
-            },
-          }}
-          rewind={false}
-          rewindWithAnimation={false}
-          rtl={false}
-          showDots
-          sliderClass=""
-          slidesToSlide={1}
-        >
-          <div className="flex h-[400px] w-[400px] items-center justify-center">
-            <div className="h-[184px] w-[184px] bg-gray-100"></div>
-          </div>
-          <div className="flex h-full w-full items-center justify-center">
-            <div className="h-[184px] w-[400px] bg-gray-100"></div>
-          </div>
-          <div className="flex h-full w-full items-center justify-center">
-            <div className="h-[350px] w-[350px] bg-gray-100"></div>
-          </div>
-        </Carousel>
-        <div className="snap-center shrink-0">
-          <div className="shrink-0 w-4 sm:w-[40px]"></div>
+      <div className="max-w-[400px] flex overflow-hidden"
+      >
+        <div className='min-w-[400px] h-[300px] flex items-center justify-center transition-transform'
+        style={{ transform: `translateX(-${activeIndex * itemWidth}px)` }}>
+          <div className='bg-gray-50 h-[184px] w-[184px] rounded-xl'/>
+        </div>
+        <div className='min-w-[400px] h-[350px] flex items-center justify-center transition-transform'
+        style={{ transform: `translateX(-${activeIndex * itemWidth}px)` }}>
+          <div className='bg-gray-50 h-[184px] w-[350px] rounded-xl'/>
+        </div>
+        <div className='min-w-[400px] h-[350px] flex items-center justify-center transition-transform'
+        style={{ transform: `translateX(-${activeIndex * itemWidth}px)` }}>
+          <div className='bg-gray-50 h-[300px] w-[350px] rounded-xl'/>
         </div>
       </div>
+      <div className="flex gap-[10px] justify-around items-center mt-[-40px]">
+          {items.map((item, index) => {
+            return (
+              <button
+                className={`border-none h-[10px] w-[10px] rounded-full ${
+                  index == activeIndex ? "bg-gray-900" : "bg-gray-500"
+                }`}
+                onClick={() => {
+                  updateIndex(index);
+                }}
+              >
+              </button>
+            );
+          })}
+        </div>
       <div className="px-[64px] pb-[64px] w-full">
         <button
           onClick={() => props.step()}
@@ -271,26 +254,4 @@ const CardSection: React.FC = () => {
     </div>
   )
 }
-
-export const responsive = {
-  superLargeDesktop: {
-    // the naming can be any, depends on you.
-    breakpoint: { max: 4000, min: 1024 },
-    items: 1,
-    slidesToSlide: 1,
-  },
-  desktop: {
-    breakpoint: { max: 1024, min: 800 },
-    items: 1,
-  },
-  tablet: {
-    breakpoint: { max: 800, min: 464 },
-    items: 1,
-  },
-  mobile: {
-    breakpoint: { max: 464, min: 0 },
-    items: 1,
-  },
-}
-
 export default ModalPhone
