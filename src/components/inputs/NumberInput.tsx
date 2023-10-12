@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, Dispatch, SetStateAction } from 'react';
+import React, { useRef, useEffect, Dispatch, SetStateAction, useState } from 'react';
 import 'intl-tel-input/build/css/intlTelInput.css';
 import intlTelInput from 'intl-tel-input';
 import '~/styles/Input.css';
@@ -18,6 +18,7 @@ const NumberInput: React.FC<NumberInputProps> = ({ actionButton, label, required
   const inputRef = useRef<HTMLInputElement | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const labelRef = useRef<HTMLSpanElement | null>(null);
+  const [init, setinit] = useState(false)
 
   const handleFocus = () => {
     if (inputRef.current && inputRef.current.value) {
@@ -31,7 +32,7 @@ const NumberInput: React.FC<NumberInputProps> = ({ actionButton, label, required
 
   useEffect(() => {
     if (!inputRef.current) return;
-    intlTelInput(inputRef.current, {
+    const iti = intlTelInput(inputRef.current, {
       separateDialCode: false,
       initialCountry: "auto",
       geoIpLookup: callback => {
@@ -41,27 +42,9 @@ const NumberInput: React.FC<NumberInputProps> = ({ actionButton, label, required
           .catch(() => callback("us"));
       },
     });
-
-    const flagElement = document.querySelector('.iti__selected-flag');
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const newWidth = entry.contentRect.width;
-
-        // Update the label's left position based on the new width
-        if (labelRef.current) labelRef.current.style.left = `calc(20px + ${newWidth}px)`;
-      }
+    iti.promise.then(() => {
+      setinit(true)
     });
-
-    if (flagElement) {
-      resizeObserver.observe(flagElement);
-    }
-
-    return () => {
-      // Clean up the ResizeObserver when the component unmounts
-      if (flagElement) {
-        resizeObserver.disconnect();
-      }
-    };
   }, []);
 
   useEffect(()=> {
@@ -73,6 +56,9 @@ const NumberInput: React.FC<NumberInputProps> = ({ actionButton, label, required
   return (
     <div ref={wrapperRef} className="h-[3.3em] w-full relative m-[0px] rounded-[6px] border-transparent">
       <div className="flex items-center relative">
+      {init === false && <div className='w-[46px] h-full absolute flex items-center justify-center'>
+        <div className='w-[30px] h-[16px] bg-[#dbdbdb] rounded-sm'/>
+      </div>}
         <input
           ref={inputRef}
           type="number"
@@ -87,7 +73,7 @@ const NumberInput: React.FC<NumberInputProps> = ({ actionButton, label, required
           onBlur={handleFocus}
           value={value}
           onInput={(e) => setValue(e.currentTarget.value)}
-          className="pr-[43px] pl-[px] pt-[16px] bg-[hsla(0,0%,100%,.8)] border-[#d2d2d7] text-[#494949] border border-[#d2d2d7] rounded-[12px] text-[15px] leading-[20px] h-[3.29412rem] w-full text-ellipsis focus:outline-none no-controller"
+          className="pr-[43px] pl-[52px] pt-[16px] bg-[hsla(0,0%,100%,.8)] border-[#d2d2d7] text-[#494949] border border-[#d2d2d7] rounded-[12px] text-[15px] leading-[20px] h-[3.29412rem] w-full text-ellipsis focus:outline-none no-controller"
           aria-invalid={false}
         />
         {actionButton && (
@@ -106,7 +92,7 @@ const NumberInput: React.FC<NumberInputProps> = ({ actionButton, label, required
       <span
         aria-hidden={true}
         ref={labelRef}
-        className="pr-[26px] text-ellipsis z-[3] text-[#86868b] duration-[125] ease-in absolute pointer-events-none top-[1.05882rem] nowrap overflow-hidden max-w-[calc(100% - 32px)] text-[15px] leading-[20px] text-center will-change-auto transition-all duration-100"
+        className="pr-[26px] pl-[52px] text-ellipsis z-[3] text-[#86868b] duration-[125] ease-in absolute pointer-events-none top-[1.05882rem] nowrap overflow-hidden max-w-[calc(100% - 32px)] text-[15px] leading-[20px] text-center will-change-auto transition-all duration-100"
       >
         {label}
       </span>
