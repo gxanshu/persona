@@ -70,6 +70,7 @@ const LinkSection = (props: { setFlow: Dispatch<SetStateAction<authFlow>> }) => 
             preText="persona.me"
             inputState={inputState}
             setInputState={setInputState}
+            autoFocus
           />
         </div>
         <div className="mt-4 h-[58px] sm:h-[48px]">
