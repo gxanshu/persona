@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Icon, RightArrowIcon } from '~/assets/icons'
 import '~/styles/Input.css'
 import ShownError from './ShowError'
@@ -45,6 +45,12 @@ export const TextInput: React.FC<TextInputProps> = ({
       labelRef.current?.classList.toggle('label_focus')
     }
   }
+
+  useEffect(()=> {
+    if(value != "" && !labelRef.current?.classList.contains("label_focus")){
+      labelRef.current?.classList.add("label_focus")
+    }
+  }, [value])
 
   return (
     <>

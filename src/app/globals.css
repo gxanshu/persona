@@ -101,3 +101,8 @@
 textarea {
   resize: none;
 }
+
+.iti__selected-flag {
+  border-top-left-radius: 6px !important;
+  border-bottom-left-radius: 6px !important;
+}

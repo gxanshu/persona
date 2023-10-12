@@ -1,5 +1,6 @@
 import { FC, useState } from "react"
 import ShownError from "./ShowError"
+import '~/styles/Input.css'
 
 interface Props {
   handleOtpSubmit: (otp: string) => void
@@ -66,7 +67,7 @@ const OTPInput:FC<Props> = ({handleOtpSubmit, disabled, haveError, setError}) =>
             autoFocus={index === 0}
             min={0}
             max={9}
-            className="border h-[52px] w-[52px] text-center bg-[#F2F2F2] focus:border-[#0071e3] outline-none focus_shadow font-[700] text-[1.25rem] leading-[20px] p-[2px] rounded-[.5rem] disabled:opacity-50 disabled:bg-gray-100"
+            className="border h-[52px] w-[52px] text-center bg-[#F2F2F2] focus:border-[#0071e3] outline-none border-[3px] focus:shadow font-[700] text-[1.25rem] leading-[20px] p-[2px] rounded-[.5rem] disabled:opacity-50 disabled:bg-gray-100"
             value={pin[index] ?? ''}
             onInput={(e) => {
               e.preventDefault();
