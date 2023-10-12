@@ -3,7 +3,15 @@ import dynamic from 'next/dynamic'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import PreTextInput, { InputState } from '~/components/inputs/PreTextInput'
 import ShownError from '~/components/inputs/ShowError'
-const PhoneSection = dynamic(() => import('./onboarding/PhoneSection'))
+const PhoneSection = dynamic(() => import('./onboarding/PhoneSection'),{
+  loading: () => <p>Loading...</p>,
+})
+const OtpSection = dynamic(() => import('./onboarding/OtpSection'),{
+  loading: () => <p>Loading...</p>,
+})
+const NameSection = dynamic(() => import('./onboarding/NameSection'),{
+  loading: () => <p>Loading...</p>,
+})
 
 export type authFlow = 'link' | 'phone' | 'otp' | 'name'
 
@@ -20,6 +28,8 @@ export default function SignUpPage() {
           >
             {flow == 'link' && <LinkSection setFlow={setFlow} />}
             {flow == 'phone' && <PhoneSection setFlow={setFlow} />}
+            {flow == 'otp' && <OtpSection setFlow={setFlow} />}
+            {flow == 'name' && <NameSection setFlow={setFlow} />}
           </div>
         </div>
       </div>
@@ -98,6 +108,7 @@ const LinkSection = (props: { setFlow: Dispatch<SetStateAction<authFlow>> }) => 
               <button
                 className="shadow-sm py-[16px] px-[10px] bg-black rounded-[12px] transition-transform overflow-hidden flex items-center justify-center w-full disabled:bg-gray-800"
                 disabled={false}
+                onClick={()=> props.setFlow('phone')}
                 type="submit"
               >
                 <div className="text-white text-[14px] leading-[20px] font-bold h-full">Grab my Link</div>

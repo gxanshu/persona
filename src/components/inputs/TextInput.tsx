@@ -76,7 +76,7 @@ export const TextInput: React.FC<TextInputProps> = ({
               type="submit"
               className="translate-x-[-15px] absolute z-[2] right-0 top-[16px] rounded-full bg-[#187FE7] disabled:bg-[#1D1D1F33]"
               disabled={buttonDisabled}
-              onSubmit={handleSubmit}
+              onClick={handleSubmit}
             >
               <Icon containerClass="" frameClass="h-[24px] w-[24px] flex p-[4px] items-center gap-[12px]">
                 <RightArrowIcon />
