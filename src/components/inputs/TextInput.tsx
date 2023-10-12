@@ -105,7 +105,7 @@ export const TextInput: React.FC<TextInputProps> = ({
           aria-hidden="true"
           ref={labelRef}
           id="apple_id_field_label"
-          className="pr-[26px] text-ellipsis z-[3] text-[#86868b] left-[1rem] duration-[125] ease-in absolute pointer-events-none top-[1.25rem] nowrap overflow-hidden max-w-[calc(100% - 32px)] text-[17px] leading-[14px] text-center will-change-auto transition-all duration-100"
+          className="pr-[26px] text-ellipsis z-[3] text-[#86868b] left-[1rem] duration-[125] ease-in absolute pointer-events-none top-[1rem] nowrap overflow-hidden max-w-[calc(100% - 32px)] text-[15px] leading-[20px] text-center will-change-auto transition-all duration-100"
         >
           {label}
         </span>

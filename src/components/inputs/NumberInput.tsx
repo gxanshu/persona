@@ -72,6 +72,7 @@ const NumberInput: React.FC<NumberInputProps> = ({ actionButton, label, required
           onFocus={handleFocus}
           onBlur={handleFocus}
           value={value}
+          disabled={!init}
           onInput={(e) => setValue(e.currentTarget.value)}
           className="pr-[43px] pl-[52px] pt-[16px] bg-[hsla(0,0%,100%,.8)] border-[#d2d2d7] text-[#494949] border border-[#d2d2d7] rounded-[12px] text-[15px] leading-[20px] h-[3.29412rem] w-full text-ellipsis focus:outline-none no-controller"
           aria-invalid={false}

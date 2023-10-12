@@ -12,7 +12,7 @@ const ShownError: React.FC<ShownErrorProps> = ({ error }) => {
   }
 
   return (
-    <div className="text-[#E30000] leading-[16px] text-[12px] font-[Inter] font-normal gap-[2px] ml-1 flex items-center">
+    <div className="text-[#E30000] leading-[16px] text-[12px] font-[Inter] font-normal gap-[2px] ml-1 flex items-baseline">
       <WarningIcon />
       {error}
     </div>
