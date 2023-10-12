@@ -1,29 +1,29 @@
-import React, { useRef, useEffect } from 'react';
-import { CrossIcon, SuccessIcon } from '~/assets/icons';
-import '~/styles/Input.css';
+import React, { useEffect, useRef } from 'react'
+import { CrossIcon, SuccessIcon } from '~/assets/icons'
+import '~/styles/Input.css'
 
-export type InputState = null | 'loading' | 'success' | 'error';
+export type InputState = null | 'loading' | 'success' | 'error'
 
 type PreTextInputProps = {
-  placeholder: string;
-  type?: 'text' | 'email';
-  disabled?: boolean;
-  value: string;
-  setValue: (value: string) => void;
-  preText: string;
-  inputState: InputState;
-  setInputState: (state: InputState) => void;
-};
+  placeholder: string
+  type?: 'text' | 'email'
+  disabled?: boolean
+  value: string
+  setValue: (value: string) => void
+  preText: string
+  inputState: InputState
+  setInputState: (state: InputState) => void
+}
 
-const PreTextInput: React.FC<PreTextInputProps> = (props) => {
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+const PreTextInput: React.FC<PreTextInputProps> = props => {
+  const wrapperRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const handleFocus = () => {
     if (wrapperRef.current) {
-      wrapperRef.current.classList.toggle('user-namewrapper_focus');
+      wrapperRef.current.classList.toggle('user-namewrapper_focus')
     }
-  };
+  }
 
   return (
     <>
@@ -49,8 +49,8 @@ const PreTextInput: React.FC<PreTextInputProps> = (props) => {
           autoComplete="off"
           aria-invalid={false}
           value={props.value}
-          onInput={(event) => {
-            props.setValue(event.currentTarget.value);
+          onInput={event => {
+            props.setValue(event.currentTarget.value)
           }}
         />
         <div className="h-[14px] w-[14px]">
@@ -61,8 +61,8 @@ const PreTextInput: React.FC<PreTextInputProps> = (props) => {
           {props.inputState === 'error' && (
             <button
               onClick={() => {
-                props.setValue('');
-                props.setInputState(null);
+                props.setValue('')
+                props.setInputState(null)
               }}
             >
               <CrossIcon />
@@ -71,7 +71,7 @@ const PreTextInput: React.FC<PreTextInputProps> = (props) => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default PreTextInput;
+export default PreTextInput

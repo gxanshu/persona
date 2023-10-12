@@ -1,4 +1,4 @@
-import { animate } from "~/lib"
+import { animate } from '~/lib'
 
 interface ModalStartListProps {
   step: () => void

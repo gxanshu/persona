@@ -15,7 +15,7 @@ interface TextInputProps {
   setValue: (value: string) => void
   haveError?: any
   className?: string
-  handleSubmit?: ()=> void
+  handleSubmit?: () => void
 }
 
 export const TextInput: React.FC<TextInputProps> = ({
@@ -30,7 +30,7 @@ export const TextInput: React.FC<TextInputProps> = ({
   haveError,
   className,
   buttonDisabled,
-  handleSubmit
+  handleSubmit,
 }) => {
   const wrapperRef = useRef<HTMLDivElement | null>(null)
   const labelRef = useRef<HTMLSpanElement | null>(null)
