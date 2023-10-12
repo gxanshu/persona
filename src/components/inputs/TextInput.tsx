@@ -10,10 +10,12 @@ interface TextInputProps {
   required?: boolean
   name: string
   disabled?: boolean
+  buttonDisabled?: boolean
   value: string
   setValue: (value: string) => void
   haveError?: any
   className?: string
+  handleSubmit?: ()=> void
 }
 
 export const TextInput: React.FC<TextInputProps> = ({
@@ -27,6 +29,8 @@ export const TextInput: React.FC<TextInputProps> = ({
   setValue,
   haveError,
   className,
+  buttonDisabled,
+  handleSubmit
 }) => {
   const wrapperRef = useRef<HTMLDivElement | null>(null)
   const labelRef = useRef<HTMLSpanElement | null>(null)
@@ -71,7 +75,8 @@ export const TextInput: React.FC<TextInputProps> = ({
             <button
               type="submit"
               className="translate-x-[-15px] absolute z-[2] right-0 top-[16px] rounded-full bg-[#187FE7] disabled:bg-[#1D1D1F33]"
-              disabled={disabled}
+              disabled={buttonDisabled}
+              onSubmit={handleSubmit}
             >
               <Icon containerClass="" frameClass="h-[24px] w-[24px] flex p-[4px] items-center gap-[12px]">
                 <RightArrowIcon />

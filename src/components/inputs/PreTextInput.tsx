@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { CrossIcon, SuccessIcon } from '~/assets/icons';
 import '~/styles/Input.css';
 
-export type InputState = '' | 'loading' | 'success' | 'error';
+export type InputState = null | 'loading' | 'success' | 'error';
 
 type PreTextInputProps = {
   placeholder: string;
@@ -10,37 +10,20 @@ type PreTextInputProps = {
   disabled?: boolean;
   value: string;
   setValue: (value: string) => void;
-  haveError?: string | null;
-  setError: (error: string | null) => void;
   preText: string;
   inputState: InputState;
   setInputState: (state: InputState) => void;
-  handleSubmit: (inputValue: string) => void;
 };
 
 const PreTextInput: React.FC<PreTextInputProps> = (props) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  let searchTimeout: NodeJS.Timeout;
 
   const handleFocus = () => {
     if (wrapperRef.current) {
       wrapperRef.current.classList.toggle('user-namewrapper_focus');
     }
   };
-
-  useEffect(() => {
-    if (props.value != "") {
-        props.setInputState('loading');
-        props.setError(null);
-        if (searchTimeout !== undefined) {
-          clearTimeout(searchTimeout);
-        }
-        if(searchTimeout == undefined){
-          searchTimeout = setTimeout(() => props.handleSubmit(props.value), 1000);
-        }
-      };
-  }, [props.value])
 
   return (
     <>
@@ -67,8 +50,6 @@ const PreTextInput: React.FC<PreTextInputProps> = (props) => {
           aria-invalid={false}
           value={props.value}
           onInput={(event) => {
-            props.setError(null);
-            props.setInputState("")
             props.setValue(event.currentTarget.value);
           }}
         />
@@ -81,8 +62,7 @@ const PreTextInput: React.FC<PreTextInputProps> = (props) => {
             <button
               onClick={() => {
                 props.setValue('');
-                props.setError(null);
-                props.setInputState('');
+                props.setInputState(null);
               }}
             >
               <CrossIcon />
