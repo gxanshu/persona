@@ -50,8 +50,10 @@ const NameContainer = (props: { setFlow: Dispatch<SetStateAction<AuthFlow>> })=>
 	return (
 		<div className='flex flex-col gap-[32px] max-w-[390px]'>
 			<div className={`flex flex-col gap-[12px] ${lexend.className}`}>
-				<h2 className={`text-[#1D1D1F] text-[33px] font-semibold tracking-[-0.66px]`}>Let’s make your clone</h2>
-				<p className='text-[#494949] text-[15px] leading-[20px] '>Enter your name and get unique link</p>
+				<h2 className={`text-[#1D1D1F] text-center text-[21px] font-semibold leading-[-0.42px]`}>Let’s make your clone</h2>
+        <div className='flex w-full flex-col items-center justify-center'>
+          <p className='text-[#494949] w-[55%] text-[15px] leading-[150%] text-center'>Enter your name and grab a unique username</p>
+        </div>
 				</div>
 				<div className='inline-flex flex-col gap-[24px]'>
           <TextInput
@@ -84,7 +86,9 @@ const NameContainer = (props: { setFlow: Dispatch<SetStateAction<AuthFlow>> })=>
             <p className="text-white text-[14px] leading-[20px] font-bold h-full">Clone me</p>
           </button>)  :(
             inputState == "error" ? (
-              <ShownError error={'This username seems to be taken already... Try something similar.'}/>
+              <div className='h-[52px]'>
+                <ShownError error={'This username seems to be taken already... Try something similar.'}/>
+              </div>
             ) : (<button
             className="shadow-sm py-[16px] px-[10px] bg-black rounded-[12px] transition-transform overflow-hidden flex items-center justify-center w-full disabled:bg-gray-800"
             disabled={true}

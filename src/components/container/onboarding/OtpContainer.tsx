@@ -19,10 +19,12 @@ const PhoneNumberContainer = (props: { setFlow: Dispatch<SetStateAction<AuthFlow
   }
 
 	return (
-		<div className='flex flex-col gap-[32px] max-w-[390px]'>
+		<div className='flex flex-col items-center gap-[32px] max-w-[390px]'>
 			<div className={`flex flex-col gap-[12px] ${lexend.className}`}>
-				<h2 className={`text-[#1D1D1F] text-[33px] font-semibold tracking-[-0.66px]`}>Check your phone</h2>
-				<p className='text-[#494949] text-[15px] leading-[20px] '>Enter the 6-digit code we texted you</p>
+				<h2 className={`text-[#1D1D1F] text-center text-[21px] font-semibold leading-[-0.42px]`}>Check your phone</h2>
+				<div className='flex w-full flex-col items-center justify-center'>
+					<p className='text-[#494949] w-[55%] text-[15px] leading-[150%] text-center'>Enter the 6-digit code we’ve texted you.</p>
+				</div>
 				</div>
 				<div className='inline-flex flex-col gap-[24px]'>
 					<OTPInput
