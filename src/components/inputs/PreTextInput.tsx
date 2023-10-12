@@ -13,7 +13,6 @@ type PreTextInputProps = {
   preText: string
   inputState: InputState
   setInputState: (state: InputState) => void
-  autoFocus?: boolean
 }
 
 const PreTextInput: React.FC<PreTextInputProps> = props => {
@@ -46,7 +45,6 @@ const PreTextInput: React.FC<PreTextInputProps> = props => {
           placeholder={props.placeholder}
           onBlur={handleFocus}
           disabled={props.disabled}
-          autoFocus={props.autoFocus}
           className="text-ellipsis focus:outline-none disabled:opacity-50 disabled:bg-gray-100 w-full pr-[10px] text-[14px] leading-[20px] text-black bg-[#F7F7F7] ml-[3px]"
           autoComplete="off"
           aria-invalid={false}

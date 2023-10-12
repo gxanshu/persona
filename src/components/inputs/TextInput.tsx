@@ -16,6 +16,7 @@ interface TextInputProps {
   haveError?: any
   className?: string
   handleSubmit?: () => void
+  autoFocus?: boolean
 }
 
 export const TextInput: React.FC<TextInputProps> = ({
@@ -31,6 +32,7 @@ export const TextInput: React.FC<TextInputProps> = ({
   className,
   buttonDisabled,
   handleSubmit,
+  autoFocus
 }) => {
   const wrapperRef = useRef<HTMLDivElement | null>(null)
   const labelRef = useRef<HTMLSpanElement | null>(null)
@@ -52,6 +54,14 @@ export const TextInput: React.FC<TextInputProps> = ({
     }
   }, [value])
 
+  useEffect(()=> {
+    if(autoFocus){
+      wrapperRef.current?.classList.add('wrapper_focus')
+      inputRef.current?.classList.add('input_focus')
+      labelRef.current?.classList.add('label_focus')
+    }
+  }, [autoFocus])
+
   return (
     <>
       <div ref={wrapperRef} className={`h-[3.3em] relative m-0 border-transparent ${className}`}>
@@ -68,6 +78,7 @@ export const TextInput: React.FC<TextInputProps> = ({
             onFocus={handleFocus}
             onBlur={handleFocus}
             disabled={disabled}
+            autoFocus={autoFocus}
             className="bg-[#F5F5F5] text-[#494949] rounded-[12px] pt-[1.05882rem] pr-[.94118rem] text-[15px] leading-[20px] h-[3.29412rem] w-full text-ellipsis focus:outline-none custom_padding disabled:opacity-50 disabled:bg-gray-100"
             autoComplete="off"
             aria-invalid="false"
