@@ -20,7 +20,7 @@ export const AboutCard: FC<AboutCardProps> = ({ delay, containerClass }) => {
             <ProfilePlus />
           </Icon>
         </div>
-        <div className="flex gap-[20px] max-w-full overflow-y-auto no-scrollbar">
+        <div className="flex gap-[20px] max-w-full overflow-x-auto overflow-y-hidden no-scrollbar">
           <div className="flex flex-col gap-[16px] min-w-full">
             <AboutCardList icon={<ProfileCake />} text="Oct 20, 2023" />
             <AboutCardList icon={<ProfileBusiness />} text="Works at BHuman AI" />
