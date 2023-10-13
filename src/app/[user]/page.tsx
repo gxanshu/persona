@@ -72,11 +72,11 @@ export default function ProfilePage() {
     >
       <div
         id="main-area"
-        className="p-[72px] flex items-start justify-between gap-[92px] bg-white/80 backdrop-blur-3xl h-full w-screen overflow-y-auto no-scrollbar"
+        className="p-[24px] sm:p-[72px] flex items-start justify-between gap-[92px] bg-white/80 backdrop-blur-3xl h-full w-screen overflow-y-auto no-scrollbar flex-col sm:flex-row"
         // style={{ animation: 'fadeIn 0.5s' }}
       >
         {/*avatar area*/}
-        <div className="inline-flex flex-col gap-[32px] sticky top-20 z-[1] self-start">
+        <div className="inline-flex flex-col gap-[32px] sm:sticky sm:top-20 sm:z-[1] self-start">
           <Image
             src={avatarImg}
             className="w-[150px] h-[150px] rounded-full"
@@ -136,7 +136,7 @@ export default function ProfilePage() {
             </div>
             <div className="bg-[#D9D9D9] h-[32px] w-[32px]" />
           </div>
-          <div className="grid gap-[32px] grid-cols-4 max-w-[800px]">
+          <div className="grid sm:gap-[32px] gap-[20px] grid-cols-2 sm:grid-cols-4 max-w-[800px]">
             <SocialCard className="col-span-2 row-span-2" delay={0.1} />
             <Card icon={<ProfileVoice />} text="Add a Voice" buttonHandler={openAudioModal} delay={0.2} />
             <Card icon={<ProfileFace />} text="Add a Face" delay={0.2} />
