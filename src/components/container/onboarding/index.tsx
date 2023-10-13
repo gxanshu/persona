@@ -18,7 +18,7 @@ export const AuthFlow = () => {
 	const [step, setStep] = useState<AuthFlow>("number")
 
 	return (
-		<div className='max-w-[390px] min-h-[300px]'>
+		<div className='sm:max-w-[390px] sm:min-h-[300px]'>
 			{step == "number" && <NumberContainer setFlow={setStep} /> }
 			{step == "otp" && <OtpContainer setFlow={setStep} /> }
 			{step == "name" && <NameContainer setFlow={setStep} /> }

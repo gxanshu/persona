@@ -1,8 +1,9 @@
-import { Lexend } from 'next/font/google'
+import { Lexend, Lexend_Giga } from 'next/font/google'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import NumberInput from '~/components/inputs/NumberInput';
 import { AuthFlow } from '.';
 const lexend = Lexend({ subsets: ['latin'], weight: ['600', '400'] })
+const lexendGiga = Lexend_Giga({ subsets: ['latin'], weight: ['600', '400'] })
 
 const PhoneNumberContainer = (props: { setFlow: Dispatch<SetStateAction<AuthFlow>> })=> {
 	const [value, setValue] = useState<string>('')
@@ -17,15 +18,15 @@ const PhoneNumberContainer = (props: { setFlow: Dispatch<SetStateAction<AuthFlow
   }, [value])
 
 	return (
-		<div className='flex flex-col gap-[32px] items-center sm:items-start max-w-[390px] sm:max-w-full'>
+		<div className='flex flex-col gap-[32px] items-center max-w-[90%] sm:max-w-full'>
 			<div className={`flex flex-col gap-[12px] w-[390px] ${lexend.className}`}>
 				<h2 className={`hidden sm:block text-[#1D1D1F] text-center text-[21px] font-semibold tracking-[-0.42px]`}>Get your Persona</h2>
-				<h2 className={`sm:hidden text-[#1D1D1F] text-center text-[33px] sm:text-[21px] font-semibold tracking-[-0.42px]`}>Clone yourself.</h2>
+				<h2 className={`sm:hidden text-[#1D1D1F] text-center text-[33px] sm:text-[21px] font-semibold tracking-[-5.28px] ${lexendGiga.className}`}>Clone yourself.</h2>
 				<div className='flex w-full flex-col items-center justify-center'>
 					<p className='text-[#494949] w-[55%] text-[15px] leading-[150%] text-center'>The most advanced version of yourself. It’s Free.</p>
 				</div>
 				</div>
-				<div className='inline-flex flex-col gap-[24px] max-w-[310px] sm:max-w-full sm:w-full'>
+				<div className='inline-flex flex-col gap-[24px] w-full'>
 					<form onSubmit={(e) =>  {
 						e.preventDefault()
 						props.setFlow('otp')
