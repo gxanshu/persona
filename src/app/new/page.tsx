@@ -73,7 +73,13 @@ const RecordingButton = () => {
       setIsDeleted(true);
     } else if (buttonState === 'Play') {
       // Play
-      setButtonState('Stop Recording');
+      setButtonState('stop Playing');
+      setIsPlaying(false);
+      // Add your logic for play functionality here
+    }
+    else if (buttonState === 'stop Playing') {
+      // Play
+      setButtonState('Play');
       setIsPlaying(false);
       // Add your logic for play functionality here
     }
@@ -85,7 +91,7 @@ const RecordingButton = () => {
         {buttonState}
       </button>
       {isDeleted && (
-        <button className='bg-blue-500 p-4 mx-[10px]' onClick={() => setButtonState('Start Recording')}>
+        <button className='bg-blue-500 p-4 mx-[10px]' onClick={() => {setButtonState('Start Recording'); setIsDeleted(false)}}>
           Delete
         </button>
       )}
