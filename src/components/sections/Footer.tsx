@@ -6,8 +6,8 @@ export default function Footer() {
 				<div className="overflow-visible mt-[24px] flex flex-col items-stretch relative">
 				{/*links area*/}
 				<div className="overflow-visible content-stretch justify-center flex items-stretch flex-wrap ">
-					{links.map(link => (
-						<ListItem text={link} />
+					{links.map((link, index) => (
+						<ListItem text={link} key={`link-${index}`} />
 					))}
 				</div>
 				</div>

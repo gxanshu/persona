@@ -7,7 +7,7 @@ const lexend = Lexend({ subsets: ['latin'], weight: ['600', '400'] })
 
 export default function HomeLogin() {
 	return (
-		<main className="min-h-screen w-full p-[84px]">
+		<main className="min-h-screen flex flex-col items-center justify-center w-full p-[84px]">
 			<div className="flex items-center justify-center gap-[72px]">
 				<div className='flex max-w-[650px] max-h-[351px] flex-col justify-center'>
 					<h1 className={`text-[96px] font-semibold leading-[110%] tracking-[-15.36px] ${lexendGiga.className} text-[#1D1D1F]`}>
