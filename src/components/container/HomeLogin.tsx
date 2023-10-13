@@ -7,7 +7,7 @@ const lexend = Lexend({ subsets: ['latin'], weight: ['600', '400'] })
 
 export default function HomeLogin() {
 	return (
-		<main className="min-h-screen flex flex-col sm:items-center sm:justify-center w-full sm:p-[84px] gap-[96px] sm:gap-[0px]">
+		<main className="min-h-screen flex flex-col sm:items-center sm:justify-center w-full sm:p-[84px] gap-[64px] sm:gap-[0px]">
 			<div className='sm:hidden p-[24px] flex items-center w-full justify-between'>
 				<Icon frameClass='h-[40px] w-[40px]' containerClass='h-[44px] w-[44px] flex items-center justify-center'>
 						<Logo/>
