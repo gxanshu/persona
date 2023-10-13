@@ -14,7 +14,7 @@ export default function Footer() {
 				<div className="overflow-visible my-[12px] justify-center flex gap-[16px] items-stretch relative text-[]">
 					{/*meta area*/}
 					<p>English (UK)</p>
-					<p>© 2023 Persona from Meta</p>
+					<p>© 2023 Persona from Bhuman</p>
 				</div>
 			</div>
 		</footer>
