@@ -1,6 +1,11 @@
 import HomeLogin from '~/components/container/HomeLogin'
-import AuthSection from '~/components/sections/auth'
+import Footer from '~/components/sections/Footer'
 
 export default function Homepage() {
-  return <HomeLogin/>
+  return (
+    <>
+      <HomeLogin/>
+      <Footer/>
+    </>
+  )
 }
