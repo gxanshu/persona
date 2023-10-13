@@ -17,14 +17,15 @@ const PhoneNumberContainer = (props: { setFlow: Dispatch<SetStateAction<AuthFlow
   }, [value])
 
 	return (
-		<div className='flex flex-col gap-[32px] max-w-[390px]'>
+		<div className='flex flex-col gap-[32px] items-center sm:items-start max-w-[390px] sm:max-w-full'>
 			<div className={`flex flex-col gap-[12px] w-[390px] ${lexend.className}`}>
-				<h2 className={`text-[#1D1D1F] text-center text-[21px] font-semibold leading-[-0.42px]`}>Get your Persona</h2>
+				<h2 className={`hidden sm:block text-[#1D1D1F] text-center text-[21px] font-semibold tracking-[-0.42px]`}>Get your Persona</h2>
+				<h2 className={`sm:hidden text-[#1D1D1F] text-center text-[33px] sm:text-[21px] font-semibold tracking-[-0.42px]`}>Clone yourself.</h2>
 				<div className='flex w-full flex-col items-center justify-center'>
 					<p className='text-[#494949] w-[55%] text-[15px] leading-[150%] text-center'>The most advanced version of yourself. It’s Free.</p>
 				</div>
 				</div>
-				<div className='inline-flex flex-col gap-[24px]'>
+				<div className='inline-flex flex-col gap-[24px] max-w-[310px] sm:max-w-full sm:w-full'>
 					<form onSubmit={(e) =>  {
 						e.preventDefault()
 						props.setFlow('otp')
@@ -34,7 +35,8 @@ const PhoneNumberContainer = (props: { setFlow: Dispatch<SetStateAction<AuthFlow
 							value={value}
 							setValue={setValue}
 							handleSubmit={()=> props.setFlow("otp")}
-							buttonDisabled={buttonDisabled} />
+							buttonDisabled={buttonDisabled}
+							/>
 					</form>
 					<div className='inline-flex flex-col gap-[8px]'>
 						<button onClick={()=> props.setFlow('otp')} className='text-white text-[15px] leading-[20px] flex items-center justify-center bg-[#187EE7] rounded-[16px] p-[16px]'>
