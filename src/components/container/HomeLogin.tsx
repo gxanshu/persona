@@ -24,8 +24,8 @@ export default function HomeLogin() {
 					<div className="snap-center shrink-0">
 			      <div className="shrink-0 w-4 sm:w-48"></div>
 			    </div>
-			    <div className='shrink-0 h-[220px] w-[342px] rounded-[24px] bg-[#D9D9D9]'/>
-			    <div className='shrink-0 h-[220px] w-[342px] rounded-[24px] bg-[#D9D9D9]'/>
+			    <div className='shrink-0 h-[220px] w-[85%] rounded-[24px] bg-[#D9D9D9]'/>
+			    <div className='shrink-0 h-[220px] w-[85%] rounded-[24px] bg-[#D9D9D9]'/>
 			    <div className="snap-center shrink-0">
 			      <div className="shrink-0 w-4 sm:w-48"></div>
 			    </div>
