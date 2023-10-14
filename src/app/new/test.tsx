@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import {
   BackwardIcon,
   BigBackwordIcon,
@@ -39,19 +39,16 @@ export default function AudioCloning() {
   const [time, setTime] = useState<number>(60)
   const [step, setStep] = useState<number>(0)
 
-  useEffect(()=> {
-    if(audioChunks[step].length){
-      setRecordingState('stop')
-      setIsRecording(false)
-    }
-  }, [step])
-
   const startRecording = () => {
     navigator.mediaDevices.getUserMedia({ audio: true })
       .then(stream => {
-        streamRef.current = stream
+        if(!streamRef.current){
+          streamRef.current = stream
+        }
         // Initialize the media recorder object
-        mediaRecoder.current = new MediaRecorder(stream)
+        if(!mediaRecoder.current){
+          mediaRecoder.current = new MediaRecorder(stream)
+        }
 
         let localAudioChunks: Blob[] = []; // Copy the existing audioChunks
 
@@ -72,7 +69,7 @@ export default function AudioCloning() {
       console.log(localAudioChunks)
 
         setIsRecording(true)
-        mediaRecoder.current.start(100)
+        if(step == 0) mediaRecoder.current.start(100)
         // if (step > 0 && step <= text.length) mediaRecoder.current.resume()
         console.log('Recording started! Speak now.')
       }).catch(err => {
@@ -84,15 +81,23 @@ export default function AudioCloning() {
   const stopRecording = () => {
     setRecordingState('stop')
     setIsRecording(false)
-    mediaRecoder.current?.stop()
+    if(step < text.length){
+      mediaRecoder.current?.pause()
+      console.log("pausing the recording")
+    } else {
+      mediaRecoder.current?.stop()
       console.log("stopping the recording")
       if (streamRef.current) {
       streamRef.current.getTracks().forEach(function(track) {
         track.stop()
       })
     }
-    mediaRecoder.current = undefined
-    const blobObj = new Blob(audioChunks[step], { type: 'audio/mp3' })
+    }
+    const blobObj = new Blob(audioChunks, { type: 'audio/mp3' })
+    const audioUrl = URL.createObjectURL(blobObj)
+    audioFile.current = new Audio()
+    audioFile.current.src = audioUrl
+    audioFile.current.load()
     // finding audio timing
     const audioContext = new AudioContext()
     const audioReader = new FileReader()
@@ -100,7 +105,7 @@ export default function AudioCloning() {
       audioContext.decodeAudioData(audioReader.result as ArrayBuffer, function(audioBuffer) {
         const durationInSeconds = audioBuffer.duration
         console.log('Audio duration: ' + durationInSeconds + ' seconds')
-        setTime((p)=> p - Math.round(durationInSeconds))
+        setTime(60 - Math.round(durationInSeconds))
       })
     }
 
@@ -110,19 +115,15 @@ export default function AudioCloning() {
 
   const playAudio = () => {
     setAudioState('pause')
-    const blobObj = new Blob(audioChunks[step], { type: 'audio/mp3' })
-    const audioUrl = URL.createObjectURL(blobObj)
-    audioFile.current = new Audio()
-    audioFile.current.src = audioUrl
-    audioFile.current.load()
-    
     // alert(audioFile.current)
-    let duration = audioFile.current.duration
-    console.log(duration)
-    audioFile.current.play()
-    audioFile.current.addEventListener('ended', () => {
-      setAudioState('play')
-    })
+    if (audioFile.current) {
+      let duration = audioFile.current.duration
+      console.log(duration)
+      audioFile.current.play()
+      audioFile.current.addEventListener('ended', () => {
+        setAudioState('play')
+      })
+    }
   }
 
   const pauseAudio = () => {
@@ -141,24 +142,8 @@ export default function AudioCloning() {
     }
     audioFile.current = undefined
     mediaRecoder.current = undefined
-    setAudioChunks((p)=> {
-          let local = p; // coping last state
-          local[step] = []; // replacing current step value's container to recorded value
-          return local; // this is array of array of chunks with new data in it
-        });
-    const blobObj = new Blob(audioChunks[step], { type: 'audio/mp3' })
-    // finding audio timing
-    const audioContext = new AudioContext()
-    const audioReader = new FileReader()
-    audioReader.onload = function() {
-      audioContext.decodeAudioData(audioReader.result as ArrayBuffer, function(audioBuffer) {
-        const durationInSeconds = audioBuffer.duration
-        console.log('Audio duration: ' + durationInSeconds + ' seconds')
-        setTime((p)=> p + Math.round(durationInSeconds))
-      })
-    }
-
-    audioReader.readAsArrayBuffer(blobObj)
+    setStep(0)
+    setTime(60)
   }
 
   return (
@@ -258,7 +243,7 @@ export default function AudioCloning() {
             {recordingState == 'stop' && (
               <button
                 onClick={() => {
-                  if(!audioChunks[step + 1].length) setRecordingState('start')
+                  setRecordingState('start')
                   setStep(p => {
                     if (p == 5) return 5
                     return p + 1
