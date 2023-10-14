@@ -44,7 +44,7 @@ export default function AudioCloning() {
         setAudioChunks(localAudioChunks)
 
         setIsRecording(true)
-        mediaRecoder.current.start(1000)
+        mediaRecoder.current.start(100)
         console.log('Recording started! Speak now.')
       }).catch(err => {
         // If the user denies permission to record audio, then display an error.
@@ -65,6 +65,7 @@ export default function AudioCloning() {
   const forwardStep = () => {
     setRecordingState('start')
     setIsRecording(false)
+    deleteAudio()
   }
 
   const playAudio = () => {
@@ -96,7 +97,8 @@ export default function AudioCloning() {
   }
 
   return (
-    <div className="max-w-[390px] h-[744px] px-[24px] py-[78px]">
+    <div className='w-screen flex items-center justify-center'>
+      <div className="max-w-[390px] h-[744px] px-[24px] py-[78px]">
       <div className="flex flex-col items-center h-full justify-between">
         {/*header section*/}
         <div className="inline-flex flex-col items-center gap-[16px]">
@@ -114,7 +116,6 @@ export default function AudioCloning() {
           </div>
         </div>
         {/*text section*/}
-        <div className="flex flex-col items-center gap-[40px]">
           <div className="inline-flex flex-col gap-[12px]">
             <p className="text-[#1D1D1F] text-[19px] font-semibold leading-[150%] max-w-[342px]">
               The clay felt smooth in her hand. She mixed, remixed and brought to life an entire world of soft
@@ -122,7 +123,19 @@ export default function AudioCloning() {
             </p>
             {/*action button area*/}
             <div className="flex gap-[8px]">
-              <button
+              {recordingState == "start" ? (<div className="inline-flex py-[4px] px-[8px] justify-center gap-[10px] rounded-[16px] border border-[#1D1D1F1F] shadow-sm">
+            <div className="flex items-center gap-[4px]">
+              <div
+                className={`w-[98px] h-[20px] rounded-[24px] ${mediaRecoder.current ? '' : 'bg-[#D9D9D9]'}`}
+              >
+                {mediaRecoder.current && (
+                  <LiveAudioVisualizer mediaRecorder={mediaRecoder.current} width={98} height={20} />
+                )}
+              </div>
+              {isRecording && <p className="text-[#1D1D1F] text-[13px] leading-[20px] ">Recording...</p>}
+            </div>
+          </div>) : (<div className='flex gap-[8px]'>
+                <button
                 onClick={audioState == 'play' ? playAudio : pauseAudio}
                 className="flex py-[4px] px-[8px] justify-center rounded-[16px] border border-[#187EE7] bg-white"
                 disabled={recordingState != 'stop'}
@@ -145,22 +158,9 @@ export default function AudioCloning() {
                   <DeleteIcon />
                 </Icon>
               </button>
+              </div>)}
             </div>
           </div>
-          {/*audio visualiser*/}
-          <div className="inline-flex py-[4px] px-[8px] justify-center gap-[10px] rounded-[16px] border border-[#1D1D1F1F] shadow-sm">
-            <div className="flex items-center gap-[4px]">
-              <div
-                className={`w-[98px] h-[20px] rounded-[24px] ${mediaRecoder.current ? '' : 'bg-[#D9D9D9]'}`}
-              >
-                {mediaRecoder.current && (
-                  <LiveAudioVisualizer mediaRecorder={mediaRecoder.current} width={98} height={20} />
-                )}
-              </div>
-              {isRecording && <p className="text-[#1D1D1F] text-[13px] leading-[20px] ">Recording...</p>}
-            </div>
-          </div>
-        </div>
 
         {/*buttons area*/}
         <div className="inline-flex items-center gap-[16px]">
@@ -194,6 +194,7 @@ export default function AudioCloning() {
             : <div className="h-[48px] w-[48px]" />}
         </div>
       </div>
+    </div>
     </div>
   )
 }
