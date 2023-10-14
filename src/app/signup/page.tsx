@@ -3,13 +3,13 @@ import dynamic from 'next/dynamic'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import PreTextInput, { InputState } from '~/components/inputs/PreTextInput'
 import ShownError from '~/components/inputs/ShowError'
-const PhoneSection = dynamic(() => import('./onboarding/PhoneSection'),{
+const PhoneSection = dynamic(() => import('./onboarding/PhoneSection'), {
   loading: () => <p>Loading...</p>,
 })
-const OtpSection = dynamic(() => import('./onboarding/OtpSection'),{
+const OtpSection = dynamic(() => import('./onboarding/OtpSection'), {
   loading: () => <p>Loading...</p>,
 })
-const NameSection = dynamic(() => import('./onboarding/NameSection'),{
+const NameSection = dynamic(() => import('./onboarding/NameSection'), {
   loading: () => <p>Loading...</p>,
 })
 

@@ -4,8 +4,8 @@ import Footer from '~/components/sections/Footer'
 export default function Homepage() {
   return (
     <>
-      <HomeLogin/>
-      <Footer/>
+      <HomeLogin />
+      <Footer />
     </>
   )
 }

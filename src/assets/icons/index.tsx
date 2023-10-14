@@ -1,9 +1,8 @@
-import React, { ReactNode, Ref } from 'react'
+import React, { ReactNode, Ref, SVGAttributes } from 'react'
 export * from './AudioRecorder'
 export * from './Logo'
 export * from './ModalIcons'
 export * from './PanelIcons'
-export * from './Play'
 export * from './ProfileIcons'
 export * from './RightArrow'
 export * from './SocialCards'
@@ -48,3 +47,4 @@ const Icon: React.FC<IconProps> = ({ containerClass, frameClass, children, ref }
 }
 
 export { Icon, IconContainer, IconFrame }
+export type svgProps = SVGAttributes<SVGSVGElement>

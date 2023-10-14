@@ -32,7 +32,7 @@ export const TextInput: React.FC<TextInputProps> = ({
   className,
   buttonDisabled,
   handleSubmit,
-  autoFocus
+  autoFocus,
 }) => {
   const wrapperRef = useRef<HTMLDivElement | null>(null)
   const labelRef = useRef<HTMLSpanElement | null>(null)
@@ -48,14 +48,14 @@ export const TextInput: React.FC<TextInputProps> = ({
     }
   }
 
-  useEffect(()=> {
-    if(value != "" && !labelRef.current?.classList.contains("label_focus")){
-      labelRef.current?.classList.add("label_focus")
+  useEffect(() => {
+    if (value != '' && !labelRef.current?.classList.contains('label_focus')) {
+      labelRef.current?.classList.add('label_focus')
     }
   }, [value])
 
-  useEffect(()=> {
-    if(autoFocus){
+  useEffect(() => {
+    if (autoFocus) {
       wrapperRef.current?.classList.add('wrapper_focus')
       inputRef.current?.classList.add('input_focus')
       labelRef.current?.classList.add('label_focus')

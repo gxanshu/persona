@@ -32,7 +32,9 @@ const PreTextInput: React.FC<PreTextInputProps> = props => {
         ref={wrapperRef}
         className={`flex w-full rounded-[8px] text-[14px] leading-[20px] bg-[#F7F7F7] p-[12px] border-[2px] border-transparent transition-all duration-75 items-center ${props.wrapperClass}`}
       >
-        <div className="flex items-center justify-center text-[#6C6C6C] text-[15px] leading-[20px]">{props.preText}/</div>
+        <div className="flex items-center justify-center text-[#6C6C6C] text-[15px] leading-[20px]">
+          {props.preText}/
+        </div>
         <input
           ref={inputRef}
           type={props.type}

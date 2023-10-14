@@ -1,104 +1,147 @@
 'use client'
 
-// import { ChatHeader } from '~/components/chatpanel/ChatHeader'
-// import { MessageSend } from '~/components/chatpanel/MessageSend'
-// import { MsgContainer } from '~/components/chatpanel/MsgContainer'
-// import { Search } from '~/components/chatpanel/Search'
-// import AnimatedModal from '~/components/modals/AnimatedModal'
-// import { useEffect, useRef } from 'react'
+import { useState } from 'react'
+import {
+  BackwardIcon,
+  BigBackwordIcon,
+  BigForwardIcon,
+  DeleteIcon,
+  FordwardIcon,
+  Icon,
+  MicIcon,
+  PlayIcon,
+  StopIcon,
+} from '~/assets/icons'
 
-// export default function TestingPage() {
-//   const modalRef = useRef<HTMLDialogElement>(null)
+type RecordingState = 'start' | 'stop'
+type AudioState = "play" | "pause"
 
-//   useEffect(() => {
-//     if (modalRef) {
-//       modalRef.current?.showModal()
-//     }
-//   })
+export default function AudioCloning() {
+  const [recordingState, setRecordingState] = useState<RecordingState>('start')
+  const [audioState, setAudioState] = useState<AudioState>('play')
+  const [isRecording, setIsRecording] = useState<boolean>(false)
 
-//   return (
-//     <>
-//       <AnimatedModal ref={modalRef} containerClass="w-max p-[12px]">
-//         <div className="w-full flex">
-//           <div className="flex flex-col border-r max-w-max">
-//             <div className="flex items-center justify-center p-[12px]">
-//               <ChatHeader onClick={() => console.log('ok')} />
-//             </div>
-//             <div className="px-[12px] pb-[8px] pt-[4px] border-b">
-//               <Search />
-//             </div>
-//             <div className="inline-flex flex-col gap-[2px] max-h-[450px] overflow-x-hidden overflow-y-auto p-[4px] no-scrollbar">
-//               <MsgContainer msg="This is a new message with multi line support, with ellipsis support and here we go" />
-//               <MsgContainer msg="This is a new message with 1 line" />
-//               <MsgContainer msg="This is a new message with 1 line" />
-//               <MsgContainer msg="This is a new message with 1 line" />
-//               <MsgContainer msg="This is a new message with 1 line" />
-//               <MsgContainer msg="This is a new message with 1 line" />
-//               <MsgContainer msg="This is a new message with 1 line" />
-//               <MsgContainer msg="This is a new message with 1 line" />
-//               <MsgContainer msg="This is a new message with 1 line" />
-//               <MsgContainer msg="This is a new message with 1 line" />
-//             </div>
-//           </div>
-//           <div className="flex flex-col justify-between">
-//             <div className="p-[12px]">
-//               <div className="w-full h-[36px] bg-[#D9D9D9]" />
-//             </div>
-//             <div className="p-[12px]">
-//               <MessageSend />
-//             </div>
-//           </div>
-//         </div>
-//       </AnimatedModal>
-//     </>
-//   )
-// }
+  const startRecording = () => {
+    setIsRecording(true)
+  }
 
-import React, { useState } from 'react';
+  const stopRecording = () => {
+    setRecordingState('stop')
+    setIsRecording(false)
+  }
 
-const RecordingButton = () => {
-  const [buttonState, setButtonState] = useState('Start Recording');
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isDeleted, setIsDeleted] = useState(false);
+  const forwardStep = () => {
+    setRecordingState('start')
+    setIsRecording(false)
+  }
 
-  const handleButtonClick = () => {
-    if (buttonState === 'Start Recording') {
-      // Start recording
-      setButtonState('Stop Recording');
-      setIsDeleted(false);
-    } else if (buttonState === 'Stop Recording') {
-      // Stop recording
-      setButtonState('Play');
-      setIsPlaying(true);
-      setIsDeleted(true);
-    } else if (buttonState === 'Play') {
-      // Play
-      setButtonState('stop Playing');
-      setIsPlaying(false);
-      // Add your logic for play functionality here
-    }
-    else if (buttonState === 'stop Playing') {
-      // Play
-      setButtonState('Play');
-      setIsPlaying(false);
-      // Add your logic for play functionality here
-    }
-  };
+  const playAudio = () => {
+    setAudioState("pause")
+  }
+
+  const pauseAudio = () => {
+    setAudioState("play")
+  }
+
+  const deleteAudio = () => {
+    setAudioState('play')
+    setRecordingState('start')
+    setIsRecording(false);
+  }
 
   return (
-    <div>
-      <button className='bg-green-500 p-4 mx-[10px]' onClick={handleButtonClick}>
-        {buttonState}
-      </button>
-      {isDeleted && (
-        <button className='bg-blue-500 p-4 mx-[10px]' onClick={() => {setButtonState('Start Recording'); setIsDeleted(false)}}>
-          Delete
-        </button>
-      )}
+    <div className="max-w-[390px] h-[744px] px-[24px] py-[78px]">
+      <div className="flex flex-col items-center h-full justify-between">
+        {/*header section*/}
+        <div className="inline-flex flex-col items-center gap-[16px]">
+          <h2 className="text-[#1D1D1F] text-[33px] leading-[40px] text-center font-semibold tracking-[-0.66px]">
+            Read the words
+          </h2>
+          <div className="flex items-center gap-[8px]">
+            <div className="flex py-[4px] px-[12px] items-center bg-[#EBEBEB] rounded-[32px]">
+              <BackwardIcon height={12} width={12} />
+            </div>
+            <p className="text-[#1D1D1F] text-center text-[13px]">60 seconds left</p>
+            <div className="flex py-[4px] px-[12px] items-center bg-[#EBEBEB] rounded-[32px]">
+              <FordwardIcon height={12} width={12} />
+            </div>
+          </div>
+        </div>
+        {/*text section*/}
+        <div className="flex flex-col items-center gap-[40px]">
+          <div className="inline-flex flex-col gap-[12px]">
+            <p className="text-[#1D1D1F] text-[19px] font-semibold leading-[150%] max-w-[342px]">
+              The clay felt smooth in her hand. She mixed, remixed and brought to life an entire world of soft
+              people.
+            </p>
+            {/*action button area*/}
+            <div className="flex gap-[8px]">
+              <button
+                onClick={audioState == "play" ? playAudio : pauseAudio}
+                className="flex py-[4px] px-[8px] justify-center rounded-[16px] border border-[#187EE7] bg-white"
+                disabled={recordingState != 'stop'}
+              >
+                <div className="flex items-center gap-[4px]">
+                  <Icon frameClass="h-[20px] w-[20px] text-[#187EE7]">
+                    {audioState == "play" ? (<PlayIcon />) : (<StopIcon/>)}
+                  </Icon>
+                  <p className="w-[32px] text-[#187EE7] text-[13px] font-[500] leading-[20px]">
+                    {audioState == "play" ? ("Play") : ("Stop")}
+                  </p>
+                </div>
+              </button>
+              <button
+                onClick={deleteAudio}
+                disabled={recordingState != 'stop'}
+                className="flex py-[4px] px-[8px] justify-center rounded-[16px] bg-white"
+              >
+                <Icon frameClass="h-[20px] w-[20px]">
+                  <DeleteIcon />
+                </Icon>
+              </button>
+            </div>
+          </div>
+          {/*audio visualiser*/}
+          <div className="inline-flex py-[4px] px-[8px] justify-center gap-[10px] rounded-[16px] border border-[#1D1D1F1F] shadow-sm">
+            <div className="flex items-center gap-[4px]">
+              <div className="w-[98px] h-[20px] rounded-[24px] bg-[#D9D9D9]">{/*visuliser*/}</div>
+              {isRecording && <p className="text-[#1D1D1F] text-[13px] leading-[20px] ">Recording...</p>}
+            </div>
+          </div>
+        </div>
+
+        {/*buttons area*/}
+        <div className="inline-flex items-center gap-[16px]">
+          <button className="flex p-[12px] items-center rounded-[32px] bg-white">
+            <BigBackwordIcon height={24} width={24} />
+          </button>
+          {recordingState == 'start' && (
+            <button
+              onClick={isRecording ? stopRecording : startRecording}
+              className={`p-[16px] flex items-center rounded-[32px] bg-[#E71818]`}
+            >
+              <Icon frameClass="h-[24px] w-[24px] text-white">
+                {isRecording ? <StopIcon /> : <MicIcon />}
+              </Icon>
+            </button>
+          )}
+          {recordingState == 'stop' && (
+            <button
+              onClick={forwardStep}
+              className={`p-[16px] flex items-center rounded-[32px] bg-[#187EE7]`}
+            >
+              <BigForwardIcon height={24} width={24} className="text-white" />
+            </button>
+          )}
+          {recordingState == 'start'
+            ? (
+              <button className="flex p-[12px] items-center rounded-[32px] bg-white">
+                <BigForwardIcon height={24} width={24} />
+              </button>
+            )
+            : <div className="h-[48px] w-[48px]" />}
+        </div>
+      </div>
     </div>
-  );
-};
-
-export default RecordingButton;
-
-
+  )
+}

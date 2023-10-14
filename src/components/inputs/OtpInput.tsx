@@ -1,5 +1,5 @@
-import { FC, useState } from "react"
-import ShownError from "./ShowError"
+import { FC, useState } from 'react'
+import ShownError from './ShowError'
 import '~/styles/Input.css'
 
 interface Props {
@@ -9,7 +9,7 @@ interface Props {
   setError: (value: string | null) => void
 }
 
-const OTPInput:FC<Props> = ({handleOtpSubmit, disabled, haveError, setError}) => {
+const OTPInput: FC<Props> = ({ handleOtpSubmit, disabled, haveError, setError }) => {
   const PIN_LENGTH = 6
   const [pin, setPin] = useState<Array<string | null>>(
     new Array(PIN_LENGTH).fill(null),
@@ -69,35 +69,35 @@ const OTPInput:FC<Props> = ({handleOtpSubmit, disabled, haveError, setError}) =>
             max={9}
             className="border h-[52px] w-[52px] text-center bg-[#F2F2F2] focus:border-[#0071e3] outline-none border-[3px] focus:shadow font-[700] text-[1.25rem] leading-[20px] p-[2px] rounded-[.5rem] disabled:opacity-50 disabled:bg-gray-100"
             value={pin[index] ?? ''}
-            onInput={(e) => {
-              e.preventDefault();
-              const updatedPin = [...pin];
-              updatedPin[index] = e.currentTarget.value;
+            onInput={e => {
+              e.preventDefault()
+              const updatedPin = [...pin]
+              updatedPin[index] = e.currentTarget.value
               for (const [i, v] of updatedPin.entries()) {
                 if (v !== '' && isNaN(parseInt(v as string))) {
-                  updatedPin[i] = '';
+                  updatedPin[i] = ''
                 }
               }
-              e.currentTarget.value = updatedPin[index] as string;
-              setError('');
-              onInput(e.currentTarget.value, index);
+              e.currentTarget.value = updatedPin[index] as string
+              setError('')
+              onInput(e.currentTarget.value, index)
             }}
-            onKeyDown={(e) => {
+            onKeyDown={e => {
               if (e.key === 'Backspace') {
                 if (index === 0) {
-                  e.preventDefault();
-                  const updatedPin = new Array(PIN_LENGTH).fill(null);
-                  setPin(updatedPin);
-                  document.getElementById(`pin-0`)?.focus();
+                  e.preventDefault()
+                  const updatedPin = new Array(PIN_LENGTH).fill(null)
+                  setPin(updatedPin)
+                  document.getElementById(`pin-0`)?.focus()
                 } else {
-                  const updatedPin = [...pin];
-                  const ele = updatedPin[index];
+                  const updatedPin = [...pin]
+                  const ele = updatedPin[index]
                   if (!ele) {
-                    e.preventDefault();
-                    document.getElementById(`pin-${index - 1}`)?.focus();
+                    e.preventDefault()
+                    document.getElementById(`pin-${index - 1}`)?.focus()
                   } else {
-                    updatedPin[index] = null;
-                    setPin(updatedPin);
+                    updatedPin[index] = null
+                    setPin(updatedPin)
                   }
                 }
               }
