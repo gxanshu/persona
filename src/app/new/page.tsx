@@ -12,6 +12,7 @@ import {
   PlayIcon,
   StopIcon,
 } from '~/assets/icons'
+// @ts-ignore
 import { LiveAudioVisualizer } from 'react-audio-visualize'
 
 type RecordingState = 'start' | 'stop'
