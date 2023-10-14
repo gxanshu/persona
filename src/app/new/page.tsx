@@ -67,6 +67,7 @@ export default function AudioCloning() {
     const audioUrl = URL.createObjectURL(blobObj)
     audioFile.current = new Audio()
     audioFile.current.src = audioUrl
+    audioFile.current.load()
     console.log('Recorded')
   }
 
