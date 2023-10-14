@@ -65,7 +65,8 @@ export default function AudioCloning() {
     }
     const blobObj = new Blob(audioChunks, { type: 'audio/webm' })
     const audioUrl = URL.createObjectURL(blobObj)
-    audioFile.current = new Audio(audioUrl)
+    audioFile.current = new Audio()
+    audioFile.current.src = audioUrl
     console.log('Recorded')
   }
 
