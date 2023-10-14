@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import {
   BackwardIcon,
   BigBackwordIcon,
@@ -12,22 +12,53 @@ import {
   PlayIcon,
   StopIcon,
 } from '~/assets/icons'
+import { LiveAudioVisualizer } from 'react-audio-visualize'
 
 type RecordingState = 'start' | 'stop'
-type AudioState = "play" | "pause"
+type AudioState = 'play' | 'pause'
 
 export default function AudioCloning() {
   const [recordingState, setRecordingState] = useState<RecordingState>('start')
   const [audioState, setAudioState] = useState<AudioState>('play')
   const [isRecording, setIsRecording] = useState<boolean>(false)
+  const mediaRecoder = useRef<MediaRecorder>()
+  const audioFile = useRef<HTMLAudioElement>()
+  const [audioChunks, setAudioChunks] = useState<Blob[]>([])
 
   const startRecording = () => {
-    setIsRecording(true)
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(stream => {
+        // Initialize the media recorder object
+        mediaRecoder.current = new MediaRecorder(stream)
+
+        let localAudioChunks: Blob[] = []
+
+        // dataavailable event is fired when the recording is stopped
+        mediaRecoder.current.addEventListener('dataavailable', event => {
+          if (typeof event.data === 'undefined') return
+          if (event.data.size === 0) return
+          localAudioChunks.push(event.data)
+        })
+        console.log(localAudioChunks)
+        setAudioChunks(localAudioChunks)
+
+        setIsRecording(true)
+        mediaRecoder.current.start(1000)
+        console.log('Recording started! Speak now.')
+      }).catch(err => {
+        // If the user denies permission to record audio, then display an error.
+        console.log('Error: ' + err)
+      })
   }
 
   const stopRecording = () => {
     setRecordingState('stop')
     setIsRecording(false)
+    mediaRecoder.current?.stop()
+    const blobObj = new Blob(audioChunks, { type: 'audio/webm' })
+    const audioUrl = URL.createObjectURL(blobObj)
+    audioFile.current = new Audio(audioUrl)
+    console.log('Recorded')
   }
 
   const forwardStep = () => {
@@ -36,17 +67,31 @@ export default function AudioCloning() {
   }
 
   const playAudio = () => {
-    setAudioState("pause")
+    setAudioState('pause')
+    if (audioFile.current) {
+      audioFile.current.play()
+      audioFile.current.addEventListener('ended', () => {
+        setAudioState('play')
+      })
+    }
   }
 
   const pauseAudio = () => {
-    setAudioState("play")
+    setAudioState('play')
+    if (audioFile.current) {
+      audioFile.current.pause()
+    }
   }
 
   const deleteAudio = () => {
     setAudioState('play')
     setRecordingState('start')
-    setIsRecording(false);
+    setIsRecording(false)
+    if (audioFile.current) {
+      audioFile.current.pause()
+    }
+    audioFile.current = undefined
+    mediaRecoder.current = undefined
   }
 
   return (
@@ -77,16 +122,16 @@ export default function AudioCloning() {
             {/*action button area*/}
             <div className="flex gap-[8px]">
               <button
-                onClick={audioState == "play" ? playAudio : pauseAudio}
+                onClick={audioState == 'play' ? playAudio : pauseAudio}
                 className="flex py-[4px] px-[8px] justify-center rounded-[16px] border border-[#187EE7] bg-white"
                 disabled={recordingState != 'stop'}
               >
                 <div className="flex items-center gap-[4px]">
                   <Icon frameClass="h-[20px] w-[20px] text-[#187EE7]">
-                    {audioState == "play" ? (<PlayIcon />) : (<StopIcon/>)}
+                    {audioState == 'play' ? <PlayIcon /> : <StopIcon />}
                   </Icon>
                   <p className="w-[32px] text-[#187EE7] text-[13px] font-[500] leading-[20px]">
-                    {audioState == "play" ? ("Play") : ("Stop")}
+                    {audioState == 'play' ? ('Play') : ('Stop')}
                   </p>
                 </div>
               </button>
@@ -104,7 +149,13 @@ export default function AudioCloning() {
           {/*audio visualiser*/}
           <div className="inline-flex py-[4px] px-[8px] justify-center gap-[10px] rounded-[16px] border border-[#1D1D1F1F] shadow-sm">
             <div className="flex items-center gap-[4px]">
-              <div className="w-[98px] h-[20px] rounded-[24px] bg-[#D9D9D9]">{/*visuliser*/}</div>
+              <div
+                className={`w-[98px] h-[20px] rounded-[24px] ${mediaRecoder.current ? '' : 'bg-[#D9D9D9]'}`}
+              >
+                {mediaRecoder.current && (
+                  <LiveAudioVisualizer mediaRecorder={mediaRecoder.current} width={98} height={20} />
+                )}
+              </div>
               {isRecording && <p className="text-[#1D1D1F] text-[13px] leading-[20px] ">Recording...</p>}
             </div>
           </div>
