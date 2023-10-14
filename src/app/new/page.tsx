@@ -26,6 +26,7 @@ export default function AudioCloning() {
   const audioFile = useRef<HTMLAudioElement>()
   const streamRef = useRef<MediaStream>()
   const [audioChunks, setAudioChunks] = useState<Blob[]>([])
+  const [time, setTime] = useState<number>(60)
 
   const startRecording = () => {
     navigator.mediaDevices.getUserMedia({ audio: true })
@@ -68,6 +69,18 @@ export default function AudioCloning() {
     audioFile.current = new Audio()
     audioFile.current.src = audioUrl
     audioFile.current.load()
+    // finding audio timing
+    const audioContext = new AudioContext();
+    const audioReader = new FileReader();
+    audioReader.onload = function () {
+      audioContext.decodeAudioData(audioReader.result as ArrayBuffer, function (audioBuffer) {
+        const durationInSeconds = audioBuffer.duration;
+        console.log('Audio duration: ' + durationInSeconds + ' seconds');
+        setTime((prev)=> prev - Math.round(durationInSeconds))
+      });
+    };
+
+    audioReader.readAsArrayBuffer(blobObj);
     console.log('Recorded')
   }
 
@@ -79,8 +92,10 @@ export default function AudioCloning() {
 
   const playAudio = () => {
     setAudioState('pause')
-    alert(audioFile.current)
+    // alert(audioFile.current)
     if (audioFile.current) {
+      let duration = audioFile.current.duration
+      console.log(duration)
       audioFile.current.play()
       audioFile.current.addEventListener('ended', () => {
         setAudioState('play')
@@ -119,7 +134,7 @@ export default function AudioCloning() {
             <div className="flex py-[4px] px-[12px] items-center bg-[#EBEBEB] rounded-[32px]">
               <BackwardIcon height={12} width={12} />
             </div>
-            <p className="text-[#1D1D1F] text-center text-[13px]">60 seconds left</p>
+            <p className="text-[#1D1D1F] text-center text-[13px]">{time} seconds left</p>
             <div className="flex py-[4px] px-[12px] items-center bg-[#EBEBEB] rounded-[32px]">
               <FordwardIcon height={12} width={12} />
             </div>
@@ -136,7 +151,7 @@ export default function AudioCloning() {
               {recordingState == "start" ? (<div className="inline-flex py-[4px] px-[8px] justify-center gap-[10px] rounded-[16px] border border-[#1D1D1F1F] shadow-sm">
             <div className="flex items-center gap-[4px]">
               <div
-                className={`w-[98px] h-[20px] rounded-[24px] ${mediaRecoder.current ? '' : 'bg-[#D9D9D9]'}`}
+                className={`w-[98px] h-[20px] rounded-[24px]`}
               >
                 {mediaRecoder.current && (
                   <LiveAudioVisualizer mediaRecorder={mediaRecoder.current} width={98} height={20} />
