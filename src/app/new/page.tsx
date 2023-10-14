@@ -24,11 +24,13 @@ export default function AudioCloning() {
   const [isRecording, setIsRecording] = useState<boolean>(false)
   const mediaRecoder = useRef<MediaRecorder>()
   const audioFile = useRef<HTMLAudioElement>()
+  const streamRef = useRef<MediaStream>()
   const [audioChunks, setAudioChunks] = useState<Blob[]>([])
 
   const startRecording = () => {
     navigator.mediaDevices.getUserMedia({ audio: true })
       .then(stream => {
+        streamRef.current = stream;
         // Initialize the media recorder object
         mediaRecoder.current = new MediaRecorder(stream)
 
@@ -56,6 +58,11 @@ export default function AudioCloning() {
     setRecordingState('stop')
     setIsRecording(false)
     mediaRecoder.current?.stop()
+    if (streamRef.current) { 
+      streamRef.current.getTracks().forEach(function(track) { 
+        track.stop(); 
+      }); 
+    }
     const blobObj = new Blob(audioChunks, { type: 'audio/webm' })
     const audioUrl = URL.createObjectURL(blobObj)
     audioFile.current = new Audio(audioUrl)
