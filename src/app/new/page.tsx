@@ -78,6 +78,7 @@ export default function AudioCloning() {
 
   const playAudio = () => {
     setAudioState('pause')
+    alert(audioFile.current)
     if (audioFile.current) {
       audioFile.current.play()
       audioFile.current.addEventListener('ended', () => {
