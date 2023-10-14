@@ -42,34 +42,34 @@ export default function AudioCloning() {
   const startRecording = () => {
     navigator.mediaDevices.getUserMedia({ audio: true })
       .then(stream => {
-        if(!streamRef.current){
+        if (!streamRef.current) {
           streamRef.current = stream
         }
         // Initialize the media recorder object
-        if(!mediaRecoder.current){
+        if (!mediaRecoder.current) {
           mediaRecoder.current = new MediaRecorder(stream)
         }
 
-        let localAudioChunks: Blob[] = []; // Copy the existing audioChunks
+        let localAudioChunks: Blob[] = [] // Copy the existing audioChunks
 
-      // dataavailable event is fired when the recording is stopped
-      mediaRecoder.current.addEventListener('dataavailable', event => {
-        if (typeof event.data === 'undefined') return;
-        if (event.data.size === 0) return;
-        localAudioChunks.push(event.data); // Append new audio data to the array
+        // dataavailable event is fired when the recording is stopped
+        mediaRecoder.current.addEventListener('dataavailable', event => {
+          if (typeof event.data === 'undefined') return
+          if (event.data.size === 0) return
+          localAudioChunks.push(event.data) // Append new audio data to the array
 
-        // Update the state with the updated audioChunks
-        setAudioChunks((p)=> {
-          let local = p; // coping last state
-          local[step] = localAudioChunks; // replacing current step value's container to recorded value
-          return local; // this is array of array of chunks with new data in it
-        });
-      });
+          // Update the state with the updated audioChunks
+          setAudioChunks(p => {
+            let local = p // coping last state
+            local[step] = localAudioChunks // replacing current step value's container to recorded value
+            return local // this is array of array of chunks with new data in it
+          })
+        })
 
-      console.log(localAudioChunks)
+        console.log(localAudioChunks)
 
         setIsRecording(true)
-        if(step == 0) mediaRecoder.current.start(100)
+        if (step == 0) mediaRecoder.current.start(100)
         // if (step > 0 && step <= text.length) mediaRecoder.current.resume()
         console.log('Recording started! Speak now.')
       }).catch(err => {
@@ -81,17 +81,17 @@ export default function AudioCloning() {
   const stopRecording = () => {
     setRecordingState('stop')
     setIsRecording(false)
-    if(step < text.length){
+    if (step < text.length) {
       mediaRecoder.current?.pause()
-      console.log("pausing the recording")
+      console.log('pausing the recording')
     } else {
       mediaRecoder.current?.stop()
-      console.log("stopping the recording")
+      console.log('stopping the recording')
       if (streamRef.current) {
-      streamRef.current.getTracks().forEach(function(track) {
-        track.stop()
-      })
-    }
+        streamRef.current.getTracks().forEach(function(track) {
+          track.stop()
+        })
+      }
     }
     const blobObj = new Blob(audioChunks, { type: 'audio/mp3' })
     const audioUrl = URL.createObjectURL(blobObj)
