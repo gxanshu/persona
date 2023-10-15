@@ -296,21 +296,7 @@ export default function AudioCloning() {
               <CircularProgress total={upload[step]}/>
               </div>
             )}
-            {recordingState == 'start'
-              ? (
-                <button
-                  onClick={() => {
-                    setStep(p => {
-                      if (p == 5) return 5
-                      return p + 1
-                    })
-                  }}
-                  className="flex p-[12px] items-center rounded-[32px] bg-white"
-                >
-                  <BigForwardIcon height={24} width={24} />
-                </button>
-              )
-              : <div className="h-[48px] w-[48px]" />}
+            <div className="h-[48px] w-[48px]" />
           </div>
         </div>
       </div>
