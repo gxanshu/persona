@@ -14,6 +14,7 @@ import {
 } from '~/assets/icons'
 // @ts-ignore
 import { LiveAudioVisualizer } from 'react-audio-visualize'
+import { CircularProgress } from '~/components/CircularProgress'
 
 type RecordingState = 'start' | 'stop'
 type AudioState = 'play' | 'pause'
@@ -37,6 +38,7 @@ export default function AudioCloning() {
   const mediaRecorder = useRef<MediaRecorder | undefined>()
   const audioFile = useRef<HTMLAudioElement | undefined>()
   const streamRef = useRef<MediaStream | undefined>()
+  const [upload, setUpload] = useState<number[]>([0, 0, 0, 0, 0, 0])
 
   useEffect(() => {
     if (audioChunks[step].length) {
@@ -127,6 +129,11 @@ export default function AudioCloning() {
 
   const deleteAudio = () => {
     setRecordingState('start')
+    setUpload((prev)=> {
+      let local = [...prev];
+      local[step] = 0;
+      return local;
+    })
     setIsRecording(false)
     if (audioFile.current) {
       audioFile.current.pause()
@@ -250,18 +257,44 @@ export default function AudioCloning() {
               </button>
             )}
             {recordingState == 'stop' && (
+              <div className='relative flex justify-center items-center'>
               <button
                 onClick={() => {
+                  if(upload[step] < 100){
+                    const interval = setInterval(() => {
+                    setUpload((prevProgress) => {
+                    if (prevProgress[step] < 100) {
+                      let local = [...prevProgress];
+                      local[step] = local[step] + 1
+                      return local;
+                    }
+                    clearInterval(interval);
+                    return prevProgress;
+                  });
+                }, 10); // Adjust the interval to control the speed of progress
+
+                setTimeout(() => {
+                  clearInterval(interval)
                   if (!audioChunks[step + 1].length) setRecordingState('start')
-                  setStep(p => {
-                    if (p == 5) return 5
-                    return p + 1
-                  })
+                    setStep(p => {
+                      if (p == 5) return 5
+                      return p + 1
+                    })
+                  }, 1500); // Stop the progress after 3 seconds
+                  } else {
+                    if (!audioChunks[step + 1].length) setRecordingState('start')
+                    setStep(p => {
+                      if (p == 5) return 5
+                      return p + 1
+                    })
+                  }
                 }}
                 className={`p-[16px] flex items-center rounded-[32px] bg-[#187EE7]`}
               >
                 <BigForwardIcon height={24} width={24} className="text-white" />
               </button>
+              <CircularProgress total={upload[step]}/>
+              </div>
             )}
             {recordingState == 'start'
               ? (

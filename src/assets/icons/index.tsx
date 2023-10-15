@@ -38,6 +38,7 @@ interface IconProps {
   ref?: Ref<HTMLDivElement>
 }
 
+/*FIXME: ref are not forward in this way*/
 const Icon: React.FC<IconProps> = ({ containerClass, frameClass, children, ref }) => {
   return (
     <IconContainer className={containerClass} ref={ref}>
