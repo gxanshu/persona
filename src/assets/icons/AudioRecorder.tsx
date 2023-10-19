@@ -97,7 +97,7 @@ export const BigForwardIcon = (props: svgProps) => (
   </svg>
 )
 
-export const CrossIcon = (props: svgProps) => (
+export const AudioCrossIcon = (props: svgProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={24}
