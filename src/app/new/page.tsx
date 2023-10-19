@@ -1,6 +1,6 @@
 'use client'
 import aiavatar from "~/assets/images/aiavatar.png"
-import { CrossIcon, Icon, MicIcon } from "~/assets/icons"
+import { AudioCrossIcon, Icon, MicIcon } from "~/assets/icons"
 import { useRef, useState } from "react"
 import Image from "next/image"
 // @ts-ignore
@@ -91,7 +91,7 @@ export default function AiVoiceRecorder() {
 
 				<button onClick={recording ? stopRecording : startRecording} className="absolute bottom-[32px] left-[50%]" style={{transform: "translateX(-50%)"}}>
 					<Icon frameClass="h-[24px] w-[24px] text-white" containerClass={`flex items-center justify-center p-[16px] rounded-[32px] ${recording ? "bg-[#898A8A]": "bg-[#E71818]"}`}>
-						{recording ? (<CrossIcon/>): (<MicIcon/>)}
+						{recording ? (<AudioCrossIcon/>): (<MicIcon/>)}
 					</Icon>
 				</button>
 			</div>
