@@ -112,3 +112,8 @@ body::-webkit-scrollbar {
   width: 0px;
   display: none;
 }
+
+
+.bg-cover {
+  background-size: cover !important;
+}
