@@ -1,6 +1,6 @@
 'use client'
 import aiavatar from "~/assets/images/aiavatar.png"
-import { Icon, MicIcon } from "~/assets/icons"
+import { CrossIcon, Icon, MicIcon } from "~/assets/icons"
 import { useRef, useState } from "react"
 import Image from "next/image"
 // @ts-ignore
@@ -9,6 +9,7 @@ import { LiveAudioVisualizer } from 'react-audio-visualize'
 export default function AiVoiceRecorder() {
 	const mediaRecorder = useRef<MediaRecorder | undefined>()
   const streamRef = useRef<MediaStream | undefined>()
+  const [recording, setRecording] = useState(false)
   const [audioChunks, setAudioChunks] = useState<Blob[]>([])
 
   const startRecording = () => {
@@ -26,13 +27,30 @@ export default function AiVoiceRecorder() {
           }
         })
 
-        // setIsRecording(true)
+        setRecording(true)
         mediaRecorder.current.start(100)
         console.log('Recording started! Speak now.')
       })
       .catch(err => {
         console.log('Error: ' + err)
       })
+  }
+
+  const stopRecording = () => {
+    if (mediaRecorder.current) {
+      mediaRecorder.current.stop()
+      // removing previous mediaRecorder service from RAM
+      // so this can recreate again (helps audio visuliser)
+      mediaRecorder.current = undefined
+      setRecording(false)
+    }
+
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => {
+        track.stop()
+      })
+    }
+    console.log('Recorded')
   }
 
 	return (
@@ -46,8 +64,8 @@ export default function AiVoiceRecorder() {
 					className="rounded-[24px] w-[342px] h-[400px]"
 					alt=""
 				/>
-				<div className="h-full w-full rounded-[24px] backdrop-blur-lg absolute inset-0"
-					style={{background: "linear-gradient(180deg, rgba(255, 255, 255, 0.56) 0%, rgba(0, 0, 0, 0.56) 100%)"}}
+				<div className={`h-full w-full rounded-[24px] ${recording ? "backdrop-blur-lg": ""} absolute inset-0`}
+					style={{background: `${mediaRecorder.current ? "linear-gradient(180deg, rgba(255, 255, 255, 0.56) 0%, rgba(0, 0, 0, 0.56) 100%)": "linear-gradient(180deg, rgba(0, 0, 0, 0.24) 0%, rgba(0, 0, 0, 0.24) 100%)"}`}}
 				/>
 
 				<div className="absolute bottom-[136px] left-[50%] h-[20px]" style={{transform: "translateX(-50%)"}}>
@@ -57,7 +75,9 @@ export default function AiVoiceRecorder() {
 				</div>
 
 				<div className="absolute bottom-[200px] left-[50%]" style={{transform: "translateX(-50%)"}}>
-					<p className="w-[236px] text-white text-center text-[21px] font-[300] leading-[150%]">Go ahead, I’m listening.....</p>
+					{recording && (
+						<p className="w-[236px] text-white text-center text-[21px] font-[300] leading-[150%]">Go ahead, I’m listening.....</p>
+					)}
 				</div>
 
 				<div className="absolute top-[16px] left-[50%]" style={{transform: "translateX(-50%)"}}>
@@ -69,9 +89,9 @@ export default function AiVoiceRecorder() {
 					</div>
 				</div>
 
-				<button onClick={startRecording} className="absolute bottom-[32px] left-[50%]" style={{transform: "translateX(-50%)"}}>
-					<Icon frameClass="h-[24px] w-[24px] text-white" containerClass="flex items-center justify-center p-[16px] rounded-[32px] bg-[#E71818]">
-						<MicIcon/>
+				<button onClick={recording ? stopRecording : startRecording} className="absolute bottom-[32px] left-[50%]" style={{transform: "translateX(-50%)"}}>
+					<Icon frameClass="h-[24px] w-[24px] text-white" containerClass={`flex items-center justify-center p-[16px] rounded-[32px] ${recording ? "bg-[#898A8A]": "bg-[#E71818]"}`}>
+						{recording ? (<CrossIcon/>): (<MicIcon/>)}
 					</Icon>
 				</button>
 			</div>

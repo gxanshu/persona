@@ -96,3 +96,21 @@ export const BigForwardIcon = (props: svgProps) => (
     />
   </svg>
 )
+
+export const CrossIcon = (props: svgProps) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={24}
+    height={24}
+    fill="none"
+    {...props}
+  >
+    <path
+      stroke="#fff"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.4}
+      d="m6 6 12 12M6 18 18 6"
+    />
+  </svg>
+)
