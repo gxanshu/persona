@@ -12,3 +12,19 @@
   animation: scaleAnimation 0.5s forwards;
   animation-fill-mode: both;
 }
+
+@keyframes blurAnimation {
+  0% {
+    backdrop-filter: blur(0px);
+  }
+  100% {
+    backdrop-filter: blur(16px);
+  }
+}
+
+/* Apply the animation to your element */
+.backdrop-animate-05 {
+  animation: blurAnimation 0.5s forwards;
+  animation-fill-mode: both;
+}
+

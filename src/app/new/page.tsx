@@ -65,7 +65,7 @@ export default function AiVoiceRecorder() {
 					className="rounded-[24px] w-[342px] h-[400px]"
 					alt=""
 				/>
-				<div className={`h-full w-full rounded-[24px] ${recording ? "backdrop-blur-lg": ""} absolute inset-0`}
+				<div className={`h-full w-full rounded-[24px] ${recording ? "backdrop-animate-05": ""} absolute inset-0`}
 					style={{background: `${mediaRecorder.current ? "linear-gradient(180deg, rgba(255, 255, 255, 0.56) 0%, rgba(0, 0, 0, 0.56) 100%)": "linear-gradient(180deg, rgba(0, 0, 0, 0.24) 0%, rgba(0, 0, 0, 0.24) 100%)"}`}}
 				/>
 
