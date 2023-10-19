@@ -85,6 +85,8 @@ const Avatar = () => {
 		<div className="relative">
 			<Image
 				src={aiavatar}
+				height={28}
+				width={28}
 				className="rounded-full h-[28px] w-[28px]"
 				alt="user avatar"
 			/>
