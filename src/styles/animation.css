@@ -28,3 +28,18 @@
   animation-fill-mode: both;
 }
 
+@keyframes ReverseblurAnimation {
+  0% {
+    backdrop-filter: blur(16px);
+  }
+  100% {
+    backdrop-filter: blur(0px);
+  }
+}
+
+/* Apply the animation to your element */
+.reverse-backdrop-animate-05 {
+  animation: ReverseblurAnimation 0.5s forwards;
+  animation-fill-mode: both;
+}
+
