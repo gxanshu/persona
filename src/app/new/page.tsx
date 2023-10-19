@@ -5,6 +5,7 @@ import { useRef, useState } from "react"
 import Image from "next/image"
 // @ts-ignore
 import { LiveAudioVisualizer } from 'react-audio-visualize'
+import "~/styles/animation.css"
 
 export default function AiVoiceRecorder() {
 	const mediaRecorder = useRef<MediaRecorder | undefined>()
@@ -76,7 +77,7 @@ export default function AiVoiceRecorder() {
 
 				<div className="absolute bottom-[200px] left-[50%]" style={{transform: "translateX(-50%)"}}>
 					{recording && (
-						<p className="w-[236px] text-white text-center text-[21px] font-[300] leading-[150%]">Go ahead, I’m listening.....</p>
+						<p className="w-[236px] scale-in-05 text-white text-center text-[21px] font-[300] leading-[150%]">Go ahead, I’m listening.....</p>
 					)}
 				</div>
 

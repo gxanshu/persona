@@ -1,0 +1,14 @@
+@keyframes scaleAnimation {
+  0% {
+    transform: scale(0.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Apply the animation to your element */
+.scale-in-05 {
+  animation: scaleAnimation 0.5s forwards;
+  animation-fill-mode: both;
+}
