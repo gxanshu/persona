@@ -72,8 +72,8 @@ const ShareModal = forwardRef(
             <p className="text-[20px] leading-[24px] text-[#0F0F0F] font-[500]">Share</p>
             <button onClick={closeModal}>
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M19.1352 0.864853L1.21631 18.7838" stroke="#030303" stroke-width="1.49324" />
-                <path d="M19.1353 18.7838L1.21633 0.864852" stroke="#030303" stroke-width="1.49324" />
+                <path d="M19.1352 0.864853L1.21631 18.7838" stroke="#030303" strokeWidth="1.49324" />
+                <path d="M19.1353 18.7838L1.21633 0.864852" stroke="#030303" strokeWidth="1.49324" />
               </svg>
             </button>
           </div>
