@@ -54,6 +54,7 @@ const ModalStartImage: React.FC<Props> = props => {
               onClick={() => {
                 updateIndex(index)
               }}
+              key={`index-${index}`}
             >
             </button>
           )
