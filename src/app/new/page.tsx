@@ -1,17 +1,22 @@
 'use client'
 import aiavatar from "~/assets/images/aiavatar.png"
 import { AudioCrossIcon, Icon, MicIcon } from "~/assets/icons"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 // @ts-ignore
 import { LiveAudioVisualizer } from 'react-audio-visualize'
 import "~/styles/animation.css"
+import { v4 as uuidv4 } from 'uuid';
+import { ApiAudioStreaming, spawnedBackendStatus, startAudioStreaming } from "~/api/audioStreaming"
+import { clearInterval } from "timers"
 
 export default function AiVoiceRecorder() {
 	const mediaRecorder = useRef<MediaRecorder | undefined>()
   const streamRef = useRef<MediaStream | undefined>()
   const [recording, setRecording] = useState(false)
   const [audioChunks, setAudioChunks] = useState<Blob[]>([])
+  const [ws, setWs] = useState<WebSocket>()
+  const [isBackendReady, setIsBackendReady] = useState<boolean>(false)
 
   const startRecording = () => {
     navigator.mediaDevices
@@ -21,15 +26,26 @@ export default function AiVoiceRecorder() {
         mediaRecorder.current = new MediaRecorder(stream)
         const localAudioChunks: Blob[] = []
 
-        mediaRecorder.current.addEventListener('dataavailable', event => {
+        mediaRecorder.current.addEventListener('dataavailable', async(event) => {
           if (event.data && event.data.size > 0) {
-            localAudioChunks.push(event.data)
-            setAudioChunks(localAudioChunks)
+          	const chunk = event.data;
+            localAudioChunks.push(chunk)
+            // setAudioChunks(localAudioChunks)
+	           if(ws){
+	           	if (ws.readyState === WebSocket.OPEN) {
+	            // Convert the Blob to ArrayBuffer for sending over WebSocket
+	            const arrayBuffer = await chunk.arrayBuffer();
+	            // sending those thunks to websocket
+	            ws.send(arrayBuffer);
+	          } else {
+	          	console.log("no websocket in state");
+	          }
+           }
           }
         })
 
         setRecording(true)
-        mediaRecorder.current.start(100)
+        mediaRecorder.current.start(500)
         console.log('Recording started! Speak now.')
       })
       .catch(err => {
@@ -53,6 +69,64 @@ export default function AiVoiceRecorder() {
     }
     console.log('Recorded')
   }
+
+  const startWebSocket = async(spawnBackend: ApiAudioStreaming) => {
+  	const id = uuidv4();
+  	console.log("startWebSocket function called", spawnBackend, "and id is", id)
+  	const wsUrl = spawnBackend.url.replace(/^https:\/\//, ''); // removing https
+
+  	const websocket = new WebSocket(`wss://${wsUrl}ws/${id}`);
+  	setWs(websocket)
+
+  	ws?.addEventListener("open", () => {
+    console.info(
+      `[${`wss://${wsUrl}ws/${id}`}] opened ws connection @`, performance.now());
+
+    setTimeout(()=>{
+    	ws?.send(JSON.stringify({
+          "instance_id": "55d67b9c-5428-400f-8da2-204ab1a1ae5c",
+          "group_id": "d7eac060-98dc-4e1a-8ea9-3f67bb31c7d4",
+          "name": "Don bosco",
+          "company_title": "CEO",
+          "company": "Bhuman"
+			}))
+    },1000)
+
+    ws?.addEventListener('close', (event) => {
+    	console.log("connection closed")
+    })
+
+    ws?.addEventListener("error", (error)=> {
+    	console.log("there is an error")
+    })
+  });
+  }
+
+  const connectWebSocket = async() => {
+  	let backendStatusChecker: NodeJS.Timeout; // Declare the interval ID variable
+
+  	const spawnBackend = await startAudioStreaming();
+  	console.log("spawnBackend", spawnBackend)
+
+  	backendStatusChecker = setInterval(async()=> {
+  		const backendStatus = await (await fetch(spawnBackend.status_url)).json() as spawnedBackendStatus
+  		if(backendStatus.state == "Ready"){
+  			console.log('backend is ready')
+  			setIsBackendReady(true)
+  			clearTimeout(backendStatusChecker)
+  			await startWebSocket(spawnBackend);
+  		}
+  		console.log("backendStatus", backendStatus)
+  	}, 1000)
+  }
+
+  useEffect(()=> {
+  	connectWebSocket();
+
+  	return ()=> {
+  		ws?.close()
+  	}
+  }, [])
 
 	return (
 		<div className="h-screen w-full flex items-center justify-center">
@@ -90,8 +164,8 @@ export default function AiVoiceRecorder() {
 					</div>
 				</div>
 
-				<button onClick={recording ? stopRecording : startRecording} className="absolute bottom-[32px] left-[50%]" style={{transform: "translateX(-50%)"}}>
-					<Icon frameClass="h-[24px] w-[24px] text-white" containerClass={`flex items-center justify-center p-[16px] rounded-[32px] ${recording ? "bg-[#898A8A]": "bg-[#E71818]"}`}>
+				<button disabled={!isBackendReady} onClick={recording ? stopRecording : startRecording} className="absolute bottom-[32px] left-[50%]" style={{transform: "translateX(-50%)"}}>
+					<Icon frameClass="h-[24px] w-[24px] text-white" containerClass={`flex items-center justify-center p-[16px] rounded-[32px] ${recording ? "bg-[#898A8A]": "bg-[#E71818]"} ${isBackendReady ? "bg-[#898A8A]": "bg-[#E71818]"}`}>
 						{recording ? (<AudioCrossIcon/>): (<MicIcon/>)}
 					</Icon>
 				</button>
