@@ -8,6 +8,7 @@ export * from './RightArrow'
 export * from './SocialCards'
 export * from './Username'
 export * from './Warning'
+export * from "./AiCallerIcons"
 
 // IconContainer component
 interface IconContainerProps {

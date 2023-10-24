@@ -1,6 +1,6 @@
 'use client'
 import aiavatar from '~/assets/images/aiavatar.png'
-import { AudioCrossIcon, Icon, MicIcon } from '~/assets/icons'
+import { AudioCrossIcon, CallEndIcon, CallIcon, Icon, MicIcon, MuteCallIcon, VideoCallIcon } from '~/assets/icons'
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 // @ts-ignore
@@ -17,6 +17,14 @@ export default function AiVoiceRecorder() {
   const [audioChunks, setAudioChunks] = useState<Blob[]>([])
   const [ws, setWs] = useState<WebSocket>()
   const [isBackendReady, setIsBackendReady] = useState<boolean>(false)
+  const [time, setTime] = useState(0);
+  const timerRef = useRef<number | null>(null);
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const remainingSeconds = (seconds % 60).toString().padStart(2, '0');
+    return `${minutes}:${remainingSeconds}`;
+  };
 
   const startRecording = () => {
     navigator.mediaDevices
@@ -30,21 +38,24 @@ export default function AiVoiceRecorder() {
           if (event.data && event.data.size > 0) {
             const chunk = event.data
             localAudioChunks.push(chunk)
-            // setAudioChunks(localAudioChunks)
-            if (ws) {
-              if (ws.readyState === WebSocket.OPEN) {
-                // Convert the Blob to ArrayBuffer for sending over WebSocket
-                const arrayBuffer = await chunk.arrayBuffer()
-                // sending those thunks to websocket
-                ws.send(arrayBuffer)
-              } else {
-                console.log('no websocket in state')
-              }
-            }
+            setAudioChunks(localAudioChunks)
+            // if (ws) {
+            //   if (ws.readyState === WebSocket.OPEN) {
+            //     // Convert the Blob to ArrayBuffer for sending over WebSocket
+            //     const arrayBuffer = await chunk.arrayBuffer()
+            //     // sending those thunks to websocket
+            //     ws.send(arrayBuffer)
+            //   } else {
+            //     console.log('no websocket in state')
+            //   }
+            // }
           }
         })
 
         setRecording(true)
+        timerRef.current = window.setInterval(() => {
+        	setTime((prevTime) => prevTime + 1);
+      	}, 1000);
         mediaRecorder.current.start(500)
         console.log('Recording started! Speak now.')
       })
@@ -67,6 +78,10 @@ export default function AiVoiceRecorder() {
         track.stop()
       })
     }
+
+    clearTimeout(timerRef.current!);
+    timerRef.current = null;
+    setTime(0)
     console.log('Recorded')
   }
 
@@ -122,13 +137,13 @@ export default function AiVoiceRecorder() {
     }, 1000)
   }
 
-  useEffect(() => {
-    connectWebSocket()
+  // useEffect(() => {
+  //   connectWebSocket()
 
-    return () => {
-      ws?.close()
-    }
-  }, [])
+  //   return () => {
+  //     ws?.close()
+  //   }
+  // }, [])
 
   return (
     <div className="h-screen w-full flex items-center justify-center">
@@ -180,7 +195,11 @@ export default function AiVoiceRecorder() {
             </div>
           </div>
 
-          <button
+          <div className="absolute top-[64px] left-[50%]" style={{ transform: 'translateX(-50%)' }}>
+          	{recording && (<p className='text-white text-center text-[13px] font-medium leading-[150%]'>{formatTime(time)}</p>)}
+          </div>
+
+          {/*<button
             disabled={!isBackendReady}
             onClick={recording ? stopRecording : startRecording}
             className="absolute bottom-[32px] left-[50%]"
@@ -194,7 +213,56 @@ export default function AiVoiceRecorder() {
             >
               {recording ? <AudioCrossIcon /> : <MicIcon />}
             </Icon>
+          </button>*/}
+          <div className='absolute bottom-[32px] left-[50%]' style={{ transform: 'translateX(-50%)' }}>
+          	{!recording ? (<button
+            // disabled={!isBackendReady}
+            onClick={startRecording}
+          >
+            <Icon
+              frameClass="h-[28px] w-[28px]"
+              containerClass="flex items-center justify-center p-[12px] rounded-[32px] bg-white"
+            >
+              <CallIcon/>
+            </Icon>
+          </button>) : (
+          <div className='inline-flex gap-[24px]'>
+          	<button
+            // disabled={!isBackendReady}
+            // onClick={startRecording}
+          >
+            <Icon
+              frameClass="h-[28px] w-[28px] text-white"
+              containerClass="flex items-center justify-center p-[12px] rounded-[32px] border border-[#FFFFFF52] backdrop-blur-lg"
+            >
+              <MuteCallIcon/>
+            </Icon>
           </button>
+          <button
+            // disabled={!isBackendReady}
+            // onClick={startRecording}
+          >
+            <Icon
+              frameClass="h-[28px] w-[28px] text-white"
+              containerClass="flex items-center justify-center p-[12px] rounded-[32px] border border-[#FFFFFF52] backdrop-blur-lg"
+            >
+              <VideoCallIcon/>
+            </Icon>
+          </button>
+          <button
+            // disabled={!isBackendReady}
+            onClick={stopRecording}
+          >
+            <Icon
+              frameClass="h-[28px] w-[28px] text-white"
+              containerClass="flex items-center justify-center p-[12px] rounded-[32px] bg-[#E71818]"
+            >
+              <CallEndIcon/>
+            </Icon>
+          </button>
+          </div>
+          )}
+          </div>
         </div>
       </div>
     </div>
