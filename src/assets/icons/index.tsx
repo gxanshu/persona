@@ -1,4 +1,5 @@
 import React, { ReactNode, Ref, SVGAttributes } from 'react'
+export * from './AiCallerIcons'
 export * from './AudioRecorder'
 export * from './Logo'
 export * from './ModalIcons'
@@ -8,7 +9,6 @@ export * from './RightArrow'
 export * from './SocialCards'
 export * from './Username'
 export * from './Warning'
-export * from "./AiCallerIcons"
 
 // IconContainer component
 interface IconContainerProps {
