@@ -1,4 +1,4 @@
-export const API_ENDPOINT = "https://clone-management-svc.safeapp.workers.dev"
+export const API_ENDPOINT = 'https://clone-management-svc.safeapp.workers.dev'
 
 export interface ApiAudioStreaming {
   name: string
@@ -9,16 +9,16 @@ export interface ApiAudioStreaming {
 }
 
 export interface spawnedBackendStatus {
-  state: "Ready" | "Swept" | string
+  state: 'Ready' | 'Swept' | string
   backend: string
   time: string
 }
 
-export async function startAudioStreaming(){
-	const responce = await fetch(`${API_ENDPOINT}/backend/audio`, {
-		method: "GET"
-	})
+export async function startAudioStreaming() {
+  const responce = await fetch(`${API_ENDPOINT}/backend/audio`, {
+    method: 'GET',
+  })
 
-	const data = await responce.json()
-	return data as ApiAudioStreaming
+  const data = await responce.json()
+  return data as ApiAudioStreaming
 }

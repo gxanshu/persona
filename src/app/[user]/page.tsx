@@ -19,12 +19,11 @@ export default function ProfilePage() {
   const shareModalRef = useRef<HTMLDialogElement>(null)
   const chatModalRef = useRef<HTMLDialogElement>(null)
 
-
   const openModal = (modalRef: RefObject<HTMLDialogElement>) => {
-    if(modalRef.current){
+    if (modalRef.current) {
       modalRef.current.showModal()
     }
-  } 
+  }
 
   return (
     <div
@@ -37,7 +36,7 @@ export default function ProfilePage() {
         // style={{ animation: 'fadeIn 0.5s' }}
       >
         {/*avatar area*/}
-        <AvatarSection/>
+        <AvatarSection />
         <div className="flex flex-col gap-[32px]">
           <div className="flex gap-[96px] w-full">
             <div className="flex flex-col gap-[8px]">
@@ -52,17 +51,32 @@ export default function ProfilePage() {
           </div>
           <div className="grid sm:gap-[32px] gap-[20px] grid-cols-2 sm:grid-cols-4 max-w-[800px]">
             <SocialCard className="col-span-2 row-span-2" delay={0.1} />
-            <Card icon={<ProfileVoice />} text="Add a Voice" buttonHandler={()=> openModal(audioModalRef)} delay={0.2} />
+            <Card
+              icon={<ProfileVoice />}
+              text="Add a Voice"
+              buttonHandler={() => openModal(audioModalRef)}
+              delay={0.2}
+            />
             <Card icon={<ProfileFace />} text="Add a Face" delay={0.2} />
             <Card
               icon={<ProfileBusiness />}
               text="Monetize your Persona"
               containerClass="col-span-2"
-              buttonHandler={()=> openModal(shareModalRef)}
+              buttonHandler={() => openModal(shareModalRef)}
               delay={0.4}
             />
-            <Card icon={<ProfileMobile />} text="Get a Number" buttonHandler={()=> openModal(chatModalRef)} delay={0.5} />
-            <Card icon={<ProfileBrain />} buttonHandler={()=> openModal(phoneModalRef)} text="Make it smart" delay={0.6} />
+            <Card
+              icon={<ProfileMobile />}
+              text="Get a Number"
+              buttonHandler={() => openModal(chatModalRef)}
+              delay={0.5}
+            />
+            <Card
+              icon={<ProfileBrain />}
+              buttonHandler={() => openModal(phoneModalRef)}
+              text="Make it smart"
+              delay={0.6}
+            />
             <AboutCard containerClass="col-span-2" delay={0.7} />
           </div>
         </div>

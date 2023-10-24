@@ -98,13 +98,7 @@ export const BigForwardIcon = (props: svgProps) => (
 )
 
 export const AudioCrossIcon = (props: svgProps) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={24}
-    height={24}
-    fill="none"
-    {...props}
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} fill="none" {...props}>
     <path
       stroke="#fff"
       strokeLinecap="round"
