@@ -214,12 +214,6 @@ export default function AiVoiceRecorder() {
     // }
   }, [])
 
-  window.testing = ()=> {
-  	console.log(ws);
-  	console.log(audioContext)
-  	console.log(audioBlobs)
-  }
-
   return (
     <div className="h-screen w-full flex items-center justify-center">
       <div className="h-full p-[24px]">
