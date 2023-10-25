@@ -376,11 +376,13 @@ export default function AudioCloning() {
                   if(upload[step] === 0){
                     handleStepUpload();
                   } else {
-                  if (audioChunks[step + 1] != undefined && time != 0) setRecordingState('start')
+                  if (audioChunks[step + 1] != undefined && time != 0){
+                    setRecordingState('start')
                     setStep(p => {
                       if (p == 5) return 5
                       return p + 1
                     })
+                  }
                   }
                 }}
                 className={`p-[16px] flex items-center rounded-[32px] bg-[#187EE7]`}
