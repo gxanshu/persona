@@ -9,6 +9,8 @@ import '~/styles/animation.css'
 import { v4 as uuidv4 } from 'uuid'
 import { ApiAudioStreaming, spawnedBackendStatus, startAudioStreaming } from '~/api/audioStreaming'
 
+let interval: NodeJS.Timeout | undefined = undefined;
+
 export default function AiVoiceRecorder() {
   const mediaRecorder = useRef<MediaRecorder | undefined>()
   const streamRef = useRef<MediaStream | undefined>()
@@ -30,6 +32,10 @@ export default function AiVoiceRecorder() {
   }
 
   const startRecording = () => {
+    ws?.send("start");
+    if(interval) {
+      clearInterval(interval);
+    }
     navigator.mediaDevices
       .getUserMedia({ audio: true })
       .then(stream => {
@@ -100,6 +106,14 @@ export default function AiVoiceRecorder() {
         `[${`wss://${wsUrl}ws/${id}`}] opened ws connection @`,
         performance.now(),
       )
+      setTimeout(() => {
+        setTimeout(()=>{
+          interval = setInterval(() => {
+            console.info("sending event");
+            websocket.send('');
+          }, 5000);
+        },1000)
+      }, 1000)
     }
 
     websocket.onmessage = (event) => {
