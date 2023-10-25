@@ -190,11 +190,14 @@ export default function AudioCloning() {
           handleFinalUpload(newIds); // Call handleFinalUpload with the updated array
           return newIds; // Return the updated array
         });
-          if (audioChunks[step + 1] != undefined && time != 0) setRecordingState('start')
-          setStep(p => {
-          if (p == 5) return 5
-            return p + 1
-          })
+          if (audioChunks[step + 1] != undefined && time != 0){
+            console.log("onready step changing")
+            setRecordingState('start')
+            setStep(p => {
+            if (p == 5) return 5
+              return p + 1
+            })
+          }
       }
     }
 
