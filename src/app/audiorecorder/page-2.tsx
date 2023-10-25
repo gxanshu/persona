@@ -12,6 +12,7 @@ import {
   PlayIcon,
   StopIcon,
 } from '~/assets/icons'
+import axios from 'axios'
 // @ts-ignore
 import { LiveAudioVisualizer } from 'react-audio-visualize'
 import { CircularProgress } from '~/components/CircularProgress'
@@ -34,13 +35,18 @@ export default function AudioCloning() {
   const [isRecording, setIsRecording] = useState(false)
   const [audioState, setAudioState] = useState<AudioState>('play')
   const [recordingState, setRecordingState] = useState<RecordingState>('start')
-  const [audioChunks, setAudioChunks] = useState<Blob[][]>([[], [], [], [], [], []])
+  const [audioChunks, setAudioChunks] = useState<Blob[][]>([
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ])
   const mediaRecorder = useRef<MediaRecorder | undefined>()
   const audioFile = useRef<HTMLAudioElement | undefined>()
   const streamRef = useRef<MediaStream | undefined>()
   const [upload, setUpload] = useState<number[]>([0, 0, 0, 0, 0, 0])
-  const [uploadIds, setUploadIds] = useState<string[]>([])
-  const timerRef = useRef<number | null>(null)
 
   useEffect(() => {
     if (audioChunks[step].length) {
@@ -48,13 +54,6 @@ export default function AudioCloning() {
       setIsRecording(false)
     }
   }, [step]) // will update on every step change
-
-  useEffect(()=> {
-    console.log("timer called")
-    if(time == 0){
-      stopRecording();
-    }
-  }, [time])
 
   const startRecording = () => {
     navigator.mediaDevices
@@ -78,9 +77,6 @@ export default function AudioCloning() {
 
         setIsRecording(true)
         mediaRecorder.current.start(100)
-        timerRef.current = window.setInterval(() => {
-          setTime(prevTime => prevTime - 1)
-        }, 1000)
         console.log('Recording started! Speak now.')
       })
       .catch(err => {
@@ -104,8 +100,22 @@ export default function AudioCloning() {
       })
     }
 
-    clearTimeout(timerRef.current!)
-    timerRef.current = null
+    const blobObj = new Blob(audioChunks[step], { type: 'audio/mp3' })
+    const audioContext = new AudioContext()
+    const audioReader = new FileReader()
+
+    audioReader.onload = function() {
+      audioContext.decodeAudioData(
+        audioReader.result as ArrayBuffer,
+        function(audioBuffer) {
+          const durationInSeconds = Math.round(audioBuffer.duration)
+          console.log('Audio duration: ' + durationInSeconds + ' seconds')
+          setTime(prevTime => prevTime - durationInSeconds)
+        },
+      )
+    }
+
+    audioReader.readAsArrayBuffer(blobObj)
     console.log('Recorded')
   }
 
@@ -130,10 +140,10 @@ export default function AudioCloning() {
 
   const deleteAudio = () => {
     setRecordingState('start')
-    setUpload((prev)=> {
-      let local = [...prev];
-      local[step] = 0;
-      return local;
+    setUpload(prev => {
+      let local = [...prev]
+      local[step] = 0
+      return local
     })
     setIsRecording(false)
     if (audioFile.current) {
@@ -153,93 +163,44 @@ export default function AudioCloning() {
     const audioReader = new FileReader()
 
     audioReader.onload = function() {
-      audioContext.decodeAudioData(audioReader.result as ArrayBuffer, function(audioBuffer) {
-        const durationInSeconds = Math.round(audioBuffer.duration)
-        console.log('Audio duration: ' + durationInSeconds + ' seconds')
-        setTime(prevTime => prevTime + durationInSeconds)
-      })
+      audioContext.decodeAudioData(
+        audioReader.result as ArrayBuffer,
+        function(audioBuffer) {
+          const durationInSeconds = Math.round(audioBuffer.duration)
+          console.log('Audio duration: ' + durationInSeconds + ' seconds')
+          setTime(prevTime => prevTime + durationInSeconds)
+        },
+      )
     }
 
     audioReader.readAsArrayBuffer(blobObj)
   }
 
-  const handleStepUpload = async() => {
-    console.log("handleStepUpload function called")
-    const blobObj = new Blob(audioChunks[step])
-    const xhr = new XMLHttpRequest();
+  const handleSubmit = async () => {
+    const name = 'TEMPLATE_NAME'
+    const ids = await Promise.all(
+      audioChunks.map(async (chunk, index) => {
+        const blobObj = new Blob(chunk)
+        const formData = new FormData()
+        formData.append('audio', blobObj)
+        formData.append('index', index.toString())
+        const res = await axios.post(
+          'https://voicleclone-worker.safeapp.workers.dev/upload_chunk?file_name='
+            + new Date().toISOString()
+            + '-'
+            + index,
+          blobObj,
+        )
+        console.log('Response', res.data)
+        return res.data as string
+      }),
+    )
 
-    xhr.upload.onloadstart = (event) => {
-      console.log("uploading", event.total)
-    }
-
-    xhr.upload.onprogress = (event) => {
-      console.log("loaded", event.loaded, "totla", event.total)
-      var percentComplete = Math.ceil((event.loaded / event.total) * 100);
-      setUpload((prevState)=> {
-          let local = [...prevState]
-          local[step] = percentComplete
-          return local
-      })
-    }
-
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState == XMLHttpRequest.DONE) {
-          console.log("xhr.responseText", xhr.responseText);
-          setUploadIds((prevState) => {
-          const newIds = [...prevState, xhr.responseText];
-          handleFinalUpload(newIds); // Call handleFinalUpload with the updated array
-          return newIds; // Return the updated array
-        });
-          if (audioChunks[step + 1] != undefined && time != 0){
-            console.log("onready step changing")
-            setRecordingState('start')
-            setStep(p => {
-            if (p == 5) return 5
-              return p + 1
-            })
-          }
-      }
-    }
-
-    xhr.open('POST', 'https://voicleclone-worker.safeapp.workers.dev/upload_chunk?file_name=' +
-      new Date().toISOString() + '-' + `${step}`);
-    xhr.send(blobObj);
-  }
-
-  const handleFinalUpload = (newIds: string[]) => {
-    console.log(newIds)
-    if(step == 5 || time == 0){
-      console.log(`finishing because step = ${step} & time = ${time }`)
-      const name = 'TEMPLATE_NAME'
-      const url = 'https://voicleclone-worker.safeapp.workers.dev/from_r2?voice_name=' + name;
-      // Define request options
-      const requestOptions = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json', // Adjust content type if needed
-        },
-        body: JSON.stringify(newIds),
-      };
-
-      console.log("uploadIds", uploadIds)
-
-      // Make the Fetch request
-      fetch(url, requestOptions)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.text(); // Assuming the response is JSON
-        })
-        .then((data) => {
-          console.log('Response', data);
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-        });
-    } else {
-      console.log(`step is ${step} and time is ${time} so unable to finish`)
-    }
+    const res = await axios.post(
+      'https://voicleclone-worker.safeapp.workers.dev/from_r2?voice_name=' + name,
+      ids,
+    )
+    console.log('Response', res.data)
   }
 
   return (
@@ -255,7 +216,9 @@ export default function AudioCloning() {
               <div className="flex py-[4px] px-[12px] items-center bg-[#EBEBEB] rounded-[32px]">
                 <BackwardIcon height={12} width={12} />
               </div>
-              <p className="text-[#1D1D1F] text-center text-[13px] w-[96px]">{time} seconds left</p>
+              <p className="text-[#1D1D1F] text-center text-[13px]">
+                {time} seconds left
+              </p>
               <div className="flex py-[4px] px-[12px] items-center bg-[#EBEBEB] rounded-[32px]">
                 <FordwardIcon height={12} width={12} />
               </div>
@@ -278,7 +241,9 @@ export default function AudioCloning() {
                         )}
                       </div>
                       {isRecording && (
-                        <p className="text-[#1D1D1F] text-[13px] leading-[20px] ">Recording...</p>
+                        <p className="text-[#1D1D1F] text-[13px] leading-[20px] ">
+                          Recording...
+                        </p>
                       )}
                     </div>
                   </div>
@@ -295,7 +260,7 @@ export default function AudioCloning() {
                           {audioState == 'play' ? <PlayIcon /> : <StopIcon />}
                         </Icon>
                         <p className="w-[32px] text-[#187EE7] text-[13px] font-[500] leading-[20px]">
-                          {audioState == 'play' ? ('Play') : ('Stop')}
+                          {audioState == 'play' ? 'Play' : 'Stop'}
                         </p>
                       </div>
                     </button>
@@ -315,7 +280,7 @@ export default function AudioCloning() {
 
           {/*buttons area*/}
           <div className="inline-flex items-center gap-[16px]">
-            {step === 0 ? (<div className="h-[48px] w-[48px]" />): (<button
+            <button
               onClick={() => {
                 setStep(p => {
                   if (p == 0) return 0
@@ -325,7 +290,7 @@ export default function AudioCloning() {
               className="flex p-[12px] items-center rounded-[32px] bg-white"
             >
               <BigBackwordIcon height={24} width={24} />
-            </button>)}
+            </button>
             {recordingState == 'start' && (
               <button
                 onClick={isRecording ? stopRecording : startRecording}
@@ -337,59 +302,50 @@ export default function AudioCloning() {
               </button>
             )}
             {recordingState == 'stop' && (
-              <div className='relative flex justify-center items-center'>
-              <button
-                onClick={() => {
-                //   if(upload[step] < 100){
-                //     handleStepUpload();
-                //     const interval = setInterval(() => {
-                //     setUpload((prevProgress) => {
-                //     if (prevProgress[step] < 100) {
-                //       let local = [...prevProgress];
-                //       local[step] = local[step] + 1
-                //       return local;
-                //     }
-                //     clearInterval(interval);
-                //     return prevProgress;
-                //   });
-                // }, 10); // Adjust the interval to control the speed of progress
+              <div className="relative flex justify-center items-center">
+                <button
+                  onClick={() => {
+                    if (step == text.length - 1) {
+                      return handleSubmit()
+                    }
+                    if (upload[step] < 100) {
+                      const interval = setInterval(() => {
+                        setUpload(prevProgress => {
+                          if (prevProgress[step] < 100) {
+                            let local = [...prevProgress]
+                            local[step] = local[step] + 1
+                            return local
+                          }
+                          clearInterval(interval)
+                          return prevProgress
+                        })
+                      }, 10) // Adjust the interval to control the speed of progress
 
-                // setTimeout(() => {
-                //   clearInterval(interval)
-                //   if(time !== 0){
-                //     if (!audioChunks[step + 1].length) setRecordingState('start')
-                //     setStep(p => {
-                //       if (p == 5) return 5
-                //       return p + 1
-                //     })
-                //   }
-                //   }, 1500); // Stop the progress after 3 seconds
-                //   } else {
-                //     if(time !== 0){
-                //       if (!audioChunks[step + 1].length) setRecordingState('start')
-                //     setStep(p => {
-                //       if (p == 5) return 5
-                //       return p + 1
-                //     })
-                //     }
-                //   }
-                  if(upload[step] === 0){
-                    handleStepUpload();
-                  } else {
-                  if (audioChunks[step + 1] != undefined && time != 0){
-                    setRecordingState('start')
-                    setStep(p => {
-                      if (p == 5) return 5
-                      return p + 1
-                    })
-                  }
-                  }
-                }}
-                className={`p-[16px] flex items-center rounded-[32px] bg-[#187EE7]`}
-              >
-                <BigForwardIcon height={24} width={24} className="text-white" />
-              </button>
-              <CircularProgress total={upload[step]}/>
+                      setTimeout(() => {
+                        clearInterval(interval)
+                        if (!audioChunks[step + 1].length) {
+                          setRecordingState('start')
+                        }
+                        setStep(p => {
+                          if (p == 5) return 5
+                          return p + 1
+                        })
+                      }, 1500) // Stop the progress after 3 seconds
+                    } else {
+                      if (!audioChunks[step + 1].length) {
+                        setRecordingState('start')
+                      }
+                      setStep(p => {
+                        if (p == 5) return 5
+                        return p + 1
+                      })
+                    }
+                  }}
+                  className={`p-[16px] flex items-center rounded-[32px] bg-[#187EE7]`}
+                >
+                  <BigForwardIcon height={24} width={24} className="text-white" />
+                </button>
+                <CircularProgress total={upload[step]} />
               </div>
             )}
             <div className="h-[48px] w-[48px]" />
