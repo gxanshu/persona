@@ -167,9 +167,6 @@ export default function AudioCloning() {
     console.log("handleStepUpload function called")
     const blobObj = new Blob(audioChunks[step])
     const xhr = new XMLHttpRequest();
-    const formData = new FormData();
-    formData.append('audio', blobObj);
-    formData.append('index', `step_${step}`)
 
     xhr.upload.onloadstart = (event) => {
       console.log("uploading", event.total)
@@ -185,29 +182,29 @@ export default function AudioCloning() {
       })
     }
 
-    xhr.upload.onloadend = (event) => {
-      console.log("uploaded")
-      if (audioChunks[step + 1] != undefined && time != 0) setRecordingState('start')
-      setStep(p => {
-      if (p == 5) return 5
-        return p + 1
-      })
-      handleFinalUpload();
-    } 
-
     xhr.onreadystatechange = function() {
       if (xhr.readyState == XMLHttpRequest.DONE) {
           console.log("xhr.responseText", xhr.responseText);
-          setUploadIds((prevState)=> [...prevState, xhr.responseText])
+          setUploadIds((prevState) => {
+          const newIds = [...prevState, xhr.responseText];
+          handleFinalUpload(newIds); // Call handleFinalUpload with the updated array
+          return newIds; // Return the updated array
+        });
+          if (audioChunks[step + 1] != undefined && time != 0) setRecordingState('start')
+          setStep(p => {
+          if (p == 5) return 5
+            return p + 1
+          })
       }
     }
 
     xhr.open('POST', 'https://voicleclone-worker.safeapp.workers.dev/upload_chunk?file_name=' +
-      new Date().toISOString() + '-' + `step-${step}`);
-    xhr.send(formData);
+      new Date().toISOString() + '-' + `${step}`);
+    xhr.send(blobObj);
   }
 
-  const handleFinalUpload = () => {
+  const handleFinalUpload = (newIds: string[]) => {
+    console.log(newIds)
     if(step == 5 || time == 0){
       console.log(`finishing because step = ${step} & time = ${time }`)
       const name = 'TEMPLATE_NAME'
@@ -218,7 +215,7 @@ export default function AudioCloning() {
         headers: {
           'Content-Type': 'application/json', // Adjust content type if needed
         },
-        body: JSON.stringify(uploadIds),
+        body: JSON.stringify(newIds),
       };
 
       console.log("uploadIds", uploadIds)
@@ -229,7 +226,7 @@ export default function AudioCloning() {
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
-          return response.json(); // Assuming the response is JSON
+          return response.text(); // Assuming the response is JSON
         })
         .then((data) => {
           console.log('Response', data);
@@ -241,11 +238,6 @@ export default function AudioCloning() {
       console.log(`step is ${step} and time is ${time} so unable to finish`)
     }
   }
-
-  useEffect(()=> {
-    console.log(upload)
-    console.log(audioChunks)
-  }, [upload])
 
   return (
     <div className="w-screen flex items-center justify-center">
