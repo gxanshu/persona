@@ -15,7 +15,6 @@ export default function AiVoiceRecorder() {
   const mediaRecorder = useRef<MediaRecorder | undefined>()
   const streamRef = useRef<MediaStream | undefined>()
   const [recording, setRecording] = useState(false)
-  const [audioChunks, setAudioChunks] = useState<Blob[]>([])
   const [ws, setWs] = useState<WebSocket | null>(null)
   const [isBackendReady, setIsBackendReady] = useState<boolean>(false)
   const [time, setTime] = useState(0)
@@ -118,8 +117,9 @@ export default function AiVoiceRecorder() {
 
     websocket.onmessage = (event) => {
       const blob = new Blob([event.data], { type: 'audio/mp3' }); // Set the appropriate MIME type
-      console.log("blob", blob)
-      setAudioBlobs((prevBlobs) => [...prevBlobs, blob]);
+      if(blob.size !== 0){
+        setAudioBlobs((prevBlobs) => [...prevBlobs, blob]);
+      }
       // Play the first audio blob if the player is not playin
     }
 
@@ -155,6 +155,7 @@ export default function AiVoiceRecorder() {
   const playNextAudio = () => {
     console.log("play function clicked")
     if (audioBlobs.length > 0 && !readyToPlay) {
+      console.log("audio is going to play")
       setReadyToPlay(true); // Set a flag to prevent multiple calls
       const blob = audioBlobs[0];
       const audioElement = audioElementRef.current;
@@ -180,8 +181,6 @@ export default function AiVoiceRecorder() {
   	setAudioContext(audiocontenxt)
   	console.log("audio contenxt", audioContext)
     connectWebSocket()
-    setReadyToPlay(false); // Reset the flag when the component mounts
-
   }, [])
 
   return (
