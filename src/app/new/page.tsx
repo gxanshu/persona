@@ -33,6 +33,7 @@ export default function AiVoiceRecorder() {
     navigator.mediaDevices
       .getUserMedia({ audio: true })
       .then(stream => {
+        alert("Microphone is accessible.")
         streamRef.current = stream
         mediaRecorder.current = new MediaRecorder(stream)
         const localAudioChunks: Blob[] = []
@@ -61,6 +62,7 @@ export default function AiVoiceRecorder() {
         console.log('Recording started! Speak now.')
       })
       .catch(err => {
+        alert("Microphone is not accessible.")
         console.log('Error: ' + err)
       })
   }
@@ -98,16 +100,6 @@ export default function AiVoiceRecorder() {
         `[${`wss://${wsUrl}ws/${id}`}] opened ws connection @`,
         performance.now(),
       )
-
-      setTimeout(() => {
-        websocket.send(JSON.stringify({
-          instance_id: '55d67b9c-5428-400f-8da2-204ab1a1ae5c',
-          group_id: 'd7eac060-98dc-4e1a-8ea9-3f67bb31c7d4',
-          name: 'Don bosco',
-          company_title: 'CEO',
-          company: 'Bhuman',
-        }))
-      }, 1000)
     }
 
     websocket.onmessage = (event) => {
@@ -146,22 +138,6 @@ export default function AiVoiceRecorder() {
     }, 1000)
   }
 
-  // // Function to play audio blobs
-  // const playAudio = () => {
-  // 	console.log("called play audio function", audioBlobs.length)
-  //   if (audioBlobs.length > 0) {
-  //     const blob = audioBlobs[0];
-  //     const audioElement = audioElementRef.current;
-  //     console.log("audioElement", audioElement)
-
-  //     if (audioElement && audioElement.src === '') {
-  //       audioElement.src = URL.createObjectURL(blob);
-  //       audioElement.controls = true;
-  //       audioElement.play();
-  //     }
-  //   }
-  // };
-
   const playNextAudio = () => {
     if (audioBlobs.length > 0 && !readyToPlay) {
       setReadyToPlay(true); // Set a flag to prevent multiple calls
@@ -179,28 +155,10 @@ export default function AiVoiceRecorder() {
     }
   };
 
-  // Listen for the "ended" event to play the next audio blob
-  // useEffect(() => {
-  //   if (audioElementRef.current) {
-  //     audioElementRef.current.addEventListener('ended', () => {
-  //       setAudioBlobs((prevBlobs) => prevBlobs.slice(1));
-  //       playAudio(); // Play the next audio blob
-  //     });
-  //   }
-  // }, []);
-
   // Listen for the "ended" event to play the next audio chunk
   useEffect(() => {
     playNextAudio()
   }, [audioBlobs]);
-
-  // useEffect(() => {
-  //   // Play audio when the state has audio blobs
-  //   if (audioBlobs.length > 0) {
-  //     playAudio(audioBlobs[0]);
-  //     setAudioBlobs((prevBlobs) => prevBlobs.slice(1));
-  //   }
-  // }, [audioBlobs]);
 
   useEffect(() => {
   	let audiocontenxt = new AudioContext()
@@ -209,9 +167,6 @@ export default function AiVoiceRecorder() {
     connectWebSocket()
     setReadyToPlay(false); // Reset the flag when the component mounts
 
-    // return () => {
-    //   ws?.close()
-    // }
   }, [])
 
   return (
