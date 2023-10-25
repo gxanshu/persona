@@ -153,6 +153,7 @@ export default function AiVoiceRecorder() {
   }
 
   const playNextAudio = () => {
+    console.log("play function clicked")
     if (audioBlobs.length > 0 && !readyToPlay) {
       setReadyToPlay(true); // Set a flag to prevent multiple calls
       const blob = audioBlobs[0];
