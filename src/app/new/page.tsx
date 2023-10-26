@@ -47,10 +47,9 @@ export default function AiVoiceRecorder() {
             const chunk = event.data
             localAudioChunks.push(chunk)
             // setAudioChunks(localAudioChunks)
-            console.log(ws)
             if (ws?.readyState === WebSocket.OPEN) {
               // Convert the Blob to ArrayBuffer for sending over WebSocket
-              console.log("Convert the Blob to ArrayBuffer for sending over WebSocket")
+              // console.log("Convert the Blob to ArrayBuffer for sending over WebSocket")
               const arrayBuffer = await chunk.arrayBuffer()
               // sending those thunks to websocket
               ws.send(arrayBuffer)
@@ -60,7 +59,10 @@ export default function AiVoiceRecorder() {
 
         connectWebSocket();
         setCallingState("connecting");
-        ringAudio.current?.play()
+        if(ringAudio.current){
+          ringAudio.current.currentTime = 0
+          ringAudio.current.play()
+        }
       })
       .catch(err => {
         alert("Microphone is not accessible.")
@@ -69,8 +71,8 @@ export default function AiVoiceRecorder() {
   }
 
   const stopRecording = () => {
-    endAudio.current?.play()
     audioElementRef.current?.pause()
+    endAudio.current?.play()
     if (mediaRecorder.current) {
       mediaRecorder.current.stop()
       // removing previous mediaRecorder service from RAM
@@ -200,7 +202,7 @@ export default function AiVoiceRecorder() {
             setTime(prevTime => prevTime + 1)
           }, 1000)
           if(mediaRecorder.current){
-            mediaRecorder.current.start(500)
+            mediaRecorder.current.start(50)
           } else {
             console.log("mediaRecorder.current is undefined")
           }
@@ -315,7 +317,7 @@ export default function AiVoiceRecorder() {
                     </Icon>
                   </button>
                   <button
-                    // disabled={!isBackendReady}
+                    disabled={!isWebsocketReady}
                     onClick={stopRecording}
                   >
                     <Icon
@@ -344,8 +346,8 @@ const Avatar = ({xl = false}: AvatarProps) => {
     <div className="relative">
       <Image
         src={aiavatar}
-        height={xl ? 96 : 28}
-        width={xl ? 96 : 28}
+        height={xl ? 120 : 28}
+        width={xl ? 120 : 28}
         className={xl ? "rounded-[24px] h-[96px] w-[96px]" : "rounded-full h-[28px] w-[28px]"}
         alt="user avatar"
       />
