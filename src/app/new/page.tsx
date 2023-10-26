@@ -10,8 +10,10 @@ import { v4 as uuidv4 } from 'uuid'
 import { ApiAudioStreaming, spawnedBackendStatus, startAudioStreaming } from '~/api/audioStreaming'
 import "~/styles/dot-pulse.css"
 
-let interval: NodeJS.Timeout | undefined = undefined;
 let ws: WebSocket | undefined = undefined;
+let audioBufferQueue: AudioBuffer[] = []
+let isPlaying = false; // Add this variable to track if audio is currently playing
+let webSocketCalled = false;
 type CallingState = "disconnect" | "connecting" | "connected"
 
 export default function AiVoiceRecorder() {
@@ -21,10 +23,7 @@ export default function AiVoiceRecorder() {
   const [isWebsocketReady, setIsWebsocketReady] = useState<boolean>(false)
   const [time, setTime] = useState(0)
   const timerRef = useRef<number | null>(null)
-  const [audioBlobs, setAudioBlobs] = useState<Blob[]>([]);
-  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
-  const audioElementRef = useRef<HTMLAudioElement | null>(null);
-  const [readyToPlay, setReadyToPlay] = useState(false);
+  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);;
   const ringAudio = useRef<HTMLAudioElement>()
   const endAudio = useRef<HTMLAudioElement>()
 
@@ -71,7 +70,6 @@ export default function AiVoiceRecorder() {
   }
 
   const stopRecording = () => {
-    audioElementRef.current?.pause()
     endAudio.current?.play()
     if (mediaRecorder.current) {
       mediaRecorder.current.stop()
@@ -90,16 +88,61 @@ export default function AiVoiceRecorder() {
     clearTimeout(timerRef.current!)
     timerRef.current = null
     ws?.close()
+    if (audioContext?.state === 'running') {
+    audioContext.suspend().then(() => {
+      console.log('AudioContext suspended');
+    });
+  }
     setTime(0)
     console.log('Recorded')
   }
 
+  const playAudio = () => {
+  if (audioContext && !isPlaying && audioBufferQueue.length > 0) {
+    const buffer = audioBufferQueue.shift(); // Remove and get the first chunk (dequeue)
+
+    if (buffer) {
+      const source = audioContext.createBufferSource();
+      source.buffer = buffer;
+      source.connect(audioContext.destination);
+      source.onended = () => {
+        isPlaying = false;
+        playAudio(); // Play the next chunk if available
+      };
+
+      source.start();
+      isPlaying = true;
+    } else {
+      // Handle the case when the buffer is null
+      playAudio(); // Proceed to the next chunk
+    }
+  }
+};
+
+
+function blobToArrayBuffer(blob: Blob): Promise<string | ArrayBuffer| null> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      resolve(reader.result);
+    };
+
+    reader.onerror = reject;
+
+    reader.readAsArrayBuffer(blob);
+  });
+}
+
+
   const startWebSocket = async (spawnBackend: ApiAudioStreaming) => {
+    if(webSocketCalled) return
     const id = uuidv4()
     console.log('startWebSocket function called', spawnBackend, 'and id is', id)
     const wsUrl = spawnBackend.url.replace(/^https:\/\//, '') // removing https
 
     const websocket = new WebSocket(`wss://${wsUrl}ws/${id}`)
+    webSocketCalled = true
 
     websocket.onopen = () => {
       console.info(
@@ -124,20 +167,37 @@ export default function AiVoiceRecorder() {
       // }, 1000)
     }
 
-    websocket.onmessage = (event) => {
-      const blob = new Blob([event.data], { type: 'audio/mp3' }); // Set the appropriate MIME type
-      if(blob.size !== 0){
-        setAudioBlobs((prevBlobs) => [...prevBlobs, blob]);
+    websocket.onmessage = async (event) => {
+      console.log(audioBufferQueue)
+    if (typeof event.data === 'string') {
+      // This is a text message
+      const textMessage = event.data;
+      console.log(textMessage);
+      // Process and handle the text message here
+    } else {
+      const blob = new Blob([event.data], { type: 'audio/mp3' });
+      if (blob.size !== 0) {
+        const arrayBuffer = await blobToArrayBuffer(blob) as ArrayBuffer;
+        audioContext?.decodeAudioData(arrayBuffer, (buffer) => {
+          audioBufferQueue.push(buffer)
+          console.log("binnary msg and isPlaying", isPlaying)
+          if (!isPlaying) {
+            playAudio();
+          }
+        });
       }
-      // Play the first audio blob if the player is not playin
     }
+};
+
 
     websocket.onclose = event => {
       console.log('connection closed')
+      stopRecording()
       setIsWebsocketReady(false)
     }
 
     websocket.onerror = error => {
+      stopRecording()
       console.log('there is an error')
       setIsWebsocketReady(false)
     }
@@ -162,36 +222,12 @@ export default function AiVoiceRecorder() {
     }, 1000)
   }
 
-  const playNextAudio = () => {
-    console.log("play function clicked")
-    if (audioBlobs.length > 0 && !readyToPlay) {
-      console.log("audio is going to play")
-      setReadyToPlay(true); // Set a flag to prevent multiple calls
-      const blob = audioBlobs[0];
-      const audioElement = audioElementRef.current;
-
-      if (audioElement) {
-        audioElement.src = URL.createObjectURL(blob);
-        audioElement.play();
-        audioElement.onended = () => {
-          setReadyToPlay(false); // Reset the flag
-          setAudioBlobs((prevBlobs) => prevBlobs.slice(1));
-        };
-      }
-    }
-  };
-
-  // Listen for the "ended" event to play the next audio chunk
   useEffect(() => {
-    playNextAudio()
-  }, [audioBlobs]);
-
-  useEffect(() => {
-  	let audiocontenxt = new AudioContext()
+    let audiocontenxt = new AudioContext()
     ringAudio.current = new Audio('/audio/ring.wav');
     endAudio.current = new Audio('/audio/end.wav');
-  	setAudioContext(audiocontenxt)
-  	console.log("audio contenxt", audioContext)
+    setAudioContext(audiocontenxt)
+    console.log("audio contenxt", audioContext)
   }, [])
 
   useEffect(()=> {
@@ -331,7 +367,6 @@ export default function AiVoiceRecorder() {
               )}
           </div>
         </div>
-        <audio ref={audioElementRef} controls></audio>
       </div>
     </div>
   )
