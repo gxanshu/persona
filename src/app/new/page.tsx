@@ -8,15 +8,19 @@ import { LiveAudioVisualizer } from 'react-audio-visualize'
 import '~/styles/animation.css'
 import { v4 as uuidv4 } from 'uuid'
 import { ApiAudioStreaming, spawnedBackendStatus, startAudioStreaming } from '~/api/audioStreaming'
+import "~/styles/dot-pulse.css"
+const ringAudio = new Audio('/audio/ring.wav');
+const endAudio = new Audio('/audio/end.wav');
 
 let interval: NodeJS.Timeout | undefined = undefined;
+let ws: WebSocket | undefined = undefined;
+type CallingState = "disconnect" | "connecting" | "connected"
 
 export default function AiVoiceRecorder() {
   const mediaRecorder = useRef<MediaRecorder | undefined>()
   const streamRef = useRef<MediaStream | undefined>()
-  const [recording, setRecording] = useState(false)
-  const [ws, setWs] = useState<WebSocket | null>(null)
-  const [isBackendReady, setIsBackendReady] = useState<boolean>(false)
+  const [callingState, setCallingState] = useState<CallingState>("disconnect")
+  const [isWebsocketReady, setIsWebsocketReady] = useState<boolean>(false)
   const [time, setTime] = useState(0)
   const timerRef = useRef<number | null>(null)
   const [audioBlobs, setAudioBlobs] = useState<Blob[]>([]);
@@ -31,14 +35,9 @@ export default function AiVoiceRecorder() {
   }
 
   const startRecording = () => {
-    ws?.send("start");
-    if(interval) {
-      clearInterval(interval);
-    }
     navigator.mediaDevices
       .getUserMedia({ audio: true })
-      .then(stream => {
-        alert("Microphone is accessible.")
+      .then(async(stream) => {
         streamRef.current = stream
         mediaRecorder.current = new MediaRecorder(stream)
         const localAudioChunks: Blob[] = []
@@ -59,12 +58,9 @@ export default function AiVoiceRecorder() {
           }
         })
 
-        setRecording(true)
-        timerRef.current = window.setInterval(() => {
-          setTime(prevTime => prevTime + 1)
-        }, 1000)
-        mediaRecorder.current.start(500)
-        console.log('Recording started! Speak now.')
+        connectWebSocket();
+        setCallingState("connecting");
+        ringAudio.play()
       })
       .catch(err => {
         alert("Microphone is not accessible.")
@@ -73,12 +69,14 @@ export default function AiVoiceRecorder() {
   }
 
   const stopRecording = () => {
+    endAudio.play()
+    audioElementRef.current?.pause()
     if (mediaRecorder.current) {
       mediaRecorder.current.stop()
       // removing previous mediaRecorder service from RAM
       // so this can recreate again (helps audio visuliser)
       mediaRecorder.current = undefined
-      setRecording(false)
+      setCallingState("disconnect")
     }
 
     if (streamRef.current) {
@@ -89,6 +87,7 @@ export default function AiVoiceRecorder() {
 
     clearTimeout(timerRef.current!)
     timerRef.current = null
+    ws?.close()
     setTime(0)
     console.log('Recorded')
   }
@@ -105,6 +104,14 @@ export default function AiVoiceRecorder() {
         `[${`wss://${wsUrl}ws/${id}`}] opened ws connection @`,
         performance.now(),
       )
+
+      setIsWebsocketReady(true)
+
+      websocket.send("start");
+      if(interval) {
+        clearInterval(interval);
+      }
+
       setTimeout(() => {
         setTimeout(()=>{
           interval = setInterval(() => {
@@ -125,13 +132,15 @@ export default function AiVoiceRecorder() {
 
     websocket.onclose = event => {
       console.log('connection closed')
+      setIsWebsocketReady(false)
     }
 
     websocket.onerror = error => {
       console.log('there is an error')
+      setIsWebsocketReady(false)
     }
 
-    setWs(websocket)
+    ws = websocket;
   }
 
   const connectWebSocket = async () => {
@@ -144,7 +153,6 @@ export default function AiVoiceRecorder() {
       const backendStatus = await (await fetch(spawnBackend.status_url)).json() as spawnedBackendStatus
       if (backendStatus.state == 'Ready') {
         console.log('backend is ready')
-        setIsBackendReady(true)
         clearTimeout(backendStatusChecker)
         await startWebSocket(spawnBackend)
       }
@@ -180,8 +188,30 @@ export default function AiVoiceRecorder() {
   	let audiocontenxt = new AudioContext()
   	setAudioContext(audiocontenxt)
   	console.log("audio contenxt", audioContext)
-    connectWebSocket()
   }, [])
+
+  useEffect(()=> {
+    if(isWebsocketReady){
+          console.log("isWebsocketReady", isWebsocketReady)
+          setCallingState("connected")
+          timerRef.current = window.setInterval(() => {
+            setTime(prevTime => prevTime + 1)
+          }, 1000)
+          if(mediaRecorder.current){
+            mediaRecorder.current.start(500)
+          } else {
+            console.log("mediaRecorder.current is undefined")
+          }
+          ringAudio.pause()
+          console.log('Recording started! Speak now.')
+        } else {
+          console.log("isWebsocketReady", isWebsocketReady)
+    }
+  }, [isWebsocketReady])
+
+  window.tst = () => {
+    console.log(isWebsocketReady)
+  }
 
   return (
     <div className="h-screen w-full flex items-center justify-center">
@@ -196,7 +226,7 @@ export default function AiVoiceRecorder() {
           />
           <div
             className={`h-full w-full rounded-[24px] ${
-              recording ? 'backdrop-animate-05' : 'reverse-backdrop-animate-05'
+              (callingState == "connecting" || callingState == "connected") ? 'backdrop-animate-05' : 'reverse-backdrop-animate-05'
             } absolute inset-0`}
             style={{
               background: `${
@@ -217,7 +247,7 @@ export default function AiVoiceRecorder() {
           </div>
 
           <div className="absolute bottom-[200px] left-[50%]" style={{ transform: 'translateX(-50%)' }}>
-            {recording && (
+            {callingState == "connected" && (
               <p className="w-[236px] scale-in-05 text-white text-center text-[21px] font-[300] leading-[150%]">
                 Go ahead, I’m listening.....
               </p>
@@ -225,41 +255,30 @@ export default function AiVoiceRecorder() {
           </div>
 
           <div className="absolute top-[16px] left-[50%]" style={{ transform: 'translateX(-50%)' }}>
-            <div className="flex py-[4px] px-[8px] items-center rounded-[24px] bg-[#1D1D1F80] backdrop-blur-lg">
+            {(callingState == "disconnect" || callingState == "connected") && <div className="flex py-[4px] px-[8px] items-center rounded-[24px] bg-[#1D1D1F80] backdrop-blur-lg">
               <div className="flex items-center gap-[4px]">
                 <Avatar />
                 <p className="text-white text-[13px] font-medium leading-[20px]">The Weeknd</p>
               </div>
-            </div>
+            </div>}
           </div>
 
+          {callingState == "connecting" && <div className="absolute top-[80px] left-[50%]" style={{ transform: 'translateX(-50%)' }}>
+              <div className='inline-flex items-center flex-col gap-[12px]'>
+                <Avatar xl/>
+                <div className='dot-pulse' />
+              </div>
+          </div>}
+
           <div className="absolute top-[64px] left-[50%]" style={{ transform: 'translateX(-50%)' }}>
-            {recording && (
+            {callingState == "connected" && (
               <p className="text-white text-center text-[13px] font-medium leading-[150%]">
                 {formatTime(time)}
               </p>
             )}
           </div>
-
-          {
-            /*<button
-            disabled={!isBackendReady}
-            onClick={recording ? stopRecording : startRecording}
-            className="absolute bottom-[32px] left-[50%]"
-            style={{ transform: 'translateX(-50%)' }}
-          >
-            <Icon
-              frameClass="h-[24px] w-[24px] text-white"
-              containerClass={`flex items-center justify-center p-[16px] rounded-[32px] ${
-                recording ? 'bg-[#898A8A]' : 'bg-[#E71818]'
-              } ${isBackendReady ? 'bg-[#898A8A]' : 'bg-[#E71818]'}`}
-            >
-              {recording ? <AudioCrossIcon /> : <MicIcon />}
-            </Icon>
-          </button>*/
-          }
           <div className="absolute bottom-[32px] left-[50%]" style={{ transform: 'translateX(-50%)' }}>
-            {!recording
+            {callingState == "disconnect"
               ? (
                 <button
                   // disabled={!isBackendReady}
@@ -318,25 +337,29 @@ export default function AiVoiceRecorder() {
   )
 }
 
-const Avatar = () => {
+interface AvatarProps {
+  xl?: boolean
+}
+
+const Avatar = ({xl = false}: AvatarProps) => {
   return (
     <div className="relative">
       <Image
         src={aiavatar}
-        height={28}
-        width={28}
-        className="rounded-full h-[28px] w-[28px]"
+        height={xl ? 96 : 28}
+        width={xl ? 96 : 28}
+        className={xl ? "rounded-[24px] h-[96px] w-[96px]" : "rounded-full h-[28px] w-[28px]"}
         alt="user avatar"
       />
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className="absolute bottom-0 right-0"
-        width="12"
-        height="12"
-        viewBox="0 0 12 12"
+        width={xl ? 20 : 12}
+        height={xl ? 20 : 12}
+        // viewBox={xl ? "0 0 20 20" : "0 0 12 12"}
         fill="none"
       >
-        <circle cx="6" cy="6" r="5" fill="#4ACF49" stroke="white" strokeWidth="2" />
+        <circle cx={xl ? 10: 6} cy={xl ? 10: 6} r={xl ? 9 : 5} fill="#4ACF49" stroke="white" strokeWidth="2" />
       </svg>
     </div>
   )
