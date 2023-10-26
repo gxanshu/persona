@@ -9,8 +9,6 @@ import '~/styles/animation.css'
 import { v4 as uuidv4 } from 'uuid'
 import { ApiAudioStreaming, spawnedBackendStatus, startAudioStreaming } from '~/api/audioStreaming'
 import "~/styles/dot-pulse.css"
-const ringAudio = new Audio('/audio/ring.wav');
-const endAudio = new Audio('/audio/end.wav');
 
 let interval: NodeJS.Timeout | undefined = undefined;
 let ws: WebSocket | undefined = undefined;
@@ -27,6 +25,8 @@ export default function AiVoiceRecorder() {
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
   const [readyToPlay, setReadyToPlay] = useState(false);
+  const ringAudio = useRef<HTMLAudioElement>()
+  const endAudio = useRef<HTMLAudioElement>()
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60).toString().padStart(2, '0')
@@ -60,7 +60,7 @@ export default function AiVoiceRecorder() {
 
         connectWebSocket();
         setCallingState("connecting");
-        ringAudio.play()
+        ringAudio.current?.play()
       })
       .catch(err => {
         alert("Microphone is not accessible.")
@@ -69,7 +69,7 @@ export default function AiVoiceRecorder() {
   }
 
   const stopRecording = () => {
-    endAudio.play()
+    endAudio.current?.play()
     audioElementRef.current?.pause()
     if (mediaRecorder.current) {
       mediaRecorder.current.stop()
@@ -186,6 +186,8 @@ export default function AiVoiceRecorder() {
 
   useEffect(() => {
   	let audiocontenxt = new AudioContext()
+    ringAudio.current = new Audio('/audio/ring.wav');
+    endAudio.current = new Audio('/audio/end.wav');
   	setAudioContext(audiocontenxt)
   	console.log("audio contenxt", audioContext)
   }, [])
@@ -202,7 +204,7 @@ export default function AiVoiceRecorder() {
           } else {
             console.log("mediaRecorder.current is undefined")
           }
-          ringAudio.pause()
+          ringAudio.current?.pause()
           console.log('Recording started! Speak now.')
         } else {
           console.log("isWebsocketReady", isWebsocketReady)
