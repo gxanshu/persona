@@ -110,18 +110,18 @@ export default function AiVoiceRecorder() {
       setIsWebsocketReady(true)
 
       websocket.send("start");
-      if(interval) {
-        clearInterval(interval);
-      }
+      // if(interval) {
+      //   clearInterval(interval);
+      // }
 
-      setTimeout(() => {
-        setTimeout(()=>{
-          interval = setInterval(() => {
-            console.info("sending event");
-            websocket.send('');
-          }, 5000);
-        },1000)
-      }, 1000)
+      // setTimeout(() => {
+      //   setTimeout(()=>{
+      //     interval = setInterval(() => {
+      //       console.info("sending event");
+      //       websocket.send('');
+      //     }, 5000);
+      //   },1000)
+      // }, 1000)
     }
 
     websocket.onmessage = (event) => {
