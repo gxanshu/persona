@@ -209,10 +209,6 @@ export default function AiVoiceRecorder() {
     }
   }, [isWebsocketReady])
 
-  window.tst = () => {
-    console.log(isWebsocketReady)
-  }
-
   return (
     <div className="h-screen w-full flex items-center justify-center">
       <div className="h-full p-[24px]">
