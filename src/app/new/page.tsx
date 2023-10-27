@@ -430,7 +430,7 @@ const Subtitles = ({ subtitleChunks }: {subtitleChunks: string[]}) => {
     // Update current subtitles every 2 seconds with the next 4 chunks
     const interval = setInterval(() => {
       if (subtitleChunks.length > 0) {
-        const newSubtitles = subtitleChunks.splice(0, 7);
+        const newSubtitles = subtitleChunks.splice(0, 5);
         setCurrentSubtitles(newSubtitles);
       }
     }, 1000);
