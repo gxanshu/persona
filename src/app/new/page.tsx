@@ -96,6 +96,7 @@ export default function AiVoiceRecorder() {
     audioContext.suspend().then(() => {
       console.log('AudioContext suspended');
     });
+    setSubtitleChunks([])
   }
     setTime(0)
     console.log('Recorded')
