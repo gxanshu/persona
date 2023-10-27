@@ -442,7 +442,7 @@ const Subtitles = ({ subtitleChunks }: {subtitleChunks: string[]}) => {
   }, [subtitleChunks]);
 
   return (
-    <p className="max-w-[236px] scale-in-05 text-white text-center text-[21px] font-[300] leading-[150%]">
+    <p className="w-[236px] scale-in-05 text-white text-center text-[21px] font-[300] leading-[150%]">
         {currentSubtitles.length ? (currentSubtitles.join(' ')) : "Go ahead, I’m listening....."}
     </p>
   );
