@@ -11,7 +11,8 @@ import { ApiAudioStreaming, spawnedBackendStatus, startAudioStreaming } from '~/
 import "~/styles/dot-pulse.css"
 
 let ws: WebSocket | undefined = undefined;
-let audioBufferQueue: AudioBuffer[] = []
+// const audioChunkQueue: ArrayBuffer[] = []
+// const audioBufferQueue: AudioBuffer[] = []
 let isPlaying = false; // Add this variable to track if audio is currently playing
 let webSocketCalled = false;
 type CallingState = "disconnect" | "connecting" | "connected"
@@ -19,13 +20,16 @@ type CallingState = "disconnect" | "connecting" | "connected"
 export default function AiVoiceRecorder() {
   const mediaRecorder = useRef<MediaRecorder | undefined>()
   const streamRef = useRef<MediaStream | undefined>()
-  const [callingState, setCallingState] = useState<CallingState>("disconnect")
+  const [callingState, setCallingState] = useState<CallingState>("connected")
   const [isWebsocketReady, setIsWebsocketReady] = useState<boolean>(false)
   const [time, setTime] = useState(0)
   const timerRef = useRef<number | null>(null)
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);;
   const ringAudio = useRef<HTMLAudioElement>()
   const endAudio = useRef<HTMLAudioElement>()
+  const [audioBuffers, setAudioBuffers] = useState<AudioBuffer[]>([])
+  const [subtitleChunks, setSubtitleChunks] = useState<string[]>([]);
+
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60).toString().padStart(2, '0')
@@ -97,9 +101,27 @@ export default function AiVoiceRecorder() {
     console.log('Recorded')
   }
 
+
+//   function processNextAudioChunk() {
+//     if (audioChunkQueue.length > 0) {
+//       console.log("audioChunkQueue: processNextAudioChunk", audioChunkQueue)
+//       const arrayBuffer = audioChunkQueue.shift(); // Get and remove the first ArrayBuffer from audioChunkQueue
+//       if(arrayBuffer){
+//         audioContext?.decodeAudioData(arrayBuffer, (buffer) => {
+//         audioBufferQueue.push(buffer); // Store the processed buffer in audioBufferQueue
+//         if (!isPlaying) {
+//           playAudio();
+//         }
+//         processNextAudioChunk(); // Process the next chunk
+//       });
+//       }
+//     }
+// }
+
   const playAudio = () => {
-  if (audioContext && !isPlaying && audioBufferQueue.length > 0) {
-    const buffer = audioBufferQueue.shift(); // Remove and get the first chunk (dequeue)
+  if (audioContext && !isPlaying && audioBuffers.length) {
+    console.log("audioBufferQueue: playAudio", audioBuffers)
+    const buffer = audioBuffers[0]; // Remove and get the first chunk (dequeue)
 
     if (buffer) {
       const source = audioContext.createBufferSource();
@@ -107,14 +129,11 @@ export default function AiVoiceRecorder() {
       source.connect(audioContext.destination);
       source.onended = () => {
         isPlaying = false;
-        playAudio(); // Play the next chunk if available
+        setAudioBuffers((prev)=> prev.splice(1))
       };
 
       source.start();
       isPlaying = true;
-    } else {
-      // Handle the case when the buffer is null
-      playAudio(); // Proceed to the next chunk
     }
   }
 };
@@ -168,23 +187,21 @@ function blobToArrayBuffer(blob: Blob): Promise<string | ArrayBuffer| null> {
     }
 
     websocket.onmessage = async (event) => {
-      console.log(audioBufferQueue)
     if (typeof event.data === 'string') {
-      // This is a text message
-      const textMessage = event.data;
-      console.log(textMessage);
-      // Process and handle the text message here
+      const msg = JSON.parse(event.data);
+        if (msg && msg.data && msg.data.ai_response_chunk) {
+        // Extract the subtitle chunk from the msg
+        const subtitleChunk = msg.data.ai_response_chunk;
+        // Add the subtitleChunk to the state variable
+        setSubtitleChunks((prevChunks) => [...prevChunks, subtitleChunk]);
+      }
     } else {
       const blob = new Blob([event.data], { type: 'audio/mp3' });
       if (blob.size !== 0) {
         const arrayBuffer = await blobToArrayBuffer(blob) as ArrayBuffer;
         audioContext?.decodeAudioData(arrayBuffer, (buffer) => {
-          audioBufferQueue.push(buffer)
-          console.log("binnary msg and isPlaying", isPlaying)
-          if (!isPlaying) {
-            playAudio();
-          }
-        });
+          setAudioBuffers((prev) => [...prev, buffer])
+        })
       }
     }
 };
@@ -194,12 +211,14 @@ function blobToArrayBuffer(blob: Blob): Promise<string | ArrayBuffer| null> {
       console.log('connection closed')
       stopRecording()
       setIsWebsocketReady(false)
+      webSocketCalled = false
     }
 
     websocket.onerror = error => {
       stopRecording()
       console.log('there is an error')
       setIsWebsocketReady(false)
+      webSocketCalled = false
     }
 
     ws = websocket;
@@ -249,6 +268,12 @@ function blobToArrayBuffer(blob: Blob): Promise<string | ArrayBuffer| null> {
     }
   }, [isWebsocketReady])
 
+  useEffect(()=> {
+    // if(audioBuffers.length){
+    //   playAudio()
+    // }
+  }, [audioBuffers])
+
   return (
     <div className="h-screen w-full flex items-center justify-center">
       <div className="h-full p-[24px]">
@@ -284,9 +309,7 @@ function blobToArrayBuffer(blob: Blob): Promise<string | ArrayBuffer| null> {
 
           <div className="absolute bottom-[200px] left-[50%]" style={{ transform: 'translateX(-50%)' }}>
             {callingState == "connected" && (
-              <p className="w-[236px] scale-in-05 text-white text-center text-[21px] font-[300] leading-[150%]">
-                Go ahead, I’m listening.....
-              </p>
+              <Subtitles subtitleChunks={subtitleChunks} />
             )}
           </div>
 
@@ -399,3 +422,27 @@ const Avatar = ({xl = false}: AvatarProps) => {
     </div>
   )
 }
+
+const Subtitles = ({ subtitleChunks }: {subtitleChunks: string[]}) => {
+  const [currentSubtitles, setCurrentSubtitles] = useState<string[]>([]);
+  
+  useEffect(() => {
+    // Update current subtitles every 2 seconds with the next 4 chunks
+    const interval = setInterval(() => {
+      if (subtitleChunks.length > 0) {
+        const newSubtitles = subtitleChunks.splice(0, 7);
+        setCurrentSubtitles(newSubtitles);
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [subtitleChunks]);
+
+  return (
+    <p className="max-w-[236px] scale-in-05 text-white text-center text-[21px] font-[300] leading-[150%]">
+        {currentSubtitles.length ? (currentSubtitles.join(' ')) : "Go ahead, I’m listening....."}
+    </p>
+  );
+};
