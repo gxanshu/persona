@@ -20,7 +20,7 @@ type CallingState = "disconnect" | "connecting" | "connected"
 export default function AiVoiceRecorder() {
   const mediaRecorder = useRef<MediaRecorder | undefined>()
   const streamRef = useRef<MediaStream | undefined>()
-  const [callingState, setCallingState] = useState<CallingState>("connected")
+  const [callingState, setCallingState] = useState<CallingState>("disconnect")
   const [isWebsocketReady, setIsWebsocketReady] = useState<boolean>(false)
   const [time, setTime] = useState(0)
   const timerRef = useRef<number | null>(null)
