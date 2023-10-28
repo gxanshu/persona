@@ -60,7 +60,7 @@ export default function AiVoiceRecorder() {
             const chunk = event.data
             localAudioChunks.push(chunk)
             // setAudioChunks(localAudioChunks)
-            if (ws?.readyState === WebSocket.OPEN && isUserSpeaking) {
+            if (ws?.readyState === WebSocket.OPEN /*&& isUserSpeaking*/) {
               // Convert the Blob to ArrayBuffer for sending over WebSocket
               // console.log("Convert the Blob to ArrayBuffer for sending over WebSocket")
               const arrayBuffer = await chunk.arrayBuffer()
@@ -76,9 +76,13 @@ export default function AiVoiceRecorder() {
           onSpeechEnd: (audio) => {
             // do something with `audio` (Float32Array of audio samples at sample rate 16000)...
             isUserSpeaking = false
+            console.log("User is speaking", mediaRecorder.current)
+            mediaRecorder.current?.pause()
           },
           onSpeechStart: () => {
             isUserSpeaking = true
+            console.log("User is speaking", mediaRecorder.current)
+            mediaRecorder.current?.resume()
           },
           stream: stream
         })
@@ -209,9 +213,9 @@ function blobToArrayBuffer(blob: Blob): Promise<string | ArrayBuffer| null> {
       }
 
       // Start the heartbeat
-      setInterval(() => {
-        websocket.send(''); // Send an empty message
-      }, 1000); // Send the heartbeat every 5 seconds
+      // setInterval(() => {
+      //   websocket.send(''); // Send an empty message
+      // }, 1000); // Send the heartbeat every 5 seconds
     }
 
     websocket.onmessage = async (event) => {
