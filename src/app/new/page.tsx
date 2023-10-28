@@ -9,12 +9,16 @@ import '~/styles/animation.css'
 import { v4 as uuidv4 } from 'uuid'
 import { ApiAudioStreaming, spawnedBackendStatus, startAudioStreaming } from '~/api/audioStreaming'
 import "~/styles/dot-pulse.css"
+import Script from 'next/script'
+import { isUtf8 } from 'buffer'
 
 let ws: WebSocket | undefined = undefined;
 // const audioChunkQueue: ArrayBuffer[] = []
 // const audioBufferQueue: AudioBuffer[] = []
+let interval: NodeJS.Timeout
 let isPlaying = false; // Add this variable to track if audio is currently playing
 let webSocketCalled = false;
+let isUserSpeaking = false;
 type CallingState = "disconnect" | "connecting" | "connected"
 
 export default function AiVoiceRecorder() {
@@ -29,6 +33,7 @@ export default function AiVoiceRecorder() {
   const endAudio = useRef<HTMLAudioElement>()
   const [audioBuffers, setAudioBuffers] = useState<AudioBuffer[]>([])
   const [subtitleChunks, setSubtitleChunks] = useState<string[]>([]);
+  const myvad = useRef();
 
 
   const formatTime = (seconds: number) => {
@@ -39,7 +44,12 @@ export default function AiVoiceRecorder() {
 
   const startRecording = () => {
     navigator.mediaDevices
-      .getUserMedia({ audio: true })
+      .getUserMedia({ audio: {
+          channelCount: 1,
+          echoCancellation: true,
+          autoGainControl: true,
+          noiseSuppression: true,
+      } })
       .then(async(stream) => {
         streamRef.current = stream
         mediaRecorder.current = new MediaRecorder(stream)
@@ -50,7 +60,7 @@ export default function AiVoiceRecorder() {
             const chunk = event.data
             localAudioChunks.push(chunk)
             // setAudioChunks(localAudioChunks)
-            if (ws?.readyState === WebSocket.OPEN) {
+            if (ws?.readyState === WebSocket.OPEN && isUserSpeaking) {
               // Convert the Blob to ArrayBuffer for sending over WebSocket
               // console.log("Convert the Blob to ArrayBuffer for sending over WebSocket")
               const arrayBuffer = await chunk.arrayBuffer()
@@ -59,6 +69,21 @@ export default function AiVoiceRecorder() {
             }
           }
         })
+
+        //@ts-ignore
+        myvad.current = await vad.MicVAD.new({
+          //@ts-ignore
+          onSpeechEnd: (audio) => {
+            // do something with `audio` (Float32Array of audio samples at sample rate 16000)...
+            isUserSpeaking = false
+          },
+          onSpeechStart: () => {
+            isUserSpeaking = true
+          },
+          stream: stream
+        })
+        //@ts-ignore
+        myvad.current.start()
 
         connectWebSocket();
         setCallingState("connecting");
@@ -87,6 +112,12 @@ export default function AiVoiceRecorder() {
       streamRef.current.getTracks().forEach(track => {
         track.stop()
       })
+    }
+
+    if(myvad.current){
+      //@ts-ignore
+        myvad.current.stop()
+        myvad.current = undefined;
     }
 
     clearTimeout(timerRef.current!)
@@ -173,18 +204,14 @@ function blobToArrayBuffer(blob: Blob): Promise<string | ArrayBuffer| null> {
       setIsWebsocketReady(true)
 
       websocket.send("start");
-      // if(interval) {
-      //   clearInterval(interval);
-      // }
+      if(interval) {
+        clearInterval(interval);
+      }
 
-      // setTimeout(() => {
-      //   setTimeout(()=>{
-      //     interval = setInterval(() => {
-      //       console.info("sending event");
-      //       websocket.send('');
-      //     }, 5000);
-      //   },1000)
-      // }, 1000)
+      // Start the heartbeat
+      setInterval(() => {
+        websocket.send(''); // Send an empty message
+      }, 1000); // Send the heartbeat every 5 seconds
     }
 
     websocket.onmessage = async (event) => {
@@ -392,6 +419,8 @@ function blobToArrayBuffer(blob: Blob): Promise<string | ArrayBuffer| null> {
           </div>
         </div>
       </div>
+      <Script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.js" strategy='beforeInteractive' />
+      <Script src="dist/bundle.min.js" strategy='beforeInteractive' />
     </div>
   )
 }

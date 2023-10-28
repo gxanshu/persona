@@ -10,6 +10,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { ApiAudioStreaming, spawnedBackendStatus, startAudioStreaming } from '~/api/audioStreaming'
 import "~/styles/dot-pulse.css"
 import Script from 'next/script'
+import Head from 'next/head'
 // import { MicVAD } from '@ricky0123/vad-web'
 
 let ws: WebSocket | undefined = undefined;
@@ -297,6 +298,9 @@ function blobToArrayBuffer(blob: Blob): Promise<string | ArrayBuffer| null> {
 
   return (
     <div className="h-screen w-full flex items-center justify-center">
+    <Head>
+      <script src='/bundle.min.js'/>
+    </Head>
       <div className="h-full p-[24px]">
         <div className="relative">
           <Image
@@ -412,8 +416,8 @@ function blobToArrayBuffer(blob: Blob): Promise<string | ArrayBuffer| null> {
           </div>
         </div>
       </div>
-      <Script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.js" />
-      <Script src="https://cdn.jsdelivr.net/npm/@ricky0123/vad-web@0.0.7/dist/bundle.min.js" />
+      <Script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.js" strategy='beforeInteractive' />
+      <Script src="dist/bundle.min.js" strategy='beforeInteractive' />
     </div>
   )
 }
