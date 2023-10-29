@@ -60,7 +60,7 @@ export default function AiVoiceRecorder() {
             const chunk = event.data
             localAudioChunks.push(chunk)
             // setAudioChunks(localAudioChunks)
-            if (ws?.readyState === WebSocket.OPEN && isUserSpeaking) {
+            if (ws?.readyState === WebSocket.OPEN /*&& isUserSpeaking*/) {
               // Convert the Blob to ArrayBuffer for sending over WebSocket
               // console.log("Convert the Blob to ArrayBuffer for sending over WebSocket")
               const arrayBuffer = await chunk.arrayBuffer()
@@ -69,6 +69,7 @@ export default function AiVoiceRecorder() {
             }
           }
         })
+        //mediaRecorder.current?.pause()
 
         //@ts-ignore
         myvad.current = await vad.MicVAD.new({
@@ -76,16 +77,32 @@ export default function AiVoiceRecorder() {
           onSpeechEnd: (audio) => {
             // do something with `audio` (Float32Array of audio samples at sample rate 16000)...
             isUserSpeaking = false
+            console.log("User is speaking", mediaRecorder.current)
+            mediaRecorder.current?.pause()
           },
           onSpeechStart: () => {
+            if(mediaRecorder.current && mediaRecorder.current.state == "inactive"){
+              mediaRecorder.current.start(50)
+            } else {
+              console.log("mediaRecorder.current is undefined")
+            }
             isUserSpeaking = true
+            console.log("User is speaking", mediaRecorder.current)
+            mediaRecorder.current?.resume()
           },
           stream: stream
         })
         //@ts-ignore
         myvad.current.start()
+        //mediaRecorder.current?.pause()
 
-        connectWebSocket();
+        connectWebSocket().then(() => {{
+          console.log("connectWebSocket connected")}
+          setTimeout(()=> {
+            console.log("mediaRecorder.current?.pause()", mediaRecorder?.current);
+            mediaRecorder.current?.pause()
+          }, 1000);
+        });
         setCallingState("connecting");
         if(ringAudio.current){
           ringAudio.current.currentTime = 0
@@ -192,7 +209,30 @@ function blobToArrayBuffer(blob: Blob): Promise<string | ArrayBuffer| null> {
     console.log('startWebSocket function called', spawnBackend, 'and id is', id)
     const wsUrl = spawnBackend.url.replace(/^https:\/\//, '') // removing https
 
+
     const websocket = new WebSocket(`wss://${wsUrl}ws/${id}`)
+
+    // const wsUrl1 = "localhost:8585/"
+    //
+    // const websocket = new WebSocket(`ws://${wsUrl1}ws/${id}`)
+    //
+    // const websocket1 = new WebSocket(`ws://${wsUrl1}ws-stream/${id}`)
+    //
+    // websocket1.onopen = () => {
+    //   console.info(
+    //       `[${`wss://${wsUrl}ws/${id}`}] opened ws connection @`,
+    //       performance.now(),
+    //   )
+    //   setTimeout(() => {
+    //     setTimeout(()=>{
+    //       interval = setInterval(() => {
+    //         console.info("sending event");
+    //         websocket1.send('');
+    //       }, 5000);
+    //     },1000)
+    //   }, 1000)
+    // }
+
     webSocketCalled = true
 
     websocket.onopen = () => {
@@ -209,9 +249,9 @@ function blobToArrayBuffer(blob: Blob): Promise<string | ArrayBuffer| null> {
       }
 
       // Start the heartbeat
-      setInterval(() => {
-        websocket.send(''); // Send an empty message
-      }, 1000); // Send the heartbeat every 5 seconds
+      // setInterval(() => {
+      //   websocket.send(''); // Send an empty message
+      // }, 1000); // Send the heartbeat every 5 seconds
     }
 
     websocket.onmessage = async (event) => {
@@ -284,11 +324,11 @@ function blobToArrayBuffer(blob: Blob): Promise<string | ArrayBuffer| null> {
           timerRef.current = window.setInterval(() => {
             setTime(prevTime => prevTime + 1)
           }, 1000)
-          if(mediaRecorder.current){
-            mediaRecorder.current.start(50)
-          } else {
-            console.log("mediaRecorder.current is undefined")
-          }
+          // if(mediaRecorder.current){
+          //   mediaRecorder.current.start(50)
+          // } else {
+          //   console.log("mediaRecorder.current is undefined")
+          // }
           ringAudio.current?.pause()
           console.log('Recording started! Speak now.')
         } else {
