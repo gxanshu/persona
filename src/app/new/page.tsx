@@ -12,7 +12,7 @@ import "~/styles/dot-pulse.css"
 import Script from 'next/script'
 
 let ws: WebSocket | undefined = undefined;
-const audioChunkQueue: AudioBufferSourceNode[] = []
+const queue: BufferSource[] = []
 // const audioBufferQueue: AudioBuffer[] = []
 let interval: NodeJS.Timeout
 let isPlaying = false; // Add this variable to track if audio is currently playing
@@ -21,18 +21,19 @@ let isUserSpeaking = false;
 type CallingState = "disconnect" | "connecting" | "connected"
 
 export default function AiVoiceRecorder() {
-  const mediaRecorder = useRef<MediaRecorder | undefined>()
-  const streamRef = useRef<MediaStream | undefined>()
   const [callingState, setCallingState] = useState<CallingState>("disconnect")
   const [isWebsocketReady, setIsWebsocketReady] = useState<boolean>(false)
+  const [subtitleChunks, setSubtitleChunks] = useState<string[]>([]);
   const [time, setTime] = useState(0)
   const timerRef = useRef<number | null>(null)
-  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);;
   const ringAudio = useRef<HTMLAudioElement>()
   const endAudio = useRef<HTMLAudioElement>()
-  const [subtitleChunks, setSubtitleChunks] = useState<string[]>([]);
+  const mediaRecorder = useRef<MediaRecorder | undefined>()
+  const streamRef = useRef<MediaStream | undefined>()
   const myvad = useRef();
-
+  const audioPlayer = useRef<HTMLAudioElement>()
+  const mediaSource = useRef<MediaSource>();
+  const sourceBuffer = useRef<SourceBuffer>()
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60).toString().padStart(2, '0')
@@ -82,6 +83,7 @@ export default function AiVoiceRecorder() {
             isUserSpeaking = false
             console.log("User is speaking", mediaRecorder.current)
             mediaRecorder.current?.pause()
+            // if(isPlaying == false) isPlaying = true;
           },
           onSpeechStart: () => {
             if(mediaRecorder.current && mediaRecorder.current.state == "inactive"){
@@ -92,6 +94,7 @@ export default function AiVoiceRecorder() {
             isUserSpeaking = true
             console.log("User is speaking", mediaRecorder.current)
             mediaRecorder.current?.resume()
+            // if(isPlaying == true) isPlaying = false;
           },
           stream: stream
         })
@@ -100,10 +103,11 @@ export default function AiVoiceRecorder() {
 
         connectWebSocket().then(() => {{
           console.log("connectWebSocket connected")}
-          setTimeout(()=> {
-            console.log("mediaRecorder.current?.pause()", mediaRecorder?.current);
-            mediaRecorder.current?.pause()
-          }, 1000);
+          // setTimeout(()=> {
+          //   console.log("mediaRecorder.current?.pause()", mediaRecorder?.current);
+          //   mediaRecorder.current?.pause()
+          //   // if(isPlaying == true) isPlaying = false;
+          // }, 1000);
         });
       })
       .catch(err => {
@@ -137,28 +141,14 @@ export default function AiVoiceRecorder() {
     clearTimeout(timerRef.current!)
     timerRef.current = null
     ws?.close()
-    if (audioContext?.state === 'running') {
-    audioContext.suspend().then(() => {
-      console.log('AudioContext suspended');
-    });
     setSubtitleChunks([])
-  }
     setTime(0)
+    isPlaying = false;
     console.log('Recorded')
   }
 
   const playAudio = () => {
-    if(audioChunkQueue.length && audioContext){
-      console.log("playing chunk")
-      isPlaying = true;
-      const node = audioChunkQueue.shift() as AudioBufferSourceNode;
-      console.log("chunks remaining to play", audioChunkQueue.length)
-      node.onended = () => {
-        isPlaying = false;
-        playAudio()
-      }
-      node.start(0);
-    }
+    console.log("playing function")
   }
 
 
@@ -204,20 +194,20 @@ export default function AiVoiceRecorder() {
         setSubtitleChunks((prevChunks) => [...prevChunks, subtitleChunk]);
       }
     } else {
-      const blob = new Blob([event.data], { type: 'audio/mp3' });
-      if (blob.size !== 0 && audioContext) {
-        let arrayBuffer = await blob.arrayBuffer();
-        let audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-        const playback = audioContext.createBufferSource();
-        playback.buffer = audioBuffer;
-        playback.connect(audioContext.destination);
-        audioChunkQueue.push(playback)
-        console.log("total chunks in store", audioChunkQueue.length)
-        if(isPlaying == false){
-          playAudio()
-        }
+      const blob = new Blob([event.data], { type: 'audio/mpeg' });
+      let arrayBuffer = await blob.arrayBuffer();
+      queue.push(arrayBuffer);
+      if (!sourceBuffer.current?.updating) {
+        sourceBuffer.current?.appendBuffer(queue.shift() as BufferSource);
       }
     }
+    if(isPlaying == false && audioPlayer.current){
+        isPlaying = true;
+        audioPlayer.current.onended = ()=> {
+          isPlaying = false;
+        }
+        audioPlayer.current?.play()
+     }
 };
 
 
@@ -256,11 +246,22 @@ export default function AiVoiceRecorder() {
   }
 
   useEffect(() => {
-    let audiocontenxt = new AudioContext()
     ringAudio.current = new Audio('/audio/ring.wav');
     endAudio.current = new Audio('/audio/end.wav');
-    setAudioContext(audiocontenxt)
-    console.log("audio contenxt", audioContext)
+    audioPlayer.current = new Audio();
+    mediaSource.current = new MediaSource();
+    audioPlayer.current.src = URL.createObjectURL(mediaSource.current);
+    mediaSource.current.onsourceopen = () => {
+      if (sourceBuffer.current == undefined && mediaSource.current) {
+        sourceBuffer.current = mediaSource.current.addSourceBuffer('audio/mpeg');
+        sourceBuffer.current.mode = "sequence";
+        sourceBuffer.current.onupdateend = () => {
+          if (queue.length > 0 && !sourceBuffer.current?.updating) {
+            sourceBuffer.current?.appendBuffer(queue.shift() as BufferSource);
+          }
+        }
+      }
+    }
   }, [])
 
   useEffect(()=> {
