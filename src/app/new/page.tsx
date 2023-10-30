@@ -150,10 +150,6 @@ export default function AiVoiceRecorder() {
     console.log('Recorded')
   }
 
-  const playAudio = () => {
-    console.log("playing function")
-  }
-
 
   const startWebSocket = async (spawnBackend: ApiAudioStreaming) => {
     if(webSocketCalled) return
