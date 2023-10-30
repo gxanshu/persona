@@ -13,6 +13,7 @@ import Script from 'next/script'
 
 let ws: WebSocket | undefined = undefined;
 const queue: BufferSource[] = []
+const localAudioChunks: Blob[] = []
 // const audioBufferQueue: AudioBuffer[] = []
 let interval: NodeJS.Timeout
 let isPlaying = false; // Add this variable to track if audio is currently playing
@@ -52,7 +53,6 @@ export default function AiVoiceRecorder() {
       .then(async(stream) => {
         streamRef.current = stream
         mediaRecorder.current = new MediaRecorder(stream)
-        const localAudioChunks: Blob[] = []
 
         mediaRecorder.current.addEventListener('dataavailable', async event => {
           if (event.data && event.data.size > 0) {
@@ -68,6 +68,8 @@ export default function AiVoiceRecorder() {
             }
           }
         })
+
+        console.log("first caall", mediaRecorder.current)
         
         setCallingState("connecting");
         if(ringAudio.current){
@@ -78,11 +80,10 @@ export default function AiVoiceRecorder() {
         //@ts-ignore
         myvad.current = await vad.MicVAD.new({
           //@ts-ignore
-          onSpeechEnd: (audio) => {
-            // do something with `audio` (Float32Array of audio samples at sample rate 16000)...
+          onSpeechEnd: () => {
             isUserSpeaking = false
-            console.log("speech end", mediaRecorder.current)
             mediaRecorder.current?.pause()
+            console.log("speech end", mediaRecorder.current)
             // if(isPlaying == false) isPlaying = true;
           },
           onSpeechStart: () => {
@@ -92,21 +93,17 @@ export default function AiVoiceRecorder() {
               console.log("mediaRecorder.current is undefined")
             }
             isUserSpeaking = true
-            console.log("speech start", mediaRecorder.current)
             mediaRecorder.current?.resume()
+            console.log("speech start", mediaRecorder.current)
             // if(isPlaying == true) isPlaying = false;
           },
           stream: stream
         })
-        //@ts-ignore
-        myvad.current.start()
 
         connectWebSocket().then(()=> {
-          setTimeout(()=> {
-            console.log("mediaRecorder.current?.pause()", mediaRecorder?.current);
-            mediaRecorder.current?.pause()
-            // if(isPlaying == true) isPlaying = false;
-          }, 1000);
+          console.log("connected to websocket");
+          //@ts-ignore
+          myvad.current.start()
         })
       })
       .catch(err => {
@@ -143,6 +140,16 @@ export default function AiVoiceRecorder() {
     setSubtitleChunks([])
     setTime(0)
     isPlaying = false;
+    let buffer = new Blob(localAudioChunks, { type: 'audio/mpeg' });
+    let audioURL= URL.createObjectURL(buffer);
+    const audio = document.createElement('audio');
+    audio.controls = true;
+    audio.src = audioURL;
+
+    // Optional: You can set other attributes and styles for the audio element.
+
+    // Append the audio element to the document body or another HTML element.
+    document.body.appendChild(audio);
     console.log('Recorded')
   }
 
