@@ -147,6 +147,10 @@ export default function AiVoiceRecorder() {
     // audio.src = audioURL;
     // document.body.appendChild(audio);
     localAudioChunks=[]
+    if(audioPlayer.current){
+      audioPlayer.current.pause();
+      audioPlayer.current.currentTime = 0
+    }
     console.log('Recorded')
   }
 
