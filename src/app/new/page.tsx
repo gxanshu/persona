@@ -13,7 +13,7 @@ import Script from 'next/script'
 
 let ws: WebSocket | undefined = undefined;
 const queue: BufferSource[] = []
-const localAudioChunks: Blob[] = []
+let localAudioChunks: Blob[] = []
 // const audioBufferQueue: AudioBuffer[] = []
 let interval: NodeJS.Timeout
 let isPlaying = false; // Add this variable to track if audio is currently playing
@@ -140,16 +140,13 @@ export default function AiVoiceRecorder() {
     setSubtitleChunks([])
     setTime(0)
     isPlaying = false;
-    let buffer = new Blob(localAudioChunks, { type: 'audio/mpeg' });
-    let audioURL= URL.createObjectURL(buffer);
-    const audio = document.createElement('audio');
-    audio.controls = true;
-    audio.src = audioURL;
-
-    // Optional: You can set other attributes and styles for the audio element.
-
-    // Append the audio element to the document body or another HTML element.
-    document.body.appendChild(audio);
+    // let buffer = new Blob(localAudioChunks, { type: 'audio/mpeg' });
+    // let audioURL= URL.createObjectURL(buffer);
+    // const audio = document.createElement('audio');
+    // audio.controls = true;
+    // audio.src = audioURL;
+    // document.body.appendChild(audio);
+    localAudioChunks=[]
     console.log('Recorded')
   }
 
