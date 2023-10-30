@@ -81,7 +81,7 @@ export default function AiVoiceRecorder() {
           onSpeechEnd: (audio) => {
             // do something with `audio` (Float32Array of audio samples at sample rate 16000)...
             isUserSpeaking = false
-            console.log("User is speaking", mediaRecorder.current)
+            console.log("speech end", mediaRecorder.current)
             mediaRecorder.current?.pause()
             // if(isPlaying == false) isPlaying = true;
           },
@@ -92,7 +92,7 @@ export default function AiVoiceRecorder() {
               console.log("mediaRecorder.current is undefined")
             }
             isUserSpeaking = true
-            console.log("User is speaking", mediaRecorder.current)
+            console.log("speech start", mediaRecorder.current)
             mediaRecorder.current?.resume()
             // if(isPlaying == true) isPlaying = false;
           },
@@ -100,16 +100,14 @@ export default function AiVoiceRecorder() {
         })
         //@ts-ignore
         myvad.current.start()
-        mediaRecorder.current?.pause()
 
-        connectWebSocket().then(() => {{
-          console.log("connectWebSocket connected")}
-          // setTimeout(()=> {
-          //   console.log("mediaRecorder.current?.pause()", mediaRecorder?.current);
-          //   mediaRecorder.current?.pause()
-          //   // if(isPlaying == true) isPlaying = false;
-          // }, 1000);
-        });
+        connectWebSocket().then(()=> {
+          setTimeout(()=> {
+            console.log("mediaRecorder.current?.pause()", mediaRecorder?.current);
+            mediaRecorder.current?.pause()
+            // if(isPlaying == true) isPlaying = false;
+          }, 1000);
+        })
       })
       .catch(err => {
         alert("Microphone is not accessible.")
