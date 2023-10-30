@@ -100,6 +100,7 @@ export default function AiVoiceRecorder() {
         })
         //@ts-ignore
         myvad.current.start()
+        mediaRecorder.current?.pause()
 
         connectWebSocket().then(() => {{
           console.log("connectWebSocket connected")}
