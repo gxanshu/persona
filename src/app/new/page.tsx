@@ -101,9 +101,10 @@ export default function AiVoiceRecorder() {
         })
 
         connectWebSocket().then(()=> {
-          console.log("connected to websocket");
           //@ts-ignore
           myvad.current.start()
+          console.log("connected to websocket");
+          audioPlayer.current?.play();
         })
       })
       .catch(err => {
@@ -151,8 +152,17 @@ export default function AiVoiceRecorder() {
       audioPlayer.current.pause();
       audioPlayer.current.currentTime = 0
     }
+    if (sourceBuffer.current) {
+        try {
+            sourceBuffer.current.abort();
+        } catch (e) {
+            console.error("Error clearing SourceBuffer: " + e);
+        }
+
+    }
     console.log('Recorded')
   }
+
 
 
   const startWebSocket = async (spawnBackend: ApiAudioStreaming) => {
@@ -161,9 +171,9 @@ export default function AiVoiceRecorder() {
     console.log('startWebSocket function called', spawnBackend, 'and id is', id)
     const wsUrl = spawnBackend.url.replace(/^https:\/\//, '') // removing https
 
-    const wsUrl1 = "localhost:8585/"
+    // const wsUrl1 = "localhost:8585/"
 
-    const websocket = new WebSocket(`ws://${wsUrl1}ws/${id}`)
+    const websocket = new WebSocket(`wss://${wsUrl}ws/${id}`)
 
     webSocketCalled = true
 
@@ -184,7 +194,7 @@ export default function AiVoiceRecorder() {
         if(websocket.readyState === WebSocket.OPEN) {
           websocket.send(JSON.stringify({"type": "KeepAlive"}));
         }
-      }, 10000); // Send the heartbeat every 5 seconds
+      }, 10000); // Send the heartbeat every 10 seconds
     }
 
     websocket.onmessage = async (event) => {
@@ -202,15 +212,11 @@ export default function AiVoiceRecorder() {
       queue.push(arrayBuffer);
       if (!sourceBuffer.current?.updating) {
         sourceBuffer.current?.appendBuffer(queue.shift() as BufferSource);
+        console.log("playing audio");
+      }else{
+        console.log("pushed audio");
       }
     }
-    if(isPlaying == false && audioPlayer.current){
-        isPlaying = true;
-        audioPlayer.current.onended = ()=> {
-          isPlaying = false;
-        }
-        audioPlayer.current?.play()
-     }
 };
 
 
