@@ -19,6 +19,7 @@ let interval: NodeJS.Timeout
 let isPlaying = false; // Add this variable to track if audio is currently playing
 let webSocketCalled = false;
 let isUserSpeaking = false;
+let sourceBufferURL: string = ""
 type CallingState = "disconnect" | "connecting" | "connected"
 
 export default function AiVoiceRecorder() {
@@ -84,7 +85,6 @@ export default function AiVoiceRecorder() {
             isUserSpeaking = false
             mediaRecorder.current?.pause()
             console.log("speech end", mediaRecorder.current)
-            // if(isPlaying == false) isPlaying = true;
           },
           onSpeechStart: () => {
             if(mediaRecorder.current && mediaRecorder.current.state == "inactive"){
@@ -148,19 +148,8 @@ export default function AiVoiceRecorder() {
     // audio.src = audioURL;
     // document.body.appendChild(audio);
     localAudioChunks=[]
-    if(audioPlayer.current){
-      audioPlayer.current.pause();
-      audioPlayer.current.currentTime = 0
-    }
-    if (sourceBuffer.current) {
-        try {
-            sourceBuffer.current.abort();
-        } catch (e) {
-            console.error("Error clearing SourceBuffer: " + e);
-        }
-
-    }
-    console.log('Recorded')
+    resetStream()
+    console.log('Recorded', sourceBuffer.current)
   }
 
 
@@ -254,23 +243,43 @@ export default function AiVoiceRecorder() {
     }, 1000)
   }
 
-  useEffect(() => {
-    ringAudio.current = new Audio('/audio/ring.wav');
-    endAudio.current = new Audio('/audio/end.wav');
-    audioPlayer.current = new Audio();
-    mediaSource.current = new MediaSource();
-    audioPlayer.current.src = URL.createObjectURL(mediaSource.current);
-    mediaSource.current.onsourceopen = () => {
-      if (sourceBuffer.current == undefined && mediaSource.current) {
-        sourceBuffer.current = mediaSource.current.addSourceBuffer('audio/mpeg');
-        sourceBuffer.current.mode = "sequence";
-        sourceBuffer.current.onupdateend = () => {
-          if (queue.length > 0 && !sourceBuffer.current?.updating) {
-            sourceBuffer.current?.appendBuffer(queue.shift() as BufferSource);
+  const initStream = () => {
+    if(mediaSource.current && audioPlayer.current){
+      sourceBufferURL = URL.createObjectURL(mediaSource.current)
+      audioPlayer.current.src = sourceBufferURL;
+      mediaSource.current.onsourceopen = () => {
+        if (sourceBuffer.current == undefined && mediaSource.current) {
+          sourceBuffer.current = mediaSource.current.addSourceBuffer('audio/mpeg');
+          sourceBuffer.current.mode = "sequence";
+          sourceBuffer.current.onupdateend = () => {
+            if (queue.length > 0 && !sourceBuffer.current?.updating) {
+              sourceBuffer.current?.appendBuffer(queue.shift() as BufferSource);
+              console.log('source buffer', sourceBuffer.current?.buffered.start(0), "end", sourceBuffer.current?.buffered.end(0), sourceBuffer.current?.buffered.length)
+            }
           }
         }
       }
     }
+  }
+
+  const resetStream = () => {
+    if (sourceBuffer.current) {
+    URL.revokeObjectURL(sourceBufferURL)
+    sourceBuffer.current.abort();
+    sourceBuffer.current = undefined;
+    queue.length = 0
+    isPlaying = false;
+  }
+    initStream()
+  }
+
+  useEffect(() => {
+    window.playCacheChunks = () => audioPlayer.current?.play(); 
+    ringAudio.current = new Audio('/audio/ring.wav');
+    endAudio.current = new Audio('/audio/end.wav');
+    audioPlayer.current = new Audio();
+    mediaSource.current = new MediaSource();
+    initStream()
   }, [])
 
   useEffect(()=> {
