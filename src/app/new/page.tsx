@@ -274,7 +274,7 @@ export default function AiVoiceRecorder() {
   }
 
   useEffect(() => {
-    window.playCacheChunks = () => audioPlayer.current?.play(); 
+    // window.playCacheChunks = () => audioPlayer.current?.play(); 
     ringAudio.current = new Audio('/audio/ring.wav');
     endAudio.current = new Audio('/audio/end.wav');
     audioPlayer.current = new Audio();
