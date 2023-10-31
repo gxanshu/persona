@@ -161,8 +161,9 @@ export default function AiVoiceRecorder() {
     console.log('startWebSocket function called', spawnBackend, 'and id is', id)
     const wsUrl = spawnBackend.url.replace(/^https:\/\//, '') // removing https
 
+    const wsUrl1 = "localhost:8585/"
 
-    const websocket = new WebSocket(`wss://${wsUrl}ws/${id}`)
+    const websocket = new WebSocket(`ws://${wsUrl1}ws/${id}`)
 
     webSocketCalled = true
 
@@ -179,12 +180,11 @@ export default function AiVoiceRecorder() {
         clearInterval(interval);
       }
 
-      // Start the heartbeat
       interval = setInterval(() => {
-         if(!isUserSpeaking && websocket.readyState === WebSocket.OPEN){
-          websocket.send('');
-         }
-      }, 1000); // Send the heartbeat every 5 seconds
+        if(websocket.readyState === WebSocket.OPEN) {
+          websocket.send(JSON.stringify({"type": "KeepAlive"}));
+        }
+      }, 10000); // Send the heartbeat every 5 seconds
     }
 
     websocket.onmessage = async (event) => {
