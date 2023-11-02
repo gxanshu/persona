@@ -14,9 +14,8 @@ import Script from 'next/script'
 let ws: WebSocket | undefined = undefined;
 const queue: BufferSource[] = []
 let localAudioChunks: Blob[] = []
-// const audioBufferQueue: AudioBuffer[] = []
 let interval: NodeJS.Timeout
-let isPlaying = false; // Add this variable to track if audio is currently playing
+let isPlaying = false;
 let webSocketCalled = false;
 let isUserSpeaking = false;
 let sourceBufferURL: string = ""
@@ -33,7 +32,7 @@ export default function AiVoiceRecorder() {
   const mediaRecorder = useRef<MediaRecorder | undefined>()
   const streamRef = useRef<MediaStream | undefined>()
   const myvad = useRef();
-  const audioPlayer = useRef<HTMLAudioElement>()
+  const audioPlayer = useRef<HTMLAudioElement>(null)
   const mediaSource = useRef<MediaSource>();
   const sourceBuffer = useRef<SourceBuffer>()
 
@@ -84,18 +83,24 @@ export default function AiVoiceRecorder() {
           onSpeechEnd: () => {
             isUserSpeaking = false
             mediaRecorder.current?.pause()
+            if(audioPlayer.current && audioPlayer.current.paused == true){
+              audioPlayer.current.play();
+            }
             console.log("speech end", mediaRecorder.current)
           },
           onSpeechStart: () => {
+            isUserSpeaking = true
+            if(audioPlayer.current && audioPlayer.current.paused == false){
+              audioPlayer.current.pause();
+              resetStream();
+            }
             if(mediaRecorder.current && mediaRecorder.current.state == "inactive"){
               mediaRecorder.current.start(50)
             } else {
               console.log("mediaRecorder.current is undefined")
             }
-            isUserSpeaking = true
             mediaRecorder.current?.resume()
             console.log("speech start", mediaRecorder.current)
-            // if(isPlaying == true) isPlaying = false;
           },
           stream: stream
         })
@@ -104,7 +109,7 @@ export default function AiVoiceRecorder() {
           //@ts-ignore
           myvad.current.start()
           console.log("connected to websocket");
-          audioPlayer.current?.play();
+          // audioPlayer.current?.play();
         })
       })
       .catch(err => {
@@ -141,12 +146,6 @@ export default function AiVoiceRecorder() {
     setSubtitleChunks([])
     setTime(0)
     isPlaying = false;
-    // let buffer = new Blob(localAudioChunks, { type: 'audio/mpeg' });
-    // let audioURL= URL.createObjectURL(buffer);
-    // const audio = document.createElement('audio');
-    // audio.controls = true;
-    // audio.src = audioURL;
-    // document.body.appendChild(audio);
     localAudioChunks=[]
     resetStream()
     console.log('Recorded', sourceBuffer.current)
@@ -199,7 +198,7 @@ export default function AiVoiceRecorder() {
       const blob = new Blob([event.data], { type: 'audio/mpeg' });
       let arrayBuffer = await blob.arrayBuffer();
       queue.push(arrayBuffer);
-      if (!sourceBuffer.current?.updating) {
+      if (!sourceBuffer.current?.updating && isUserSpeaking == false) {
         sourceBuffer.current?.appendBuffer(queue.shift() as BufferSource);
         console.log("playing audio");
       }else{
@@ -277,7 +276,7 @@ export default function AiVoiceRecorder() {
     // window.playCacheChunks = () => audioPlayer.current?.play(); 
     ringAudio.current = new Audio('/audio/ring.wav');
     endAudio.current = new Audio('/audio/end.wav');
-    audioPlayer.current = new Audio();
+    // audioPlayer.current = new Audio();
     mediaSource.current = new MediaSource();
     initStream()
   }, [])
@@ -412,9 +411,10 @@ export default function AiVoiceRecorder() {
               )}
           </div>
         </div>
+        <audio ref={audioPlayer} controls></audio>
       </div>
       <Script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.js" strategy='beforeInteractive' />
-      <Script src="dist/bundle.min.js" strategy='beforeInteractive' />
+      <Script src="https://cdn.jsdelivr.net/npm/@ricky0123/vad-web@0.0.7/dist/bundle.min.js" strategy='beforeInteractive' />
     </div>
   )
 }
