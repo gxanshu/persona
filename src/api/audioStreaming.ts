@@ -22,3 +22,12 @@ export async function startAudioStreaming() {
   const data = await responce.json()
   return data as ApiAudioStreaming
 }
+
+export async function startAudioStreamingV2() {
+  const responce = await fetch(`https://clone-management-svc.safeapp.workers.dev/backend/messages`, {
+    method: 'GET',
+  })
+
+  const data = await responce.json()
+  return data as ApiAudioStreaming
+}

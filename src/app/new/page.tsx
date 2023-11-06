@@ -7,7 +7,7 @@ import Image from 'next/image'
 import { LiveAudioVisualizer } from 'react-audio-visualize'
 import '~/styles/animation.css'
 import { v4 as uuidv4 } from 'uuid'
-import { ApiAudioStreaming, spawnedBackendStatus, startAudioStreaming } from '~/api/audioStreaming'
+import { ApiAudioStreaming, spawnedBackendStatus, startAudioStreaming, startAudioStreamingV2 } from '~/api/audioStreaming'
 import "~/styles/dot-pulse.css"
 import Script from 'next/script'
 
@@ -228,7 +228,7 @@ export default function AiVoiceRecorder() {
   const connectWebSocket = async () => {
     let backendStatusChecker: NodeJS.Timeout // Declare the interval ID variable
 
-    const spawnBackend = await startAudioStreaming()
+    const spawnBackend = await startAudioStreamingV2()
     console.log('spawnBackend', spawnBackend)
 
     backendStatusChecker = setInterval(async () => {
