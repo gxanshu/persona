@@ -1,3 +1,5 @@
+import "~/styles/animation.css"
+
 interface AnimationProps {
   name: string
   timing?: number

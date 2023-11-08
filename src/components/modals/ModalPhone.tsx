@@ -4,7 +4,7 @@ import { Icon, ProfileModalCross } from '~/assets/icons'
 import AnimatedModal from './AnimatedModal'
 import dynamic from 'next/dynamic'
 const LazyPhoneModal = dynamic(() => import('./LazyPhoneModal'))
-const LazyOnboarding = dynamic(() => import('./onboarding/CarouselOnboard'))
+const LazyOnboarding = dynamic(() => import('./onboarding/ListOnboard'))
 
 const ModalPhone = forwardRef(({}, ref: ForwardedRef<HTMLDialogElement>) => {
   const [step, setStep] = useState<boolean>(true)
