@@ -1,7 +1,7 @@
 import { MessageSend } from "~/components/chatpanel/MessageSend"
 //@ts-ignore
 import { AudioVisualizer } from 'react-audio-visualize';
-import { useEffect, useRef, useState } from "react";
+import { CSSProperties, useEffect, useRef, useState } from "react";
 import { Icon, PlayIcon, StopIcon } from "~/assets/icons";
 
 interface AudioTestingProps {
@@ -35,39 +35,39 @@ export const AudioTesting = (props: AudioTestingProps) => {
 		}
 	}
 
-	useEffect(()=> {
-		if(blobUrl){
+	useEffect(() => {
+		if (blobUrl) {
 			URL.revokeObjectURL(blobUrl)
 		}
-		if(blob && audioPlayer.current){
+		if (blob && audioPlayer.current) {
 			blobUrl = URL.createObjectURL(blob);
 			audioPlayer.current.src = blobUrl;
 			audioPlayer.current.load();
 		}
 	}, [blob])
 
-	useEffect(()=> {
+	useEffect(() => {
 		audioPlayer.current = new Audio();
 	}, [])
 
 	const playAudio = () => {
 		setAudioPlaying(true);
-		if(audioPlayer.current){
+		if (audioPlayer.current) {
 			audioPlayer.current.play()
-	    audioPlayer.current.addEventListener('ended', () => {
-	      setAudioPlaying(false);
-	    })
+			audioPlayer.current.addEventListener('ended', () => {
+				setAudioPlaying(false);
+			})
 		}
 	}
 
 	const pauseAudio = () => {
 		if (audioPlayer.current) {
-      audioPlayer.current.pause()
-    }
+			audioPlayer.current.pause()
+		}
 	}
 
 	return (
-		<div className="flex flex-col items-center justify-between sm:p-[64px] p-[48px] h-full gap-[48px]">
+		<div className="flex flex-col items-center justify-between sm:p-[64px] py-[48px] px-[28px] h-full gap-[48px]">
 			<div className="flex flex-col gap-[24px] items-center">
 				<div className="w-full flex flex-col items-center gap-[8px]">
 					<h2 className="break-words text-center text-[33px] leading-[40px] font-[700]">
@@ -79,19 +79,20 @@ export const AudioTesting = (props: AudioTestingProps) => {
 				</div>
 			</div>
 			{blob && (
-				<>
+				<div className="flex flex-col items-center gap-[16px]">
 					<AudioVisualizer
 						ref={visualizerRef}
 						blob={blob}
+						height={95}
 						width={500}
-						height={75}
+						style={{width: "110%", marginLeft: "-5%"} as CSSProperties}
 						barWidth={1}
-						gap={0}
+						gap={1}
 						barColor={'#f76565'}
 					/>
 					<button
 						onClick={audioPlaying ? pauseAudio : playAudio}
-						className="flex py-[4px] px-[8px] justify-center rounded-[16px] border border-[#187EE7] bg-white"
+						className="flex py-[4px] px-[8px] justify-center rounded-[16px] border border-[#187EE7] bg-white max-w-max"
 					>
 						<div className="flex items-center gap-[4px]">
 							<Icon frameClass="h-[20px] w-[20px] text-[#187EE7]">
@@ -102,7 +103,7 @@ export const AudioTesting = (props: AudioTestingProps) => {
 							</p>
 						</div>
 					</button>
-				</>
+				</div>
 			)}
 			<MessageSend handleSubmit={handleSubmit} loading={loading} hideMic />
 		</div>

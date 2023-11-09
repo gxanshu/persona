@@ -263,13 +263,7 @@ export default function AudioCloning(props: AudioCloningProps) {
                 Read the words
               </h2>
               <div className="flex items-center gap-[8px]">
-                <div className="flex py-[4px] px-[12px] items-center bg-[#EBEBEB] rounded-[32px]">
-                  <BackwardIcon height={12} width={12} />
-                </div>
                 <p className="text-[#1D1D1F] text-center text-[13px] w-[96px]">{time} seconds left</p>
-                <div className="flex py-[4px] px-[12px] items-center bg-[#EBEBEB] rounded-[32px]">
-                  <FordwardIcon height={12} width={12} />
-                </div>
               </div>
             </div>
             {/*text section*/}
