@@ -15,6 +15,7 @@ import {
 // @ts-ignore
 import { LiveAudioVisualizer } from 'react-audio-visualize'
 import { CircularProgress } from '~/components/CircularProgress'
+import { Loader } from '../Loader'
 
 type RecordingState = 'start' | 'stop'
 type AudioState = 'play' | 'pause'
@@ -28,7 +29,12 @@ const text = [
   'Sixth line copy of lorem ipsums Neque porro quisquam est qui dolorem ipsum quia dolor sit amet.',
 ]
 
-export default function AudioCloning() {
+interface AudioCloningProps {
+  setVoiceId: (value: string)=> void;
+  nextStep: ()=> void;
+}
+
+export default function AudioCloning(props: AudioCloningProps) {
   const [time, setTime] = useState(60)
   const [step, setStep] = useState(0)
   const [isRecording, setIsRecording] = useState(false)
@@ -40,6 +46,7 @@ export default function AudioCloning() {
   const streamRef = useRef<MediaStream | undefined>()
   const [upload, setUpload] = useState<number[]>([0, 0, 0, 0, 0, 0])
   const [uploadIds, setUploadIds] = useState<string[]>([])
+  const [isFinalUpload, setIsFinalUpload] = useState(false);
   const timerRef = useRef<number | null>(null)
 
   useEffect(() => {
@@ -209,6 +216,7 @@ export default function AudioCloning() {
   const handleFinalUpload = (newIds: string[]) => {
     console.log(newIds)
     if (step == 5 || time == 0) {
+      setIsFinalUpload(true)
       console.log(`finishing because step = ${step} & time = ${time}`)
       const name = 'TEMPLATE_NAME'
       const url = 'https://voicleclone-worker.safeapp.workers.dev/from_r2?voice_name=' + name;
@@ -229,13 +237,16 @@ export default function AudioCloning() {
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
-          return response.text(); // Assuming the response is JSON
+          return response.text();
         })
         .then((data) => {
-          console.log('Response', data);
+          props.setVoiceId(data);
+          setIsFinalUpload(false);
+          props.nextStep();
         })
         .catch((error) => {
           console.error('Error:', error);
+          setIsFinalUpload(false);
         });
     } else {
       console.log(`step is ${step} and time is ${time} so unable to finish`)
@@ -387,7 +398,7 @@ export default function AudioCloning() {
                     }}
                     className={`p-[16px] flex items-center rounded-[32px] bg-[#187EE7]`}
                   >
-                    <BigForwardIcon height={24} width={24} className="text-white" />
+                    {isFinalUpload ? (<Loader size={24}/>) : (<BigForwardIcon height={24} width={24} className="text-white" />)}
                   </button>
                   <CircularProgress total={upload[step]} />
                 </div>

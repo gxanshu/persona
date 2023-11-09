@@ -5,7 +5,7 @@ export const CheckIcon = () => (
 )
 
 export const PanelSearch = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none">
+  <svg xmlns="http://www.w3.org/2000/svg" height={20} width={20} fill="none">
     <path
       stroke="#86868B"
       strokeLinecap="round"
@@ -26,7 +26,7 @@ export const PanelPen = () => (
 )
 
 export const MsgMicIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none">
+  <svg xmlns="http://www.w3.org/2000/svg" height={24} width={24} fill="none">
     <g clipPath="url(#a)">
       <path
         fill="#1D1D1F"
@@ -43,9 +43,9 @@ export const MsgMicIcon = () => (
 )
 
 export const MsgSendIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none">
+  <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} fill="none">
     <path
-      stroke="#FAFAFA"
+      stroke="currentColor"
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={1.8}
