@@ -26,7 +26,7 @@ const AudioRecordingOnboarding = forwardRef(({}, ref: ForwardedRef<HTMLDialogEle
   }
 
   return (
-    <AnimatedModal ref={ref}>
+    <AnimatedModal containerClass='min-h-screen sm:min-h-[644px] recording-modal flex items-center justify-center sm:block' ref={ref}>
     {step
           ? <div className='h-[644px]'>
             <LazyOnboarding step={() => setStep(false)} />

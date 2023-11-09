@@ -43,7 +43,8 @@ export default function AiVoiceRecorder() {
   }
 
   const startRecording = () => {
-    navigator.mediaDevices
+    try {
+      navigator.mediaDevices
       .getUserMedia({ audio: {
           channelCount: 1,
           echoCancellation: true,
@@ -116,6 +117,9 @@ export default function AiVoiceRecorder() {
         alert("Microphone is not accessible.")
         console.log('Error: ' + err)
       })
+    } catch(e) {
+      console.log(e)
+    }
   }
 
   const stopRecording = () => {

@@ -13,7 +13,7 @@ const AnimatedModal = forwardRef(
     return (
       <dialog
         ref={ref}
-        className={`w-[531px] min-h-[500px] rounded-[48px] bg-white modal-enter ${containerClass} outline-none`}
+        className={`w-[531px] sm:min-h-[500px] rounded-[48px] bg-white modal-enter ${containerClass} outline-none`}
         style={style}
         open={open}
       >

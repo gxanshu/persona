@@ -117,3 +117,13 @@ body::-webkit-scrollbar {
 .bg-cover {
   background-size: cover !important;
 }
+
+/* Define a CSS media query for mobile screens */
+@media (max-width: 767px) {
+  /* Target the .recording-modal */
+  .recording-modal {
+    max-width: 100vw !important;
+    margin: 0px !important;
+    border-radius: 0px !important;
+  }
+}
