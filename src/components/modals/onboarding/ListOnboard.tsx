@@ -1,5 +1,7 @@
 import { animate } from '~/lib'
-import SiriOrb from '~/components/orbs/SiriOrb'
+import {
+  SiriOrb, BlackWaveOrb, BlueWaveOrb, ColorWaveOrb
+} from '~/components/orbs/'
 
 interface ModalStartListProps {
   step: () => void
@@ -10,6 +12,9 @@ export const ModalStartList: React.FC<ModalStartListProps> = props => {
     <div className="flex flex-col items-center justify-between sm:p-[64px] p-[48px] h-full gap-[48px]">
       <div className="flex flex-col gap-[24px] items-center">
         <div className="w-full flex flex-col items-center gap-[12px]">
+          {/*<BlackWaveOrb className='h-[64px] w-[64px] bg-black' />
+          <BlueWaveOrb className='h-[64px] w-[64px]' />
+          <ColorWaveOrb className='h-[64px] w-[64px]' />*/}
           <SiriOrb className='h-[64px] w-[64px]' />
           <h2 className="break-words text-center text-[33px] leading-[40px] font-[700]">
             Clone your Voice
@@ -49,7 +54,7 @@ interface ListItemProps {
 
 const ListItem: React.FC<ListItemProps> = ({ emoji, delay, subText, heading }) => {
   return (
-    <div className="flex flex-start gap-[96px]" style={{ ...animate({ name: 'fadeIn', delay }), opacity: 0}}>
+    <div className="flex flex-start gap-[96px]" style={{ ...animate({ name: 'fadeIn', delay }), opacity: 0 }}>
       <div className="flex gap-[12px]">
         <p className="text-center text-[24px] leading-[150%]">{emoji}</p>
         <div className='text-[#494949] text-[15px] leading-[150%]'>

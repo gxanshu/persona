@@ -1,12 +1,12 @@
-import { init } from "next/dist/compiled/webpack/webpack";
 import { useEffect, useRef } from "react";
-const siri_orb = "/shaders/siri-orb.frag";
 const vert = "/shaders/shader.vert";
 import Shader from "./shader";
 
-interface SiriOrbProps {
+export interface OrbCanvasProps {
 	className?: string;
-	stream?: MediaStream
+	stream?: MediaStream;
+	/**must be a path for .frag file*/
+	orb: string;
 }
 
 let audioContext: AudioContext;
@@ -33,7 +33,7 @@ function updateAudio() {
 	console.log("updateAudio")
 }
 
-export default async function SiriOrb({ className, stream }: SiriOrbProps) {
+export async function OrbCanvas({ className, stream, orb }: OrbCanvasProps) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
 	const init = async() => {
@@ -48,7 +48,7 @@ export default async function SiriOrb({ className, stream }: SiriOrbProps) {
 					console.error('Error accessing microphone:', error);
 				}
 			}
-			let shader1 = new Shader(canvasRef.current, vert, siri_orb);
+			let shader1 = new Shader(canvasRef.current, vert, orb);
 			function update() {
 			    shader1.audio = audioSample;
 			}
@@ -61,6 +61,6 @@ export default async function SiriOrb({ className, stream }: SiriOrbProps) {
 	}, [])
 
 	return (
-		<canvas className={`bg-black ${className}`} ref={canvasRef}></canvas>
+		<canvas className={`${className}`} ref={canvasRef}></canvas>
 	)
 }

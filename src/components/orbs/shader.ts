@@ -15,7 +15,7 @@ export default class Shader {
       this.vert = vert;
       this.frag = frag;
       this.gl = this.canvas.getContext('webgl');
-      window.addEventListener('resize', this.resizeCanvas.bind(this));
+      // window.addEventListener('resize', this.resizeCanvas.bind(this));
       if (!this.gl) {
         console.error('WebGL is not supported in this browser.');
         return;
@@ -39,13 +39,15 @@ export default class Shader {
       if (!this.canvas) {
         return;
       }
-      if (this.canvas.parentElement) {
-        this.canvas.width = this.canvas.parentElement.clientWidth;
-        this.canvas.height = this.canvas.parentElement.clientHeight;
-      } else if (typeof window !== 'undefined') {
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
-      }
+      // if (this.canvas.parentElement) {
+      //   this.canvas.width = this.canvas.parentElement.clientWidth;
+      //   this.canvas.height = this.canvas.parentElement.clientHeight;
+      // } else if (typeof window !== 'undefined') {
+      //   this.canvas.width = window.innerWidth;
+      //   this.canvas.height = window.innerHeight;
+      // }
+      this.canvas.width = this.canvas.offsetWidth;
+      this.canvas.height = this.canvas.offsetHeight;
       if (this.gl && this.program) {
         const res = this.gl.getUniformLocation(this.program, 'resolution');
         this.gl.uniform2f(res, this.canvas.width, this.canvas.height);
