@@ -52,7 +52,7 @@ const ModalChat = forwardRef(({}, ref: ForwardedRef<HTMLDialogElement>) => {
               <div className="w-full h-[36px] bg-[#D9D9D9]" />
             </div>
             <div className="p-[12px]">
-              <MessageSend />
+              <MessageSend handleSubmit={()=>{}} />
             </div>
           </div>
         </div>
