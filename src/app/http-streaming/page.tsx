@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react";
 
 export default function HttpStreaming() {
-	const audioPlayer = useRef<HTMLAudioElement>();
+	const audioPlayer = useRef<HTMLAudioElement>(null);
 
 	let audioUrl = "https://fetch-stream-audio.anthum.com/5mbps/house-41000hz-trim.wav"
 	let audioUrl2 = "https://samplelib.com/lib/preview/mp3/sample-15s.mp3"
@@ -19,25 +19,27 @@ export default function HttpStreaming() {
 	}
 
 	useEffect(() => {
-		audioPlayer.current = new Audio();
-		audioPlayer.current.preload = "auto";
-		// audioPlayer.current.oncanplay = () => {
-		// 	audioPlayer.current?.play();
-		// }
-		audioPlayer.current.onended = () => {
-			console.log("audio playing finish")
-		}
-		audioPlayer.current.onerror = () => {
-			console.log("error while playing audio")
+		if(audioPlayer.current){
+			audioPlayer.current.preload = "auto";
+			audioPlayer.current.onended = () => {
+				console.log("audio playing finish")
+			}
+			audioPlayer.current.onerror = () => {
+				console.log("error while playing audio")
+			}
 		}
 	}, [])
 
 	return (
-		<main className="p-[72px] flex gap-[16px]">
+		<main className="flex flex-col gap-[12px]">
+			<div className="p-[52px] flex gap-[16px]">
 			<button className="border p-2 rounded" onClick={()=> playAudio(audioUrl)}>play audio (3.1mb)</button>
 			<button className="border p-2 rounded" onClick={()=> playAudio(audioUrl2)}>play audio (900kb)</button>
 			<button className="border p-2 rounded" onClick={()=> playAudio(audioUrl3)}>play audi0 (5mb)</button>
 			<button className="border p-2 rounded" onClick={()=> playAudio(audioUrl4)}>play audio (10mb)</button>
+		</div>
+		<audio controls ref={audioPlayer} preload="auto"></audio>
 		</main>
+
 	)
 }
