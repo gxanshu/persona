@@ -6,25 +6,14 @@ import Image from 'next/image'
 // @ts-ignore
 import { LiveAudioVisualizer } from 'react-audio-visualize'
 import '~/styles/animation.css'
-import { v4 as uuidv4 } from 'uuid'
-import { ApiAudioStreaming, spawnedBackendStatus, startAudioStreaming, startAudioStreamingV2 } from '~/api/audioStreaming'
 import "~/styles/dot-pulse.css"
 import Script from 'next/script'
 
-let ws: WebSocket | undefined = undefined;
-const queue: BufferSource[] = []
-let localAudioChunks: Blob[] = []
-let interval: NodeJS.Timeout
 let isPlaying = false;
-let webSocketCalled = false;
-let isUserSpeaking = false;
-let sourceBufferURL: string = ""
 type CallingState = "disconnect" | "connecting" | "connected"
 
 export default function AiVoiceRecorder() {
   const [callingState, setCallingState] = useState<CallingState>("disconnect")
-  const [isWebsocketReady, setIsWebsocketReady] = useState<boolean>(false)
-  const [subtitleChunks, setSubtitleChunks] = useState<string[]>([]);
   const [time, setTime] = useState(0)
   const timerRef = useRef<number | null>(null)
   const ringAudio = useRef<HTMLAudioElement>()
@@ -33,14 +22,51 @@ export default function AiVoiceRecorder() {
   const streamRef = useRef<MediaStream | undefined>()
   const myvad = useRef();
   const audioPlayer = useRef<HTMLAudioElement>(null)
-  const mediaSource = useRef<MediaSource>();
-  const sourceBuffer = useRef<SourceBuffer>()
+  const audioCtx = useRef<AudioContext>();
+  const audioSource = useRef<AudioBufferSourceNode>();
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60).toString().padStart(2, '0')
     const remainingSeconds = (seconds % 60).toString().padStart(2, '0')
     return `${minutes}:${remainingSeconds}`
   }
+
+  const playAudio = (audio: Float32Array) => {
+    if(isPlaying == false && audioCtx.current){
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', '/api/audio', true);
+      xhr.responseType = 'arraybuffer';
+
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          isPlaying = true;
+          let audioData = new Uint8Array(xhr.response);
+          audioCtx.current?.decodeAudioData(audioData.buffer, function(buffer) {
+            if(audioSource.current && audioCtx.current){
+              audioSource.current.buffer = buffer;
+              audioSource.current.connect(audioCtx.current.destination);
+              audioSource.current.onended = () => {
+                isPlaying = false;
+              }
+              audioSource.current.start(0);
+            }
+          });
+        }
+      };
+
+    xhr.send(audio);
+    console.log(audio);
+    }
+  }
+
+  const pauseAndCleanAudio = () => {
+    if (audioSource.current) {
+      audioSource.current.stop();
+      isPlaying = false
+      audioSource.current = undefined; // Set the AudioBufferSourceNode to null to clean the buffer
+      audioSource.current = audioCtx.current?.createBufferSource()
+    }
+};
 
   const startRecording = () => {
     navigator.mediaDevices
@@ -53,64 +79,29 @@ export default function AiVoiceRecorder() {
       .then(async(stream) => {
         streamRef.current = stream
         mediaRecorder.current = new MediaRecorder(stream)
-
-        mediaRecorder.current.addEventListener('dataavailable', async event => {
-          if (event.data && event.data.size > 0) {
-            const chunk = event.data
-            localAudioChunks.push(chunk)
-            // setAudioChunks(localAudioChunks)
-            if (ws?.readyState === WebSocket.OPEN /*&& isUserSpeaking*/) {
-              // Convert the Blob to ArrayBuffer for sending over WebSocket
-              // console.log("Convert the Blob to ArrayBuffer for sending over WebSocket")
-              const arrayBuffer = await chunk.arrayBuffer()
-              // sending those thunks to websocket
-              ws.send(arrayBuffer)
-            }
-          }
-        })
-
-        console.log("first caall", mediaRecorder.current)
         
         setCallingState("connecting");
-        if(ringAudio.current){
-          ringAudio.current.currentTime = 0
-          ringAudio.current.play()
-        }
 
         //@ts-ignore
         myvad.current = await vad.MicVAD.new({
           //@ts-ignore
-          onSpeechEnd: () => {
-            isUserSpeaking = false
-            mediaRecorder.current?.pause()
-            if(audioPlayer.current && audioPlayer.current.paused == true){
-              audioPlayer.current.play();
-            }
-            console.log("speech end", mediaRecorder.current)
+          onSpeechEnd: (audio: Float32Array) => {
+            playAudio(audio);
+            console.log('end')
           },
           onSpeechStart: () => {
-            isUserSpeaking = true
-            if(audioPlayer.current && audioPlayer.current.paused == false){
-              audioPlayer.current.pause();
-              resetStream();
+            if(isPlaying){
+              pauseAndCleanAudio();
             }
-            if(mediaRecorder.current && mediaRecorder.current.state == "inactive"){
-              mediaRecorder.current.start(50)
-            } else {
-              console.log("mediaRecorder.current is undefined")
-            }
-            mediaRecorder.current?.resume()
-            console.log("speech start", mediaRecorder.current)
+            console.log('start');
           },
           stream: stream
         })
 
-        connectWebSocket().then(()=> {
-          //@ts-ignore
-          myvad.current.start()
-          console.log("connected to websocket");
-          // audioPlayer.current?.play();
-        })
+        //@ts-ignore
+        myvad.current.start();
+
+        mediaRecorder.current?.start(50)
       })
       .catch(err => {
         alert("Microphone is not accessible.")
@@ -128,172 +119,33 @@ export default function AiVoiceRecorder() {
       setCallingState("disconnect")
     }
 
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => {
-        track.stop()
-      })
-    }
-
     if(myvad.current){
       //@ts-ignore
         myvad.current.pause()
         delete myvad.current
     }
 
-    clearTimeout(timerRef.current!)
-    timerRef.current = null
-    ws?.close()
-    setSubtitleChunks([])
     setTime(0)
-    isPlaying = false;
-    localAudioChunks=[]
-    resetStream()
-    console.log('Recorded', sourceBuffer.current)
-  }
-
-
-
-  const startWebSocket = async (spawnBackend: ApiAudioStreaming) => {
-    if(webSocketCalled) return
-    const id = uuidv4()
-    console.log('startWebSocket function called', spawnBackend, 'and id is', id)
-    const wsUrl = spawnBackend.url.replace(/^https:\/\//, '') // removing https
-
-    // const wsUrl1 = "localhost:8585/"
-
-    const websocket = new WebSocket(`wss://${wsUrl}ws/${id}`)
-
-    webSocketCalled = true
-
-    websocket.onopen = () => {
-      console.info(
-        `[${`wss://${wsUrl}ws/${id}`}] opened ws connection @`,
-        performance.now(),
-      )
-
-      setIsWebsocketReady(true)
-
-      websocket.send("start");
-      if(interval) {
-        clearInterval(interval);
-      }
-
-      interval = setInterval(() => {
-        if(websocket.readyState === WebSocket.OPEN) {
-          websocket.send(JSON.stringify({"type": "KeepAlive"}));
-        }
-      }, 10000); // Send the heartbeat every 10 seconds
-    }
-
-    websocket.onmessage = async (event) => {
-    if (typeof event.data === 'string') {
-      const msg = JSON.parse(event.data);
-        if (msg && msg.data && msg.data.ai_response_chunk) {
-        // Extract the subtitle chunk from the msg
-        const subtitleChunk = msg.data.ai_response_chunk;
-        // Add the subtitleChunk to the state variable
-        setSubtitleChunks((prevChunks) => [...prevChunks, subtitleChunk]);
-      }
-    } else {
-      const blob = new Blob([event.data], { type: 'audio/mpeg' });
-      let arrayBuffer = await blob.arrayBuffer();
-      queue.push(arrayBuffer);
-      if (!sourceBuffer.current?.updating && isUserSpeaking == false) {
-        sourceBuffer.current?.appendBuffer(queue.shift() as BufferSource);
-        console.log("playing audio");
-      }else{
-        console.log("pushed audio");
-      }
-    }
-};
-
-
-    websocket.onclose = event => {
-      console.log('connection closed')
-      stopRecording()
-      setIsWebsocketReady(false)
-      webSocketCalled = false
-    }
-
-    websocket.onerror = error => {
-      stopRecording()
-      console.log('there is an error')
-      setIsWebsocketReady(false)
-      webSocketCalled = false
-    }
-
-    ws = websocket;
-  }
-
-  const connectWebSocket = async () => {
-    let backendStatusChecker: NodeJS.Timeout // Declare the interval ID variable
-
-    const spawnBackend = await startAudioStreamingV2()
-    console.log('spawnBackend', spawnBackend)
-
-    backendStatusChecker = setInterval(async () => {
-      const backendStatus = await (await fetch(spawnBackend.status_url)).json() as spawnedBackendStatus
-      if (backendStatus.state == 'Ready') {
-        console.log('backend is ready')
-        clearTimeout(backendStatusChecker)
-        await startWebSocket(spawnBackend)
-      }
-      console.log('backendStatus', backendStatus)
-    }, 1000)
-  }
-
-  const initStream = () => {
-    if(mediaSource.current && audioPlayer.current){
-      sourceBufferURL = URL.createObjectURL(mediaSource.current)
-      audioPlayer.current.src = sourceBufferURL;
-      mediaSource.current.onsourceopen = () => {
-        if (sourceBuffer.current == undefined && mediaSource.current) {
-          sourceBuffer.current = mediaSource.current.addSourceBuffer('audio/mpeg');
-          sourceBuffer.current.mode = "sequence";
-          sourceBuffer.current.onupdateend = () => {
-            if (queue.length > 0 && !sourceBuffer.current?.updating) {
-              sourceBuffer.current?.appendBuffer(queue.shift() as BufferSource);
-              console.log('source buffer', sourceBuffer.current?.buffered.start(0), "end", sourceBuffer.current?.buffered.end(0), sourceBuffer.current?.buffered.length)
-            }
-          }
-        }
-      }
-    }
-  }
-
-  const resetStream = () => {
-    if (sourceBuffer.current) {
-    URL.revokeObjectURL(sourceBufferURL)
-    sourceBuffer.current.abort();
-    sourceBuffer.current = undefined;
-    queue.length = 0
-    isPlaying = false;
-  }
-    initStream()
+    pauseAndCleanAudio();
   }
 
   useEffect(() => {
     // window.playCacheChunks = () => audioPlayer.current?.play(); 
     ringAudio.current = new Audio('/audio/ring.wav');
     endAudio.current = new Audio('/audio/end.wav');
-    // audioPlayer.current = new Audio();
-    mediaSource.current = new MediaSource();
-    initStream()
-  }, [])
-
-  useEffect(()=> {
-    if(isWebsocketReady){
-          console.log("isWebsocketReady", isWebsocketReady)
-          setCallingState("connected")
-          timerRef.current = window.setInterval(() => {
-            setTime(prevTime => prevTime + 1)
-          }, 1000)
-          ringAudio.current?.pause()
-          console.log('Recording started! Speak now.')
-        } else {
-          console.log("isWebsocketReady", isWebsocketReady)
+    //@ts-ignore
+    audioCtx.current = new (window.AudioContext || window.webkitAudioContext)();
+    audioSource.current = audioCtx.current.createBufferSource();
+    if(audioPlayer.current){
+      audioPlayer.current.preload = "auto";
+      audioPlayer.current.onended = () => {
+        console.log("audio playing finish")
+      }
+      audioPlayer.current.onerror = () => {
+        console.log("error while playing audio")
+      }
     }
-  }, [isWebsocketReady])
+  }, [])
 
   return (
     <div className="h-screen w-full flex items-center justify-center">
@@ -325,12 +177,6 @@ export default function AiVoiceRecorder() {
           >
             {mediaRecorder.current && (
               <LiveAudioVisualizer mediaRecorder={mediaRecorder.current} width={310} height={16} />
-            )}
-          </div>
-
-          <div className="absolute bottom-[200px] left-[50%]" style={{ transform: 'translateX(-50%)' }}>
-            {callingState == "connected" && (
-              <Subtitles subtitleChunks={subtitleChunks} />
             )}
           </div>
 
@@ -397,7 +243,6 @@ export default function AiVoiceRecorder() {
                     </Icon>
                   </button>
                   <button
-                    disabled={!isWebsocketReady}
                     onClick={stopRecording}
                   >
                     <Icon
@@ -446,27 +291,3 @@ const Avatar = ({xl = false}: AvatarProps) => {
     </div>
   )
 }
-
-const Subtitles = ({ subtitleChunks }: {subtitleChunks: string[]}) => {
-  const [currentSubtitles, setCurrentSubtitles] = useState<string[]>([]);
-  
-  useEffect(() => {
-    // Update current subtitles every 2 seconds with the next 4 chunks
-    const interval = setInterval(() => {
-      if (subtitleChunks.length > 0) {
-        const newSubtitles = subtitleChunks.splice(0, 5);
-        setCurrentSubtitles(newSubtitles);
-      }
-    }, 1000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [subtitleChunks]);
-
-  return (
-    <p className="w-[236px] scale-in-05 text-white text-center text-[21px] font-[300] leading-[150%]">
-        {currentSubtitles.length ? (currentSubtitles.join(' ')) : "Go ahead, I’m listening....."}
-    </p>
-  );
-};
